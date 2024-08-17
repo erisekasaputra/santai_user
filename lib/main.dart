@@ -8,8 +8,8 @@ void main() {
   runApp(
     GetMaterialApp(
       title: "Application",
-      initialRoute: Routes.REG_USER_PROFILE,
-      // initialRoute: Routes.LOGIN,
+      // initialRoute: Routes.HISTORY,
+      initialRoute: Routes.SPLASH_SCREEN,
       getPages: AppPages.routes,
     ),
   );

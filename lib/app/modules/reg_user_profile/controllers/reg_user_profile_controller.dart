@@ -3,28 +3,40 @@ import 'package:get/get.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 class RegUserProfileController extends GetxController {
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+
+  final referenceCodeController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final phoneController = TextEditingController();
+  final dateOfBirthController = TextEditingController();
+  final genderController = TextEditingController();
+  final addressController = TextEditingController();
+  final posCodeController = TextEditingController();
+
   final isPasswordHidden = true.obs;
+  final isConfirmPasswordHidden = true.obs;
 
-  final isAgreed = false.obs;
+  final genderOptions = ['Male', 'Female'];
+  final selectedGender = 'Male'.obs;
 
-  void signUp() {
-    // Implement your login logic here
-    String phone = phoneController.text;
-    String password = passwordController.text;
-    String email = emailController.text;
-    print('Phone: $phone, Password: $password, Email: $email');
 
-    Get.offAllNamed(Routes.LOGIN);
+  void register() {
+    Get.toNamed(Routes.REG_MOTORCYCLE);
   }
+
 
   @override
   void onClose() {
-    phoneController.dispose();
+    referenceCodeController.dispose();
+    fullNameController.dispose();
     passwordController.dispose();
-    emailController.dispose();
+    confirmPasswordController.dispose();
+    phoneController.dispose();
+    dateOfBirthController.dispose();
+    genderController.dispose();
+    addressController.dispose();
+    posCodeController.dispose();
     super.onClose();
   }
 }

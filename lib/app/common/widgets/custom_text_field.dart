@@ -6,6 +6,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType keyboardType;
   final bool obscureText;
+  final IconData? suffixIcon;  // New optional parameter for suffix icon
 
   const CustomTextField({
     Key? key,
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
+    this.suffixIcon,  // Added to constructor
   }) : super(key: key);
 
   @override
@@ -25,6 +27,7 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: Icon(icon, color: Colors.black),
+        suffixIcon: suffixIcon != null ? Icon(suffixIcon, color: Colors.black) : null,  // Add suffix icon if provided
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           borderSide: BorderSide(color: Colors.black),

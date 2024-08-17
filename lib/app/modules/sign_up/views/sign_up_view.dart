@@ -15,6 +15,7 @@ class SignUpView extends GetView<SignUpController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -65,11 +66,10 @@ class SignUpView extends GetView<SignUpController> {
                 const SizedBox(height: 20),
                 Obx(() => Row(
                   children: [
-                    Checkbox(
+                   Checkbox(
                       value: controller.isAgreed.value,
                       onChanged: (value) {
                         controller.isAgreed.value = value ?? false;
-                        print("Value: $value");
                       },
                       checkColor: Colors.white, 
                       activeColor: Colors.black,
@@ -95,10 +95,10 @@ class SignUpView extends GetView<SignUpController> {
                 )),
 
                 const SizedBox(height: 10),
-                CustomElevatedButton(
+                Obx(() => CustomElevatedButton(
                   text: 'Create Account',
                   onPressed: controller.isAgreed.value ? controller.signUp : null,
-                ),
+                )),
                 const SizedBox(height: 20),
                 Row(
                   children: [
@@ -156,7 +156,7 @@ class SignUpView extends GetView<SignUpController> {
                           Get.toNamed(Routes.LOGIN);
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.black, // Maintain text color
+                          foregroundColor: Colors.black,
                         ),
                         child: RichText(
                           text: const TextSpan(
@@ -175,7 +175,6 @@ class SignUpView extends GetView<SignUpController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20), // Add some space at the bottom
               ],
             ),
           ),

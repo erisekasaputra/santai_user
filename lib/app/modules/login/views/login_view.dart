@@ -13,6 +13,7 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -141,7 +142,7 @@ class LoginView extends GetView<LoginController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20), // Add some space at the bottom
+                const SizedBox(height: 5),
               ],
             ),
           ),

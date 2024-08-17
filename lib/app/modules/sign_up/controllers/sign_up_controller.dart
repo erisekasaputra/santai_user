@@ -17,7 +17,7 @@ class SignUpController extends GetxController {
     String email = emailController.text;
     print('Phone: $phone, Password: $password, Email: $email');
 
-    Get.offAllNamed(Routes.REG_USER_PROFILE);
+    Get.toNamed(Routes.REG_USER_PROFILE);
   }
 
   @override
