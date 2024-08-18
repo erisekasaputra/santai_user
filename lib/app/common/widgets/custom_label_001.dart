@@ -26,7 +26,7 @@ class CustomLabel extends StatelessWidget {
         style: TextStyle(
           fontSize: fontSize,
           color: textColor,
-          fontWeight: fontWeight,
+          fontFamily: 'Saira',
         ),
       ),
     );

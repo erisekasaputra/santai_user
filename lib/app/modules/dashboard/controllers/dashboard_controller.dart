@@ -1,11 +1,15 @@
 import 'package:get/get.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:geocoding/geocoding.dart';
 import 'package:santai/app/routes/app_pages.dart';
+import 'package:santai/app/services/location_service.dart';
 
 class DashboardController extends GetxController {
   final userName = 'Pang Li';
-  final address = 'Fetching location...'.obs;
+  final LocationService locationService = Get.find<LocationService>();
+
+  String get address => locationService.address.value;
+  bool get isLoading => locationService.isLoading.value;
 
   // final List<Motorcycle> motorcycles = [
   //   Motorcycle(plateNumber: 'VBB 6123', brand: 'SYM', model: 'VF3i 185', nextService: '01/12/2024'),
@@ -51,41 +55,44 @@ final currentServiceIndex = 0.obs;
   @override
   void onInit() {
     super.onInit();
-    getCurrentLocation();
+    // getCurrentLocation();
   }
 
-   Future<void> getCurrentLocation() async {
-  print("getCurrentLocation");
-  try {
-    Map<String, dynamic> dataResponse = await determinePosition();
-    if (!dataResponse["error"]) {
-      Position position = dataResponse["position"];
-      print("Position: ${position.latitude}, ${position.longitude}");
-      try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        ).timeout(Duration(seconds: 20));
-        print("Placemarks: $placemarks");
-        if (placemarks.isNotEmpty) {
-          String currentAddress = "${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}, ${placemarks[0].country}";
-          address.value = currentAddress;
-        } else {
-          address.value = "Location found, but address details are unavailable";
-        }
-      } catch (e) {
-        print("Error in placemarkFromCoordinates: $e");
-        address.value = "Error getting address details";
-      }
-    } else {
-      Get.snackbar("Terjadi Kesalahan", dataResponse["message"]);
-    }
-  } catch (e) {
-    print("Error in getCurrentLocation: $e");
-    Get.snackbar("Terjadi Kesalahan", "Gagal mendapatkan lokasi. Silakan coba lagi.");
-    address.value = "Lokasi tidak tersedia";
-  }
-}
+  //  Future<void> getCurrentLocation() async {
+  //     print("getCurrentLocation");
+  //     isLoading.value = true;
+  //     try {
+  //       Map<String, dynamic> dataResponse = await determinePosition();
+  //       if (!dataResponse["error"]) {
+  //         Position position = dataResponse["position"];
+  //         print("Position: ${position.latitude}, ${position.longitude}");
+  //         try {
+  //           List<Placemark> placemarks = await placemarkFromCoordinates(
+  //             position.latitude,
+  //             position.longitude,
+  //           ).timeout(Duration(seconds: 20));
+  //           print("Placemarks: $placemarks");
+  //           if (placemarks.isNotEmpty) {
+  //             String currentAddress = "${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}, ${placemarks[0].country}";
+  //             address.value = currentAddress;
+  //           } else {
+  //             address.value = "Location found, but address details are unavailable";
+  //           }
+  //         } catch (e) {
+  //           print("Error in placemarkFromCoordinates: $e");
+  //           address.value = "Error getting address details";
+  //         }
+  //       } else {
+  //         Get.snackbar("Terjadi Kesalahan", dataResponse["message"]);
+  //       }
+  //     } catch (e) {
+  //       print("Error in getCurrentLocation: $e");
+  //       Get.snackbar("Terjadi Kesalahan", "Gagal mendapatkan lokasi. Silakan coba lagi.");
+  //       address.value = "Lokasi tidak tersedia";
+  //     } finally {
+  //       isLoading.value = false;
+  //     }
+  //   }
 
 void selectMotorcycle(int serviceIndex, int motorcycleIndex) {
   if (serviceProgresses[serviceIndex].currentStep == 0) { // Only allow selection during "Order" step
@@ -109,7 +116,7 @@ void selectMotorcycle(int serviceIndex, int motorcycleIndex) {
         Get.toNamed(Routes.HISTORY);
         break;
       case 2:
-        Get.toNamed('/inbox');
+        Get.toNamed(Routes.CHAT_MENU);
         break;
       case 3:
         Get.toNamed(Routes.SETTINGS);
@@ -117,38 +124,38 @@ void selectMotorcycle(int serviceIndex, int motorcycleIndex) {
     }
   }
 
-  Future<Map<String, dynamic>> determinePosition() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        return {"error": true, "message": "Layanan lokasi dinonaktifkan."};
-      }
+  // Future<Map<String, dynamic>> determinePosition() async {
+  //   try {
+  //     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //     if (!serviceEnabled) {
+  //       return {"error": true, "message": "Layanan lokasi dinonaktifkan."};
+  //     }
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          return {"error": true, "message": "Izin lokasi ditolak."};
-        }
-      }
+  //     LocationPermission permission = await Geolocator.checkPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       permission = await Geolocator.requestPermission();
+  //       if (permission == LocationPermission.denied) {
+  //         return {"error": true, "message": "Izin lokasi ditolak."};
+  //       }
+  //     }
 
-      if (permission == LocationPermission.deniedForever) {
-        return {"error": true, "message": "Izin lokasi ditolak secara permanen."};
-      }
+  //     if (permission == LocationPermission.deniedForever) {
+  //       return {"error": true, "message": "Izin lokasi ditolak secara permanen."};
+  //     }
 
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 15),
-        ),
-      );
+  //     Position position = await Geolocator.getCurrentPosition(
+  //       locationSettings: const LocationSettings(
+  //         accuracy: LocationAccuracy.high,
+  //         timeLimit: Duration(seconds: 15),
+  //       ),
+  //     );
 
-      return {"error": false, "position": position};
-    } catch (e) {
-      print("Error in determinePosition: $e");
-      return {"error": true, "message": "Gagal mendapatkan posisi: $e"};
-    }
-  }
+  //     return {"error": false, "position": position};
+  //   } catch (e) {
+  //     print("Error in determinePosition: $e");
+  //     return {"error": true, "message": "Gagal mendapatkan posisi: $e"};
+  //   }
+  // }
 
 
 

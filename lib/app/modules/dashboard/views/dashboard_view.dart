@@ -78,23 +78,71 @@ class DashboardView extends GetView<DashboardController> {
       children: [
         Icon(Icons.location_on_outlined, color: Colors.black),
         const SizedBox(width: 8),
+
         Expanded(
-          child: Obx(() => Text(
-            controller.address.value,
-            style: TextStyle(color: Colors.black),
-          )),
-        ),
-        const SizedBox(width: 5),
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-          ),
-          child: IconButton(
-            icon: Icon(Icons.refresh, color: Colors.black),
-            onPressed: () => controller.getCurrentLocation(),
-          ),
-        ),
+  child: Obx(() => Text(
+    controller.address,
+    style: TextStyle(color: Colors.black),
+  )),
+),
+const SizedBox(width: 5),
+Obx(() => controller.isLoading
+  ? SizedBox(
+      width: 24,
+      height: 24,
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+      ),
+    )
+  : Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      child: IconButton(
+        icon: Icon(Icons.refresh, color: Colors.black),
+        onPressed: () {
+          controller.locationService.getCurrentLocation();
+        },
+      ),
+    ),
+),
+
+
+
+
+
+
+        // Expanded(
+        //   child: Obx(() => Text(
+        //     controller.address.value,
+        //     style: TextStyle(color: Colors.black),
+        //   )),
+        // ),
+        // const SizedBox(width: 5),
+        // Obx(() => controller.isLoading.value
+        //   ? SizedBox(
+        //       width: 24,
+        //       height: 24,
+        //       child: CircularProgressIndicator(
+        //         strokeWidth: 2,
+        //         valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+        //       ),
+        //     )
+        //   : Container(
+        //       decoration: BoxDecoration(
+        //         shape: BoxShape.circle,
+        //         color: Colors.white,
+        //       ),
+        //       child: IconButton(
+        //         icon: Icon(Icons.refresh, color: Colors.black),
+        //         onPressed: () {
+        //           controller.getCurrentLocation();
+        //         },
+        //       ),
+        //     ),
+        // ),
       ],
     ),
   );

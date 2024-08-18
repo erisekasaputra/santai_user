@@ -27,7 +27,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             const Text(
               'YOUR NO.1 MOTORCYCLE MAINTENANCE SERVICE PROVIDER',
               style: TextStyle(

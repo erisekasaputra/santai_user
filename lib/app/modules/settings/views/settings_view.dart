@@ -80,7 +80,6 @@ class SettingsView extends GetView<SettingsController> {
         _buildSettingItem(Icons.person_outline, 'Edit Profile'),
         _buildSettingItem(Icons.location_on_outlined, 'Address'),
         _buildSettingItem(Icons.notifications_none, 'Notification'),
-        _buildSettingItem(Icons.account_balance_wallet_outlined, 'E-Wallet'),
         _buildSettingItem(Icons.security, 'Security'),
         _buildLanguageItem(),
         _buildSettingItem(Icons.privacy_tip_outlined, 'Privacy Policy'),

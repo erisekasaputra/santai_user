@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
 import 'package:santai/app/common/widgets/custom_label_001.dart';
+import 'package:santai/app/common/widgets/custom_phone_field.dart';
 import 'package:santai/app/common/widgets/custom_pswd_field.dart';
-import 'package:santai/app/common/widgets/custom_text_field.dart';
+// import 'package:santai/app/common/widgets/custom_text_field.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 import '../controllers/sign_up_controller.dart';
@@ -39,21 +40,10 @@ class SignUpView extends GetView<SignUpController> {
                 const CustomLabel(
                   text: 'Phone',
                 ),
-                CustomTextField(
-                  hintText: '+62',
-                  icon: Icons.phone,
+                CustomPhoneField(
+                  hintText: 'Enter your phone number',
                   controller: controller.phoneController,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 10),
-                const CustomLabel(
-                  text: 'Email',
-                ),
-                CustomTextField(
-                  hintText: 'Email',
-                  icon: Icons.email,
-                  controller: controller.emailController,
-                  keyboardType: TextInputType.emailAddress,
+                  onChanged: controller.updatePhoneInfo,
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(
@@ -123,25 +113,15 @@ class SignUpView extends GetView<SignUpController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.circle),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.circle),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.circle),
-                      onPressed: () {},
+                      icon: Image.asset('assets/images/google_logo.png', width: 50, height: 50),
+                      onPressed: controller.signInWithGoogle,
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Row(

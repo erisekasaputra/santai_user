@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/routes/app_pages.dart';
 import '../controllers/motorcycle_detail_controller.dart';
 
 class MotorcycleDetailView extends GetView<MotorcycleDetailController> {
@@ -22,7 +23,9 @@ class MotorcycleDetailView extends GetView<MotorcycleDetailController> {
         ),
         actions: [
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Get.toNamed(Routes.REG_MOTORCYCLE);
+            },
             icon: const Icon(Icons.add, color: Colors.black),
             label: const Text(
               'Add more',
@@ -124,13 +127,18 @@ class MotorcycleDetailView extends GetView<MotorcycleDetailController> {
                     padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
                     child: Row(
                       children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(Routes.MOTORCYCLE_INFORMATION);
+                          },
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(Icons.edit, color: Colors.black, size: 18),
                           ),
-                          padding: const EdgeInsets.all(8),
-                          child: Icon(Icons.edit, color: Colors.black, size: 18),
                         ),
                         SizedBox(width: 5),
                         Text(

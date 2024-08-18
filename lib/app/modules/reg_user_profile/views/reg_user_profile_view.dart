@@ -65,6 +65,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 10),
+                const CustomLabel(text: 'Email'),
                 CustomTextField(
                   hintText: 'Email',
                   icon: Icons.email,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
 import 'package:santai/app/common/widgets/custom_label_001.dart';
+import 'package:santai/app/common/widgets/custom_phone_field.dart';
 import 'package:santai/app/common/widgets/custom_pswd_field.dart';
 import 'package:santai/app/common/widgets/custom_text_field.dart';
 import 'package:santai/app/routes/app_pages.dart';
@@ -34,23 +35,51 @@ class LoginView extends GetView<LoginController> {
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
                 const SizedBox(height: 20),
-                const CustomLabel(
-                  text: 'Phone',
-                ),
-                CustomTextField(
-                  hintText: '+62',
-                  icon: Icons.phone,
-                  controller: controller.phoneController,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 10),
-                const CustomLabel(
-                  text: 'Password',
-                ),
-                CustomPasswordField(
-                  controller: controller.passwordController,
-                  isPasswordHidden: controller.isPasswordHidden,
-                ),
+
+
+                // const CustomLabel(
+                //   text: 'Phone',
+                // ),
+                // CustomPhoneField(
+                //   hintText: 'Enter your phone number',
+                //   controller: controller.phoneController,
+                //   onChanged: controller.updatePhoneInfo,
+                // ),
+                // const SizedBox(height: 10),
+                // const CustomLabel(
+                //   text: 'Password',
+                // ),
+                // CustomPasswordField(
+                //   controller: controller.passwordController,
+                //   isPasswordHidden: controller.isPasswordHidden,
+                // ),
+
+                Obx(() => Column(
+                  children: [
+                    if (controller.isStaffLogin.value) ...[
+                      const SizedBox(height: 10),
+                      const CustomLabel(text: 'Business Code'),
+                      CustomTextField(
+                        controller: controller.businessCodeController,
+                        hintText: 'Enter business code',
+                        icon: Icons.business_center,
+                      ),
+                    ],
+                    const SizedBox(height: 10),
+                    const CustomLabel(text: 'Phone'),
+                    CustomPhoneField(
+                      hintText: 'Enter your phone number',
+                      controller: controller.phoneController,
+                      onChanged: controller.updatePhoneInfo,
+                    ),
+                    const CustomLabel(text: 'Password'),
+                    CustomPasswordField(
+                      controller: controller.passwordController,
+                      isPasswordHidden: controller.isPasswordHidden,
+                    ),
+                    
+                  ],
+                )),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -62,10 +91,26 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                CustomElevatedButton(
-                  text: 'Log In',
-                  onPressed: controller.login,
-                ),
+                // Obx(() => CustomElevatedButton(
+                //   text: controller.isStaffLogin.value ? 'Staff Log In' : 'Log In',
+                //   onPressed: controller.isStaffLogin.value ? controller.signInAsStaff : controller.login,
+                // )),
+                Obx(() => CustomElevatedButton(
+                  text: controller.isStaffLogin.value ? 'Staff Log In' : 'Log In',
+                  onPressed: controller.isLoading.value
+                    ? null
+                    : (controller.isStaffLogin.value ? controller.signInAsStaff : controller.login),
+                  child: controller.isLoading.value
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : null,
+                )),
                 const SizedBox(height: 20),
                 Row(
                   children: [
@@ -90,25 +135,30 @@ class LoginView extends GetView<LoginController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.circle),
-                      onPressed: () {},
+                    Column(
+                      children: [
+                        IconButton(
+                          icon: Image.asset('assets/images/google_logo.png', width: 50, height: 50),
+                          onPressed: controller.signInWithGoogle,
+                        ),
+                        const Text('Sign in with Google'),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.circle),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.circle),
-                      onPressed: () {},
+                    const SizedBox(width: 10),
+                    Column(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.business_center, size: 50, color: Colors.black),
+                          onPressed: controller.toggleStaffLogin,
+                        ),
+                        Obx(() => Text(controller.isStaffLogin.value ? 'Switch to User' : 'Sign in as Staff')),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Row(

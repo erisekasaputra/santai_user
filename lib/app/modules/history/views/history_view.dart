@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/routes/app_pages.dart';
 import '../controllers/history_controller.dart';
 
 class HistoryView extends GetView<HistoryController> {
@@ -169,7 +170,9 @@ class HistoryView extends GetView<HistoryController> {
     return Row(
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.toNamed(Routes.SERVICE_DETAIL);
+          },
           child: const Text('Detail'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[300],
@@ -181,7 +184,9 @@ class HistoryView extends GetView<HistoryController> {
         ),
         const SizedBox(width: 8),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.toNamed(Routes.RATE_SERVICE);
+          },
           child: const Text('Rate'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[600],

@@ -1,5 +1,9 @@
 import 'package:get/get.dart';
 
+import '../modules/chat/bindings/chat_binding.dart';
+import '../modules/chat/views/chat_view.dart';
+import '../modules/chat_menu/bindings/chat_menu_binding.dart';
+import '../modules/chat_menu/views/chat_menu_view.dart';
 import '../modules/checkout/bindings/checkout_binding.dart';
 import '../modules/checkout/views/checkout_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
@@ -18,6 +22,8 @@ import '../modules/motorcycle_information/bindings/motorcycle_information_bindin
 import '../modules/motorcycle_information/views/motorcycle_information_view.dart';
 import '../modules/payment/bindings/payment_binding.dart';
 import '../modules/payment/views/payment_view.dart';
+import '../modules/rate_service/bindings/rate_service_binding.dart';
+import '../modules/rate_service/views/rate_service_view.dart';
 import '../modules/reg_motorcycle/bindings/reg_motorcycle_binding.dart';
 import '../modules/reg_motorcycle/views/reg_motorcycle_view.dart';
 import '../modules/reg_user_profile/bindings/reg_user_profile_binding.dart';
@@ -127,6 +133,21 @@ class AppPages {
       name: _Paths.SERVICE_DETAIL,
       page: () => const ServiceDetailView(),
       binding: ServiceDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.RATE_SERVICE,
+      page: () => const RateServiceView(),
+      binding: RateServiceBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT_MENU,
+      page: () => const ChatMenuView(),
+      binding: ChatMenuBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT,
+      page: () => const ChatView(),
+      binding: ChatBinding(),
     ),
   ];
 }

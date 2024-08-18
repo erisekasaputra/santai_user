@@ -20,6 +20,9 @@ abstract class Routes {
   static const SETTINGS = _Paths.SETTINGS;
   static const HISTORY = _Paths.HISTORY;
   static const SERVICE_DETAIL = _Paths.SERVICE_DETAIL;
+  static const RATE_SERVICE = _Paths.RATE_SERVICE;
+  static const CHAT_MENU = _Paths.CHAT_MENU;
+  static const CHAT = _Paths.CHAT;
 }
 
 abstract class _Paths {
@@ -41,4 +44,7 @@ abstract class _Paths {
   static const SETTINGS = '/settings';
   static const HISTORY = '/history';
   static const SERVICE_DETAIL = '/service-detail';
+  static const RATE_SERVICE = '/rate-service';
+  static const CHAT_MENU = '/chat-menu';
+  static const CHAT = '/chat';
 }

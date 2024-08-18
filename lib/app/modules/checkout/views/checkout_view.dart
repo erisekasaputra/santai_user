@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
 import 'package:santai/app/routes/app_pages.dart';
 import '../controllers/checkout_controller.dart';
@@ -139,7 +140,10 @@ void _selectTime() async {
     },
   );
   if (picked != null) {
-    controller.selectedTime.value = picked.format(Get.context!);
+    final now = DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+    final format = DateFormat("h:mm a"); // Menggunakan format 12 jam
+    controller.selectedTime.value = format.format(dt);
   }
 }
 
