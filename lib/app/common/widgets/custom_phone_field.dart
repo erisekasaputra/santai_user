@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
+import 'package:santai/app/theme/app_theme.dart';
 
 class CustomPhoneField extends StatelessWidget {
   final TextEditingController controller;
@@ -16,20 +17,28 @@ class CustomPhoneField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
+
+
     return IntlPhoneField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: borderColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: borderColor, width: 2),
         ),
       ),
-      initialCountryCode: 'ID',
+      initialCountryCode: 'MY',
       onChanged: (phone) {
         onChanged(phone.countryCode, phone.number);
       },

@@ -2,9 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
+import 'package:http/http.dart' as http;
+
 class RegMotorcycleController extends GetxController {
+  final isLoading = false.obs;
+
   final driverOwnerController = TextEditingController();
   final licensePlateController = TextEditingController();
   final makeController = TextEditingController();
@@ -18,45 +23,8 @@ class RegMotorcycleController extends GetxController {
   final selectedImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
 
-  void showImageSourceDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: const Center(
-          child: Text(
-            'Select Image Source',
-            style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold), 
-          ),
-        ),
-        backgroundColor: Colors.white,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library, color: Colors.black, size: 30), 
-              title: const Text(
-                'Gallery',
-                style: TextStyle(color: Colors.black, fontSize: 20) 
-              ),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.black, size: 30), 
-              title: const Text(
-                'Camera',
-                style: TextStyle(color: Colors.black, fontSize: 20)
-              ),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.camera);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+  void handleImageSourceSelection(ImageSource source) {
+    _pickImage(source);
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -66,21 +34,76 @@ class RegMotorcycleController extends GetxController {
     }
   }
 
-  void register() {
-  Get.snackbar(
-    "Registration Successful",
-    "Your motorcycle has been registered successfully!",
-    snackPosition: SnackPosition.TOP,
-    backgroundColor: Colors.grey[800],
-    colorText: Colors.white,
-    borderRadius: 10,
-    margin: const EdgeInsets.all(10),
-    duration: const Duration(seconds: 4),
-    isDismissible: true,
-    dismissDirection: DismissDirection.horizontal,
-  );
-  Get.toNamed(Routes.DASHBOARD);
+  Future<void> register() async {
+    isLoading.value = true;
+
+    try {
+      await Future.delayed(const Duration(seconds: 2));
+
+      CustomToast.show(
+        message: "Registration Success",
+        type: ToastType.success,
+      );
+
+      // await sendRegistrationData();
+
+      Get.toNamed(Routes.DASHBOARD);
+    } catch (e) {
+      CustomToast.show(
+        message: "Registration Failed",
+        type: ToastType.error,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
+
+  Future<void> sendRegistrationData() async {
+  isLoading.value = true;
+
+  try {
+    var uri = Uri.parse('YOUR_API_ENDPOINT_HERE');
+    var request = http.MultipartRequest('POST', uri);
+
+
+    request.fields['driver_owner'] = driverOwnerController.text;
+    request.fields['license_plate'] = licensePlateController.text;
+    request.fields['make'] = makeController.text;
+    request.fields['model'] = modelController.text;
+    request.fields['year'] = yearController.text;
+    request.fields['fuel_type'] = selectedGas.value;
+
+    if (selectedImage.value != null) {
+      var file = await http.MultipartFile.fromPath(
+        'motorcycle_image',
+        selectedImage.value!.path,
+      );
+      request.files.add(file);
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      CustomToast.show(
+        message: "Registration Success",
+        type: ToastType.success,
+      );
+      Get.toNamed(Routes.DASHBOARD);
+    } else {
+      CustomToast.show(
+        message: "Registration Failed: ${response.reasonPhrase}",
+        type: ToastType.error,
+      );
+    }
+  } catch (e) {
+    CustomToast.show(
+      message: "Registration Failed: $e",
+      type: ToastType.error,
+    );
+  } finally {
+    isLoading.value = false;
+  }
+}
 
   @override
   void onClose() {

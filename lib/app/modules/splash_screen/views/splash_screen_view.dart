@@ -15,28 +15,28 @@ class SplashScreenView extends GetView<SplashScreenController> {
           children: [
             Image.asset(
               'assets/images/splash_image.png',
-              width: 150,
-              height: 150,
+              width: 200,
+              height: 200,
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'SANTAI',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text(
-              'YOUR NO.1 MOTORCYCLE MAINTENANCE SERVICE PROVIDER',
-              style: TextStyle(
-                fontSize: 14, 
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            // const SizedBox(height: 20),
+            // const Text(
+            //   'SANTAI',
+            //   style: TextStyle(
+            //     fontSize: 50,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.black,
+            //   ),
+            // ),
+            // const SizedBox(height: 5),
+            // const Text(
+            //   'YOUR NO.1 MOTORCYCLE MAINTENANCE SERVICE PROVIDER',
+            //   style: TextStyle(
+            //     fontSize: 14, 
+            //     color: Colors.black,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            //   textAlign: TextAlign.center,
+            // ),
           ],
         ),
       ),

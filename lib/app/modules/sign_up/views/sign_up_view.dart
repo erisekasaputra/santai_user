@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
 import 'package:santai/app/common/widgets/custom_label_001.dart';
 import 'package:santai/app/common/widgets/custom_phone_field.dart';
 import 'package:santai/app/common/widgets/custom_pswd_field.dart';
-// import 'package:santai/app/common/widgets/custom_text_field.dart';
 import 'package:santai/app/routes/app_pages.dart';
+import 'package:santai/app/theme/app_theme.dart';
 
 import '../controllers/sign_up_controller.dart';
 
@@ -15,6 +14,10 @@ class SignUpView extends GetView<SignUpController> {
   
   @override
   Widget build(BuildContext context) {
+
+    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
+
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -25,13 +28,13 @@ class SignUpView extends GetView<SignUpController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50), // Spacer to center content
-                const Icon(Icons.image, size: 100),
-                const SizedBox(height: 20),
+                const SizedBox(height: 50),
+                Image.asset('assets/images/company_logo.png', width: 200, height: 200),
                 const Text(
                   'Sign Up',
                   style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 10),
                 const Text(
                   'Login to your account',
                   style: TextStyle(fontSize: 16, color: Colors.black),
@@ -40,6 +43,7 @@ class SignUpView extends GetView<SignUpController> {
                 const CustomLabel(
                   text: 'Phone',
                 ),
+                const SizedBox(height: 5),
                 CustomPhoneField(
                   hintText: 'Enter your phone number',
                   controller: controller.phoneController,
@@ -49,6 +53,7 @@ class SignUpView extends GetView<SignUpController> {
                 const CustomLabel(
                   text: 'Password',
                 ),
+                const SizedBox(height: 5),
                  CustomPasswordField(
                   controller: controller.passwordController,
                   isPasswordHidden: controller.isPasswordHidden,
@@ -66,17 +71,17 @@ class SignUpView extends GetView<SignUpController> {
                     ),
                     Expanded(
                       child: RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
+                          text: TextSpan(
+                            style: const TextStyle(
                               fontSize: 14, 
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
                             children: [
-                              TextSpan(text: "I agree to the ", style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: "Terms & Conditions"),
-                              TextSpan(text: " and ", style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: "Privacy Policy"),
+                              const TextSpan(text: "I agree to the "),
+                              TextSpan(text: "Terms & Conditions", style: TextStyle(color: Theme.of(context).colorScheme.primary_100)),
+                              const TextSpan(text: " and "),
+                              TextSpan(text: "Privacy Policy", style: TextStyle(color: Theme.of(context).colorScheme.primary_100)),
                             ],
                           ),
                         ),
@@ -87,7 +92,10 @@ class SignUpView extends GetView<SignUpController> {
                 const SizedBox(height: 10),
                 Obx(() => CustomElevatedButton(
                   text: 'Create Account',
-                  onPressed: controller.isAgreed.value ? controller.signUp : null,
+                  onPressed: controller.isLoading.value
+                    ? null
+                    : (controller.isAgreed.value ? controller.signUp : null),
+                  isLoading: controller.isLoading.value,
                 )),
                 const SizedBox(height: 20),
                 Row(
@@ -113,15 +121,36 @@ class SignUpView extends GetView<SignUpController> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      icon: Image.asset('assets/images/google_logo.png', width: 50, height: 50),
-                      onPressed: controller.signInWithGoogle,
+                    Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: borderColor, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: Image.asset('assets/images/google_logo.png', width: 30, height: 30),
+                        onPressed: controller.signInWithGoogle,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: borderColor, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: Image.asset('assets/images/facebook_logo.png', width: 30, height: 30),
+                        onPressed: controller.signInWithGoogle,
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Row(
@@ -129,7 +158,7 @@ class SignUpView extends GetView<SignUpController> {
                     children: [
                       const Text(
                         "You Have an Account?",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16),
                       ),
                       TextButton(
                         onPressed: () {
@@ -139,15 +168,15 @@ class SignUpView extends GetView<SignUpController> {
                           foregroundColor: Colors.black,
                         ),
                         child: RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
+                          text: TextSpan(
+                            style: const TextStyle(
                               fontSize: 16, 
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
                             children: [
-                              TextSpan(text: "Sign In "),
-                              TextSpan(text: "with mobile phone", style: TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: "Sign In ", style: TextStyle(color: Theme.of(context).colorScheme.primary_100)),
+                              const TextSpan(text: "with mobile phone"),
                             ],
                           ),
                         ),

@@ -58,96 +58,115 @@ class AppPages {
       name: _Paths.SPLASH_SCREEN,
       page: () => const SplashScreenView(),
       binding: SplashScreenBinding(),
+      transition: Transition.fadeIn
     ),
     GetPage(
       name: _Paths.REGISTER_OTP,
       page: () => const RegisterOtpView(),
       binding: RegisterOtpBinding(),
+      transition: Transition.fadeIn
     ),
     GetPage(
       name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: LoginBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.SIGN_UP,
       page: () => const SignUpView(),
       binding: SignUpBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.REG_USER_PROFILE,
       page: () => const RegUserProfileView(),
       binding: RegUserProfileBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.REG_MOTORCYCLE,
       page: () => const RegMotorcycleView(),
       binding: RegMotorcycleBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.SERVICE_NOW,
       page: () => const ServiceNowView(),
       binding: ServiceNowBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.DETAIL_PRODUCT,
       page: () => const DetailProductView(),
       binding: DetailProductBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.CHECKOUT,
       page: () => const CheckoutView(),
       binding: CheckoutBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.PAYMENT,
       page: () => const PaymentView(),
       binding: PaymentBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.MOTORCYCLE_DETAIL,
       page: () => const MotorcycleDetailView(),
       binding: MotorcycleDetailBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.MOTORCYCLE_INFORMATION,
       page: () => const MotorcycleInformationView(),
       binding: MotorcycleInformationBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.SETTINGS,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
+      transition: Transition.downToUp
     ),
     GetPage(
       name: _Paths.HISTORY,
       page: () => const HistoryView(),
       binding: HistoryBinding(),
+      transition: Transition.downToUp
     ),
     GetPage(
       name: _Paths.SERVICE_DETAIL,
       page: () => const ServiceDetailView(),
       binding: ServiceDetailBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.RATE_SERVICE,
       page: () => const RateServiceView(),
       binding: RateServiceBinding(),
+      transition: Transition.rightToLeft
     ),
     GetPage(
       name: _Paths.CHAT_MENU,
       page: () => const ChatMenuView(),
       binding: ChatMenuBinding(),
+      transition: Transition.downToUp
     ),
     GetPage(
       name: _Paths.CHAT,
       page: () => const ChatView(),
       binding: ChatBinding(),
+      transition: Transition.rightToLeft
     ),
   ];
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:santai/app/common/widgets/custom_snackbar.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
+// import 'package:santai/app/common/widgets/custom_snackbar.dart';
 import 'package:santai/app/domain/usecases/login_use_case.dart';
+import 'package:santai/app/modules/register_otp/views/register_otp_view.dart';
 import 'package:santai/app/routes/app_pages.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -31,24 +33,32 @@ class LoginController extends GetxController {
   void login() async {
     isLoading.value = true;
     final password = passwordController.text;
-
     String fullPhoneNumber = '${countryCode.value}${phoneNumber.value}';
 
-    print('Phone: $fullPhoneNumber, Password: $password');
+    try {
 
+      print('Phone: $fullPhoneNumber, Password: $password');
+      await Future.delayed(Duration(seconds: 2));
 
-    await Future.delayed(Duration(seconds: 2));
+      CustomToast.show(
+          message: "Login successful",
+          type: ToastType.success,
+        );
 
-    ModernSnackbar.show(
-      message: "Login successful",
-      type: SnackbarType.success,
-    );
+      isLoading.value = false;
+      Get.toNamed(Routes.REGISTER_OTP);
 
-    isLoading.value = false;
-    Get.toNamed(Routes.REGISTER_OTP);
-
-    // final user = await loginUseCase.execute(phone, password);
-    // print('Logged in user: ${user.email}');
+      // final user = await loginUseCase.execute(phone, password);
+      // print('Logged in user: ${user.email}');
+      
+    } catch (e) {
+      CustomToast.show(
+          message: "Login failed",
+          type: ToastType.error,
+        );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void toggleStaffLogin() {
@@ -63,23 +73,46 @@ class LoginController extends GetxController {
     final businessCode = businessCodeController.text;
 
     if (phone.isEmpty || password.isEmpty || businessCode.isEmpty) {
-      ModernSnackbar.show(
-        message: "Please fill in all fields",
-        type: SnackbarType.warning,
-      );
+      // ModernSnackbar.show(
+      //   message: "Please fill in all fields",
+      //   type: SnackbarType.warning,
+      // );
+      CustomToast.show(
+          message: "Please fill in all fields",
+          type: ToastType.warning,
+        );
       isLoading.value = false;
       return;
     }
 
-    await Future.delayed(Duration(seconds: 2));
+    try {
 
-    print('Staff Login - Phone: $phone, Password: $password, Business Code: $businessCode');
-    
-    isLoading.value = false;
-    Get.toNamed(Routes.REGISTER_OTP);
+      await Future.delayed(Duration(seconds: 2));
+
+      print('Staff Login - Phone: $phone, Password: $password, Business Code: $businessCode');
+      
+      isLoading.value = false;
+      Get.toNamed(Routes.REGISTER_OTP);
+
+      Get.to(
+        () => const RegisterOtpView(),
+        transition: Transition.rightToLeft,
+        duration: const Duration(milliseconds: 500),
+      );
+      
+    } catch (e) {
+      CustomToast.show(
+          message: "Login failed",
+          type: ToastType.error,
+        );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> signInWithGoogle() async {
+
+
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return;
@@ -97,14 +130,20 @@ class LoginController extends GetxController {
       
       if (success) {
   
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.REGISTER_OTP);
       } else {
     
-        Get.snackbar('Error', 'Failed to authenticate with server');
+        CustomToast.show(
+          message: "Failed to authenticate with server",
+          type: ToastType.error,
+        );
       }
     } catch (error) {
       print(error);
-      Get.snackbar('Error', 'Sign in with Google failed');
+      CustomToast.show(
+          message: "Sign in with Google failed",
+          type: ToastType.error,
+        );
     }
   }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_date_picker.dart';
 import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
 import 'package:santai/app/common/widgets/custom_label_001.dart';
+import 'package:santai/app/common/widgets/custom_modern_dropdown.dart';
 import 'package:santai/app/common/widgets/custom_text_field.dart';
 import '../controllers/reg_user_profile_controller.dart';
 
@@ -22,14 +24,15 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
               children: [
                 const Text(
                   'Registration',
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
                 const Text(
                   'Your account',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+                  style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 20),
                 const CustomLabel(text: 'Reference Code'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'Reference Code',
                   icon: Icons.code,
@@ -37,6 +40,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'First Name'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'First Name',
                   icon: Icons.person,
@@ -44,6 +48,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Middle Name'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'Middle Name',
                   icon: Icons.person,
@@ -51,6 +56,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Last Name'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'Last Name',
                   icon: Icons.person,
@@ -58,6 +64,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Phone'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: '[+6] 018 222 0060',
                   icon: Icons.phone,
@@ -66,6 +73,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Email'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'Email',
                   icon: Icons.email,
@@ -74,45 +82,17 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const CustomLabel(text: 'Date of Birth'),
-                          GestureDetector(
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(1900),
-                                lastDate: DateTime.now(),
-                                builder: (BuildContext context, Widget? child) {
-                                  return Theme(
-                                    data: ThemeData.light().copyWith(
-                                      primaryColor: Colors.grey,
-                                      hintColor: Colors.grey, 
-                                      colorScheme: ColorScheme.light(primary: Colors.grey),
-                                      buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-                                    ),
-                                    child: child ?? Container(),
-                                  );
-                                },
-                              );
-                              if (pickedDate != null) {
-                                String formattedDate = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-                                controller.dateOfBirthController.text = formattedDate;
-                              }
-                            },
-                            child: AbsorbPointer(
-                              child: CustomTextField(
-                                hintText: 'Date of Birth',
-                                icon: Icons.calendar_today,
-                                controller: controller.dateOfBirthController,
-                                keyboardType: TextInputType.datetime,
-                              ),
-                            ),
+                          const SizedBox(height: 5),
+                          CustomDatePicker(
+                            hintText: 'Date of Birth',
+                            controller: controller.dateOfBirthController,
                           ),
                         ],
                       ),
@@ -123,25 +103,18 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const CustomLabel(text: 'Gender'),
-                          Obx(() => DropdownButtonFormField<String>(
-                            borderRadius: BorderRadius.circular(20),
-                            dropdownColor: Colors.white,
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.person),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            value: controller.selectedGender.value,
-                            items: controller.genderOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+                          const SizedBox(height: 5),
+                          Obx(() => ModernDropdown(
+                            selectedItem: controller.selectedGender.value,
+                            items: controller.genderOptions,
                             onChanged: (newValue) {
-                              controller.selectedGender.value = newValue!;
+                              if (newValue != null) {
+                                controller.selectedGender.value = newValue;
+                              }
                             },
+                            prefixIcon: Icons.person,
+                            hintText: 'Select Gender',
+                            width: double.infinity,
                           )),
                         ],
                       ),
@@ -150,6 +123,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Address'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'Address',
                   icon: Icons.location_on,
@@ -157,6 +131,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Postal Code'),
+                const SizedBox(height: 5),
                 CustomTextField(
                   hintText: 'Postal Code',
                   icon: Icons.pin_drop,
@@ -164,10 +139,11 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 20),
-                CustomElevatedButton(
+                Obx(() => CustomElevatedButton(
                   text: 'Registration',
-                  onPressed: controller.register,
-                ),
+                  onPressed: controller.isLoading.value ? null : controller.register,
+                  isLoading: controller.isLoading.value,
+                )),
               ],
             ),
           ),

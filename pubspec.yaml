@@ -26,10 +26,14 @@ dependencies:
   shared_preferences: 2.3.2
   timezone: 0.9.4
   permission_handler: 11.3.1
+  fluttertoast: 8.2.8
+  dropdown_search: 5.0.6
+  timeline_tile: 2.0.0
   flutter: 
     sdk: flutter
 
 dev_dependencies: 
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: 4.0.0
   flutter_test: 
     sdk: flutter
@@ -38,6 +42,9 @@ flutter:
   assets: 
     - assets/images/splash_image.png
     - assets/images/google_logo.png
+    - assets/images/facebook_logo.png
+    - assets/images/company_logo.png
+    - assets/images/app_icon.png
   fonts: 
     - family: Saira
       fonts: 
@@ -46,4 +53,11 @@ flutter:
         - asset: assets/fonts/saira/Saira-Bold.ttf
           weight: 600
   uses-material-design: true
+
+flutter_launcher_icons: 
+  android: launcher_icon
+  image_path: assets/images/app_icon.png
+  ios: true
+  min_sdk_android: 21
+  remove_alpha_ios: true
 

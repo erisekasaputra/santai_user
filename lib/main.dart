@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/controllers/permission_controller.dart';
+import 'package:santai/app/controllers/theme_controller.dart';
 import 'package:santai/app/services/location_service.dart';
 import 'package:santai/app/services/timezone_service.dart';
+import 'package:santai/app/theme/app_theme.dart';
 import 'app/routes/app_pages.dart';
 import 'app/controllers/device_info_controller.dart';
 
@@ -21,18 +23,16 @@ void main() async {
   Get.put(LocationService());
   Get.put(TimezoneService());
   Get.put(PermissionController());
+  Get.put(ThemeController());
 
 
   runApp(
     GetMaterialApp(
       title: "Application",
-      theme: ThemeData(
-        fontFamily: 'Saira',
-      ),
+      theme: AppTheme.lightTheme,
 
 
-      // initialRoute: Routes.SETTINGS,
-      initialRoute: Routes.LOGIN,
+      initialRoute: Routes.SPLASH_SCREEN,
 
 
       getPages: AppPages.routes,

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
+// import 'package:santai/app/common/widgets/custom_snackbar.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 class SignUpController extends GetxController {
+  final isLoading = false.obs;
+   final isAgreed = false.obs;
+
   final TextEditingController passwordController = TextEditingController();
   final isPasswordHidden = true.obs;
-
 
   final phoneController = TextEditingController();
   final countryCode = ''.obs;
@@ -14,20 +18,37 @@ class SignUpController extends GetxController {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
-  final isAgreed = false.obs;
 
-   void updatePhoneInfo(String code, String number) {
-    countryCode.value = code;
-    phoneNumber.value = number;
-  }
+  void updatePhoneInfo(String code, String number) {
+  countryCode.value = code;
+  phoneNumber.value = number;
+}
 
-  void signUp() {
+  Future<void> signUp() async {
+    isLoading.value = true;
+
     String password = passwordController.text;
-
     String fullPhoneNumber = '${countryCode.value}${phoneNumber.value}';
-    print('Phone: $fullPhoneNumber, Password: $password');
+  
+    try {
+      await Future.delayed(const Duration(seconds: 2));
 
-    Get.toNamed(Routes.REG_USER_PROFILE);
+      CustomToast.show(
+        message: "Successfully registered!",
+        type: ToastType.success,
+      );
+
+      print('Phone: $fullPhoneNumber, Password: $password');
+      Get.offAllNamed(Routes.REGISTER_OTP);
+
+    } catch (error) {
+      CustomToast.show(
+        message: "Something went wrong.",
+        type: ToastType.error,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
    Future<void> signInWithGoogle() async {
@@ -42,26 +63,34 @@ class SignUpController extends GetxController {
       print('idToken: $idToken');
       print('accessToken: $accessToken');
 
-      Get.snackbar('Success', 'idToken: $idToken Access Token: $accessToken');
+      CustomToast.show(
+        message: 'idToken: $idToken Access Token: $accessToken',
+        type: ToastType.success,
+      );
 
       bool success = await sendTokenToServer(idToken);
       
       if (success) {
   
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.REGISTER_OTP);
       } else {
-    
-        Get.snackbar('Error', 'Failed to authenticate with server');
+        CustomToast.show(
+          message: "Failed to authenticate with server",
+          type: ToastType.error,
+        );
       }
     } catch (error) {
       print(error);
-      Get.snackbar('Error', 'Sign in with Google failed');
+      CustomToast.show(
+        message: "Sign in with Google failed",
+        type: ToastType.error,
+      );
     }
   }
 
   Future<bool> sendTokenToServer(String? token) async {
   
-    return true; // Placeholder
+    return true;
   }
 
   @override

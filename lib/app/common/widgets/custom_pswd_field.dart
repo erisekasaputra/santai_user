@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/theme/app_theme.dart';
 
 class CustomPasswordField extends StatelessWidget {
   final TextEditingController controller;
@@ -13,6 +14,8 @@ class CustomPasswordField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
+
     return Obx(() => TextField(
       controller: controller,
       obscureText: isPasswordHidden.value,
@@ -25,17 +28,18 @@ class CustomPasswordField extends StatelessWidget {
             isPasswordHidden.value = !isPasswordHidden.value;
           },
         ),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          borderSide: BorderSide(
-            color: Colors.black,
-            width: 2.0,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: borderColor),
           ),
-        ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: borderColor, width: 2),
+          ),
       ),
     ));
   }

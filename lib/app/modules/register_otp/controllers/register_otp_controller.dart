@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
 import 'dart:async';
 import 'package:santai/app/routes/app_pages.dart';
 
@@ -28,24 +29,28 @@ class RegisterOtpController extends GetxController {
   }
 
  void verifyOtp() {
-  final fullOtp = otp.join();
-  print('Entered OTP: $fullOtp');
 
-  Future.delayed(const Duration(milliseconds: 500), () {
-    try {
+  try {
+    final fullOtp = otp.join();
+    print('Entered OTP: $fullOtp');
+
+    Future.delayed(const Duration(milliseconds: 500), () {
       print('Attempting to navigate...');
       Get.offAllNamed(Routes.REG_USER_PROFILE);
       print('Navigation command executed');
-    } catch (e) {
-      print('Navigation error: $e');
-    }
-  });
+
+    });
+  } catch (e) {
+    CustomToast.show(
+      message: "Failed to authenticate with server",
+      type: ToastType.error,
+    );
+  }
 }
 
   void resendOtp() {
     if (!canResend.value) return;
-    
-    // Implement OTP resend logic here
+
     print('Resending OTP...');
     
     canResend.value = false;

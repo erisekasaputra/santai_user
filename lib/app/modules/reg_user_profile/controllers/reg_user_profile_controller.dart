@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 class RegUserProfileController extends GetxController {
+  final isLoading = false.obs;
 
   final referenceCodeController = TextEditingController();
   final fullNameController = TextEditingController();
@@ -21,8 +23,30 @@ class RegUserProfileController extends GetxController {
   final selectedGender = 'Male'.obs;
 
 
-  void register() {
-    Get.toNamed(Routes.REG_MOTORCYCLE);
+  Future<void> register() async {
+    isLoading.value = true;
+
+    try {
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      CustomToast.show(
+        message: "Registration Success",
+        type: ToastType.success,
+      );
+
+
+      Get.toNamed(Routes.REG_MOTORCYCLE);
+      
+    } catch (e) {
+      CustomToast.show(
+        message: "Registration Failed",
+        type: ToastType.error,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+    
   }
 
 
