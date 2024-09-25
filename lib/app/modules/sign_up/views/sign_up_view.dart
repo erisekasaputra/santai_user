@@ -11,12 +11,11 @@ import '../controllers/sign_up_controller.dart';
 
 class SignUpView extends GetView<SignUpController> {
   const SignUpView({Key? key}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
-
+    final Color primary_100 = Theme.of(context).colorScheme.primary_100;
     final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
-
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -29,7 +28,8 @@ class SignUpView extends GetView<SignUpController> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 50),
-                Image.asset('assets/images/company_logo.png', width: 200, height: 200),
+                Image.asset('assets/images/company_logo.png',
+                    width: 200, height: 200),
                 const Text(
                   'Sign Up',
                   style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
@@ -54,49 +54,60 @@ class SignUpView extends GetView<SignUpController> {
                   text: 'Password',
                 ),
                 const SizedBox(height: 5),
-                 CustomPasswordField(
+                CustomPasswordField(
                   controller: controller.passwordController,
                   isPasswordHidden: controller.isPasswordHidden,
                 ),
                 const SizedBox(height: 20),
                 Obx(() => Row(
-                  children: [
-                   Checkbox(
-                      value: controller.isAgreed.value,
-                      onChanged: (value) {
-                        controller.isAgreed.value = value ?? false;
-                      },
-                      checkColor: Colors.white, 
-                      activeColor: Colors.black,
-                    ),
-                    Expanded(
-                      child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontSize: 14, 
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
+                      children: [
+                        Checkbox(
+                          value: controller.isAgreed.value,
+                          onChanged: (value) {
+                            controller.isAgreed.value = value ?? false;
+                          },
+                          checkColor: Colors.white,
+                          activeColor: Colors.black,
+                        ),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
+                              children: [
+                                const TextSpan(text: "I agree to the "),
+                                TextSpan(
+                                    text: "Terms & Conditions",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary_100)),
+                                const TextSpan(text: " and "),
+                                TextSpan(
+                                    text: "Privacy Policy",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary_100)),
+                              ],
                             ),
-                            children: [
-                              const TextSpan(text: "I agree to the "),
-                              TextSpan(text: "Terms & Conditions", style: TextStyle(color: Theme.of(context).colorScheme.primary_100)),
-                              const TextSpan(text: " and "),
-                              TextSpan(text: "Privacy Policy", style: TextStyle(color: Theme.of(context).colorScheme.primary_100)),
-                            ],
                           ),
                         ),
-                    ),
-                  ],
-                )),
-
+                      ],
+                    )),
                 const SizedBox(height: 10),
                 Obx(() => CustomElevatedButton(
-                  text: 'Create Account',
-                  onPressed: controller.isLoading.value
-                    ? null
-                    : (controller.isAgreed.value ? controller.signUp : null),
-                  isLoading: controller.isLoading.value,
-                )),
+                      text: 'Create Account',
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : (controller.isAgreed.value
+                              ? controller.signUp
+                              : null),
+                      isLoading: controller.isLoading.value,
+                    )),
                 const SizedBox(height: 20),
                 Row(
                   children: [
@@ -110,7 +121,8 @@ class SignUpView extends GetView<SignUpController> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         "Or",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Expanded(
@@ -132,22 +144,23 @@ class SignUpView extends GetView<SignUpController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: IconButton(
-                        icon: Image.asset('assets/images/google_logo.png', width: 30, height: 30),
+                        icon: Image.asset('assets/images/google_logo.png',
+                            width: 30, height: 30),
                         onPressed: controller.signInWithGoogle,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: borderColor, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: Image.asset('assets/images/facebook_logo.png', width: 30, height: 30),
-                        onPressed: controller.signInWithGoogle,
-                      ),
-                    ),
+                    // const SizedBox(width: 10),
+                    // Card(
+                    //   color: Colors.white,
+                    //   shape: RoundedRectangleBorder(
+                    //     side: BorderSide(color: borderColor, width: 1),
+                    //     borderRadius: BorderRadius.circular(8),
+                    //   ),
+                    //   child: IconButton(
+                    //     icon: Image.asset('assets/images/facebook_logo.png', width: 30, height: 30),
+                    //     onPressed: controller.signInWithGoogle,
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -167,20 +180,45 @@ class SignUpView extends GetView<SignUpController> {
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.black,
                         ),
-                        child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontSize: 16, 
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                            children: [
-                              TextSpan(text: "Sign In ", style: TextStyle(color: Theme.of(context).colorScheme.primary_100)),
-                              const TextSpan(text: "with mobile phone"),
-                            ],
+                        child: Text(
+                        "Sign Up",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: primary_100
                           ),
                         ),
                       ),
+                      const Text(
+                        "with mobile phone",
+                        style: TextStyle(fontSize: 16),
+                      ),
+
+                      // TextButton(
+                      //   onPressed: () {
+                      //     Get.toNamed(Routes.LOGIN);
+                      //   },
+                      //   style: TextButton.styleFrom(
+                      //     foregroundColor: Colors.black,
+                      //   ),
+                      //   child: RichText(
+                      //     text: TextSpan(
+                      //       style: const TextStyle(
+                      //         fontSize: 16,
+                      //         fontWeight: FontWeight.normal,
+                      //         color: Colors.black,
+                      //       ),
+                      //       children: [
+                      //         TextSpan(
+                      //             text: "Sign In ",
+                      //             style: TextStyle(
+                      //                 color: Theme.of(context)
+                      //                     .colorScheme
+                      //                     .primary_100)),
+                      //         const TextSpan(text: "with mobile phone"),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_back_button.dart';
+import 'package:santai/app/theme/app_theme.dart';
 import '../controllers/chat_menu_controller.dart';
 
 class ChatMenuView extends GetView<ChatMenuController> {
@@ -14,11 +16,15 @@ class ChatMenuView extends GetView<ChatMenuController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Obx(() => controller.isNotificationTab.value ? const SizedBox.shrink() : _buildSearchBar()),
-            SizedBox(height: 16),
-            _buildTabButtons(),
-            SizedBox(height: 16),
-            Obx(() => controller.isNotificationTab.value ? _buildNotificationList() : _buildChatList()),
+            Obx(() => controller.isNotificationTab.value
+                ? const SizedBox.shrink()
+                : _buildSearchBar(context)),
+            const SizedBox(height: 16),
+            _buildTabButtons(context),
+            const SizedBox(height: 16),
+            Obx(() => controller.isNotificationTab.value
+                ? _buildNotificationList(context)
+                : _buildChatList(context)),
             _buildEndOfMessage(),
           ],
         ),
@@ -29,91 +35,133 @@ class ChatMenuView extends GetView<ChatMenuController> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.white,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Get.back(),
+      elevation: 0,
+      leading: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 8, 0, 8),
+        child: CustomBackButton(
+          onPressed: () => Get.back(),
+        ),
       ),
-      title: Obx(() => Text(
-        controller.isNotificationTab.value ? 'Notification' : 'Inbox',
-        style: const TextStyle(
+      leadingWidth: 100,
+      title: const Text(
+        'Service Detail',
+        style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,
-          fontSize: 24,
+          fontSize: 22,
         ),
-      )),
+      ),
       centerTitle: true,
-      elevation: 0,
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final Color borderColor = Theme.of(context).colorScheme.button_text_01;
     return TextField(
       onChanged: controller.updateSearchQuery,
       decoration: InputDecoration(
         hintText: 'Search',
-        prefixIcon: Icon(Icons.search),
+        prefixIcon: Icon(Icons.search, size: 30),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: borderColor, width: 1),
         ),
       ),
     );
   }
 
-  Widget _buildTabButtons() {
+  Widget _buildTabButtons(BuildContext context) {
+    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
+    final Color primary_300 = Theme.of(context).colorScheme.primary_300;
     return Row(
       children: [
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Obx(() => ElevatedButton(
-              onPressed: () => controller.toggleTab(false),
-              child: Text('Chat Logs'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: controller.isNotificationTab.value ? Colors.grey : Colors.black,
-                backgroundColor: controller.isNotificationTab.value ? Colors.white : Colors.grey[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            )),
+                  onPressed: () => controller.toggleTab(false),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: controller.isNotificationTab.value
+                        ? Colors.black
+                        : Colors.white,
+                    backgroundColor: controller.isNotificationTab.value
+                        ? Colors.white
+                        : primary_300,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color: borderColor, width: 1),
+                    ),
+                  ),
+                  child: Text('Chat Logs',
+                      style: TextStyle(
+                        color: controller.isNotificationTab.value
+                            ? Colors.black
+                            : Colors.white,
+                      )),
+                )),
           ),
         ),
         Expanded(
           child: Obx(() => ElevatedButton(
-            onPressed: () => controller.toggleTab(true),
-            child: Text('Notifications'),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: controller.isNotificationTab.value ? Colors.black : Colors.grey,
-              backgroundColor: controller.isNotificationTab.value ? Colors.grey[300] : Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          )),
+                onPressed: () => controller.toggleTab(true),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: controller.isNotificationTab.value
+                      ? Colors.white
+                      : Colors.black,
+                  backgroundColor: controller.isNotificationTab.value
+                      ? primary_300
+                      : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(color: borderColor, width: 1),
+                  ),
+                ),
+                child: Text('Notifications',
+                    style: TextStyle(
+                      color: controller.isNotificationTab.value
+                          ? Colors.white
+                          : Colors.black,
+                    )),
+              )),
         ),
       ],
     );
   }
 
-  Widget _buildNotificationList() {
+  Widget _buildNotificationList(BuildContext context) {
+    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
     return Expanded(
       child: ListView.separated(
         itemCount: controller.notifications.length,
-        separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[300]),
+        separatorBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+          child: Divider(height: 1, color: borderColor),
+        ),
         itemBuilder: (context, index) {
           final notification = controller.notifications[index];
           return ListTile(
-            leading: const CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, color: Colors.white, size: 40),
+            leading: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/company_logo.png'),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
             ),
-            title: Text(notification.message,
+            title: Text(
+              notification.message,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
-              ),),
-            subtitle: Text(notification.sender.isNotEmpty ? 'from ${notification.sender}' : ''),
+              ),
+            ),
+            subtitle: Text(notification.sender.isNotEmpty
+                ? 'from ${notification.sender}'
+                : ''),
             trailing: Text(notification.time),
           );
         },
@@ -121,56 +169,62 @@ class ChatMenuView extends GetView<ChatMenuController> {
     );
   }
 
-  Widget _buildChatList() {
+  Widget _buildChatList(BuildContext context) {
+    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
     return Expanded(
       child: Obx(() => ListView.separated(
-        itemCount: controller.filteredChatLogs.length,
-        separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[300]),
-        itemBuilder: (context, index) {
-          final chat = controller.filteredChatLogs[index];
-          return _buildChatListItem(chat);
-        },
-      )),
+            itemCount: controller.filteredChatLogs.length,
+            separatorBuilder: (context, index) =>
+                Divider(height: 1, color: borderColor),
+            itemBuilder: (context, index) {
+              final chat = controller.filteredChatLogs[index];
+              return _buildChatListItem(context, chat);
+            },
+          )),
     );
   }
 
-  Widget _buildChatListItem(ChatLog chat) {
+  Widget _buildChatListItem(BuildContext context, ChatLog chat) {
+    final Color alert_300 = Theme.of(context).colorScheme.alert_300;
     bool isExpired = chat.time.toLowerCase() == 'expired';
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: const CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.grey,
-          child: Icon(Icons.person, color: Colors.white, size: 40),
+        leading: CircleAvatar(
+            radius: 35,
+            backgroundImage:
+                Image.network('https://picsum.photos/200/200').image),
+        title: Text(
+          chat.name,
+          style: TextStyle(
+            color: isExpired ? Colors.grey : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        title: Text(chat.name,
-              style: TextStyle(
-                color: isExpired ? Colors.grey : Colors.black,
-                fontWeight: FontWeight.bold,
-              ),),
-        subtitle: Text(chat.lastMessage, 
-                style: TextStyle(
-                color: isExpired ? Colors.grey : Colors.black,
-              ),),
+        subtitle: Text(
+          chat.lastMessage,
+          style: TextStyle(
+            color: isExpired ? Colors.grey : Colors.black,
+          ),
+        ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if (chat.unreadCount > 0)
               Container(
-                padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: alert_300,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
                   chat.unreadCount.toString(),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
-            SizedBox(height: 4), // Add some space between unread count and time
+            const SizedBox(height: 4),
             Text(
               chat.time,
               style: TextStyle(
@@ -187,11 +241,9 @@ class ChatMenuView extends GetView<ChatMenuController> {
   Widget _buildEndOfMessage() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Obx(() => Text(
-        controller.isNotificationTab.value
-            ? 'You have reached the end of the notification'
-            : 'You have reached the end of the chat'
-      )),
+      child: Obx(() => Text(controller.isNotificationTab.value
+          ? 'You have reached the end of the notification'
+          : 'You have reached the end of the chat')),
     );
   }
 }

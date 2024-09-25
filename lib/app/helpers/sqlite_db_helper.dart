@@ -17,11 +17,10 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path, version: 2, onCreate: _createDB, onUpgrade: _onUpgrade);
   }
 
   Future<void> _createDB(Database db, int version) async {
-
     await db.execute('''
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +41,30 @@ class DatabaseHelper {
       )
     ''');
 
+    await db.execute('''
+      CREATE TABLE addresses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL,
+        isFavorite INTEGER NOT NULL
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('DROP TABLE IF EXISTS addresses');
+      await db.execute('''
+        CREATE TABLE addresses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          latitude REAL NOT NULL,
+          longitude REAL NOT NULL,
+          isFavorite INTEGER NOT NULL
+        )
+      ''');
+    }
   }
 
   Future<int> createUser(Map<String, dynamic> user) async {
@@ -75,6 +98,60 @@ class DatabaseHelper {
     return await db.query('motorcycles', where: 'userId = ?', whereArgs: [userId]);
   }
 
+  Future<int> createAddress(Map<String, dynamic> address) async {
+    final db = await database;
+    return await db.insert('addresses', {
+      'name': address['name'],
+      'latitude': address['latitude'],
+      'longitude': address['longitude'],
+      'isFavorite': address['isFavorite'],
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getAddresses({bool? isFavorite}) async {
+    final db = await database;
+    if (isFavorite != null) {
+      return await db.query('addresses', where: 'isFavorite = ?', whereArgs: [isFavorite ? 1 : 0]);
+    }
+    return await db.query('addresses');
+  }
+
+  Future<int> updateAddress(Map<String, dynamic> address) async {
+    final db = await database;
+    return await db.update('addresses', address, where: 'id = ?', whereArgs: [address['id']]);
+  }
+
+  Future<int> deleteAddress(int id) async {
+    final db = await database;
+    return await db.delete('addresses', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> insertDummyAddresses() async {
+    final addresses = [
+      {
+        'name': 'Kontrakan',
+        'latitude': -6.3164,
+        'longitude': 107.0089,
+        'isFavorite': 1
+      },
+      {
+        'name': 'Kantor',
+        'latitude': -6.2888,
+        'longitude': 106.9456,
+        'isFavorite': 1
+      },
+      {
+        'name': 'Burangkeng',
+        'latitude': -6.3377,
+        'longitude': 107.0253,
+        'isFavorite': 0
+      },
+    ];
+
+    for (var address in addresses) {
+      await createAddress(address);
+    }
+  }
 
   Future close() async {
     final db = await instance.database;

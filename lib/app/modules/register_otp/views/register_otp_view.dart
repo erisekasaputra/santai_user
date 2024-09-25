@@ -79,28 +79,45 @@ class RegisterOtpView extends GetView<RegisterOtpController> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Didn't receive OTP?",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
+                   Obx(() => Text(
+                      controller.canResend.value
+                            ? ''
+                            : 'Did not receive the code? You can resend in ${controller.resendTimer.value}s',
+                      style: TextStyle(fontSize: 14, color: color_primary_50),
+                    )),
+
+                    const SizedBox(height: 20),
+                     Obx(() => ElevatedButton.icon(
+                      icon: const Icon(Icons.call, color: Colors.white),
+                      label: Text(
+                        controller.isLoadingWhatsApp.value ? 'Sending...' : 'Send OTP via WhatsApp',
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      const SizedBox(width: 5),
-                      Obx(() => GestureDetector(
-                        onTap: controller.canResend.value ? controller.resendOtp : null,
-                        child: Text(
-                          controller.canResend.value
-                              ? 'Resend code'
-                              : 'You can resend code in ${controller.resendTimer.value}s',
-                          style: TextStyle(
-                            color: color_primary_50,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      onPressed: (controller.isLoadingWhatsApp.value || !controller.canResend.value) ? null : controller.sendOtpViaWhatsApp,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      )),
-                    ],
-                  ),
+                      ),
+                    )),
+                    const SizedBox(height: 10),
+                    Obx(() => ElevatedButton.icon(
+                      icon: const Icon(Icons.sms, color: Colors.white),
+                      label: Text(
+                        controller.isLoadingSms.value ? 'Sending...' : 'Send OTP via SMS',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onPressed: (controller.isLoadingSms.value || !controller.canResend.value) ? null : controller.sendOtpViaSms,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    )),
                 ],
               ),
             ),

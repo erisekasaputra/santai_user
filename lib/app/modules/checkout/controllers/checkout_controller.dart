@@ -2,11 +2,13 @@ import 'package:get/get.dart';
 
 class CheckoutController extends GetxController {
   final isScheduleOn = false.obs;
-  final selectedDate = 'mm/dd/yyyy'.obs;
-  final selectedTime = '10:00 PM'.obs;
+  final selectedDate = ''.obs;
+  final selectedTime = ''.obs;
 
   final promotionCode = ''.obs;
   final sCareRewardValue = 0.0.obs;
+
+  final isTipChecked = false.obs;
 
 
   final items = [

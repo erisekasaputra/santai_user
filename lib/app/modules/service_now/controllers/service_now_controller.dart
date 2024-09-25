@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 class ServiceNowController extends GetxController {
+  final isLoading = false.obs;
+
   final selectedCategoryIndex = 0.obs;
   final selectedPartTag = ''.obs;
   final selectedParts = <Map<String, dynamic>>{}.obs;
@@ -16,13 +18,27 @@ void togglePartSelection(Map<String, dynamic> part) {
   update();
 }
 
-void checkoutSelectedParts() {
-  print('Selected parts:');
-  for (var part in selectedParts) {
-    print('${part['name']} - ${part['price']}');
-  }
+Future<void> checkoutSelectedParts() async {
+  isLoading.value = true;
 
-  Get.toNamed(Routes.CHECKOUT);
+  try{
+
+    await Future.delayed(Duration(seconds: 2));
+
+    isLoading.value = false;
+    print('Selected parts:');
+    for (var part in selectedParts) {
+      print('${part['name']} - ${part['price']}');
+    }
+
+    Get.toNamed(Routes.CHECKOUT);
+
+  } catch (e) {
+
+  } finally {
+    isLoading.value = false;
+  }
+  
 }
 
   final List<Map<String, dynamic>> categories = [

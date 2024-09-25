@@ -2,17 +2,26 @@ import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_toast.dart';
 import 'dart:async';
 import 'package:santai/app/routes/app_pages.dart';
+import 'package:santai/app/services/notification_service.dart';
 
 class RegisterOtpController extends GetxController {
+  final otpSource = ''.obs;
   final otp = ['', '', '', ''].obs;
   final canResend = true.obs;
   final resendTimer = 60.obs;
+
+  final isLoadingSms = false.obs;
+  final isLoadingWhatsApp = false.obs;
+
+  final NotificationService _notificationService = NotificationService();
+
   Timer? _timer;
 
   @override
   void onInit() {
     super.onInit();
     startResendTimer();
+    otpSource.value = Get.arguments?['source'] ?? '';
   }
 
   @override
@@ -28,17 +37,19 @@ class RegisterOtpController extends GetxController {
     }
   }
 
- void verifyOtp() {
-
+  void verifyOtp() {
   try {
     final fullOtp = otp.join();
     print('Entered OTP: $fullOtp');
 
     Future.delayed(const Duration(milliseconds: 500), () {
       print('Attempting to navigate...');
-      Get.offAllNamed(Routes.REG_USER_PROFILE);
+      if (otpSource.value == 'login') {
+        Get.offAllNamed(Routes.DASHBOARD);
+      } else {
+        Get.offAllNamed(Routes.REG_USER_PROFILE);
+      }
       print('Navigation command executed');
-
     });
   } catch (e) {
     CustomToast.show(
@@ -48,13 +59,40 @@ class RegisterOtpController extends GetxController {
   }
 }
 
-  void resendOtp() {
-    if (!canResend.value) return;
+  void sendOtpViaSms() async {
+    isLoadingSms.value = true;
+    try {
+      canResend.value = false;
+      startResendTimer();
+    } catch (e) {
+      CustomToast.show(
+        message: "Failed to send OTP via SMS",
+        type: ToastType.error,
+      );
+    } finally {
+      isLoadingSms.value = false;
+    }
+  }
 
-    print('Resending OTP...');
-    
-    canResend.value = false;
-    startResendTimer();
+  void sendOtpViaWhatsApp() async {
+    isLoadingWhatsApp.value = true;
+    try {
+      _notificationService.showNotification(
+        id: 0,
+        title: 'Santai',
+        body: 'OTP has been sent',
+      );
+
+      canResend.value = false;
+      startResendTimer();
+    } catch (e) {
+      CustomToast.show(
+        message: "Failed to send OTP via WhatsApp",
+        type: ToastType.error,
+      );
+    } finally {
+      isLoadingWhatsApp.value = false;
+    }
   }
 
   void startResendTimer() {

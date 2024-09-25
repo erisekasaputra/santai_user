@@ -11,24 +11,19 @@ class CustomToast {
     ToastGravity gravity = ToastGravity.TOP,
   }) {
     Color backgroundColor;
-    IconData icon;
 
     switch (type) {
       case ToastType.success:
         backgroundColor = Colors.green;
-        icon = Icons.check_circle;
         break;
       case ToastType.error:
         backgroundColor = Colors.red;
-        icon = Icons.error;
         break;
       case ToastType.warning:
         backgroundColor = Colors.orange;
-        icon = Icons.warning;
         break;
       case ToastType.info:
         backgroundColor = Colors.blue;
-        icon = Icons.info;
         break;
     }
 

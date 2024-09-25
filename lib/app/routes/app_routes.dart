@@ -23,6 +23,7 @@ abstract class Routes {
   static const RATE_SERVICE = _Paths.RATE_SERVICE;
   static const CHAT_MENU = _Paths.CHAT_MENU;
   static const CHAT = _Paths.CHAT;
+  static const MAP_PICKER = _Paths.MAP_PICKER;
 }
 
 abstract class _Paths {
@@ -47,4 +48,5 @@ abstract class _Paths {
   static const RATE_SERVICE = '/rate-service';
   static const CHAT_MENU = '/chat-menu';
   static const CHAT = '/chat';
+  static const MAP_PICKER = '/map-picker';
 }

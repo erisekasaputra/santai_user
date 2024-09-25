@@ -4,6 +4,7 @@ import 'package:santai/app/theme/app_theme.dart';
 class CustomElevatedButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
+  final Color? backgroundColor;
   final Color textColor;
   final double fontSize;
   final FontWeight fontWeight;
@@ -16,6 +17,7 @@ class CustomElevatedButton extends StatelessWidget {
     Key? key,
     required this.text,
     this.onPressed,
+    this.backgroundColor,
     this.textColor = Colors.white,
     this.fontSize = 16,
     this.fontWeight = FontWeight.bold,
@@ -27,8 +29,7 @@ class CustomElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    final Color effectiveBackgroundColor = Theme.of(context).colorScheme.primary_300;
+    final Color effectiveBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary_300;
 
     return ElevatedButton(
       onPressed: isLoading ? () {} : onPressed,
@@ -62,59 +63,123 @@ class CustomElevatedButton extends StatelessWidget {
 }
 
 
-
 // import 'package:flutter/material.dart';
 // import 'package:santai/app/theme/app_theme.dart';
 
 // class CustomElevatedButton extends StatelessWidget {
 //   final String text;
 //   final VoidCallback? onPressed;
-//   final Color? backgroundColor;
 //   final Color textColor;
 //   final double fontSize;
 //   final FontWeight fontWeight;
 //   final double borderRadius;
 //   final double width;
 //   final double height;
-//   final Widget? child;
+//   final bool isLoading;
 
 //   const CustomElevatedButton({
 //     Key? key,
 //     required this.text,
 //     this.onPressed,
-//     this.backgroundColor,
 //     this.textColor = Colors.white,
 //     this.fontSize = 16,
 //     this.fontWeight = FontWeight.bold,
 //     this.borderRadius = 20.0,
 //     this.width = double.infinity,
 //     this.height = 50.0,
-//     this.child,
+//     this.isLoading = false,
 //   }) : super(key: key);
 
 //   @override
 //   Widget build(BuildContext context) {
-//     final Color effectiveBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary_300;
     
+//     final Color effectiveBackgroundColor = Theme.of(context).colorScheme.primary_300;
+
 //     return ElevatedButton(
-//       onPressed: onPressed,
+//       onPressed: isLoading ? () {} : onPressed,
 //       style: ElevatedButton.styleFrom(
 //         minimumSize: Size(width, height),
 //         backgroundColor: effectiveBackgroundColor,
+//         disabledBackgroundColor: effectiveBackgroundColor,
 //         shape: RoundedRectangleBorder(
 //           borderRadius: BorderRadius.circular(borderRadius),
 //         ),
 //       ),
-//       child: child ?? Text(
-//         text,
-//         style: TextStyle(
-//           color: textColor,
-//           fontSize: fontSize,
-//           fontWeight: fontWeight,
-//         ),
-//       ),
+//       child: isLoading
+//           ? SizedBox(
+//               width: 20,
+//               height: 20,
+//               child: CircularProgressIndicator(
+//                 valueColor: AlwaysStoppedAnimation<Color>(textColor),
+//                 strokeWidth: 2,
+//               ),
+//             )
+//           : Text(
+//               text,
+//               style: TextStyle(
+//                 color: textColor,
+//                 fontSize: fontSize,
+//                 fontWeight: fontWeight,
+//               ),
+//             ),
 //     );
 //   }
 // }
+
+
+
+// // import 'package:flutter/material.dart';
+// // import 'package:santai/app/theme/app_theme.dart';
+
+// // class CustomElevatedButton extends StatelessWidget {
+// //   final String text;
+// //   final VoidCallback? onPressed;
+// //   final Color? backgroundColor;
+// //   final Color textColor;
+// //   final double fontSize;
+// //   final FontWeight fontWeight;
+// //   final double borderRadius;
+// //   final double width;
+// //   final double height;
+// //   final Widget? child;
+
+// //   const CustomElevatedButton({
+// //     Key? key,
+// //     required this.text,
+// //     this.onPressed,
+// //     this.backgroundColor,
+// //     this.textColor = Colors.white,
+// //     this.fontSize = 16,
+// //     this.fontWeight = FontWeight.bold,
+// //     this.borderRadius = 20.0,
+// //     this.width = double.infinity,
+// //     this.height = 50.0,
+// //     this.child,
+// //   }) : super(key: key);
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     final Color effectiveBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary_300;
+    
+// //     return ElevatedButton(
+// //       onPressed: onPressed,
+// //       style: ElevatedButton.styleFrom(
+// //         minimumSize: Size(width, height),
+// //         backgroundColor: effectiveBackgroundColor,
+// //         shape: RoundedRectangleBorder(
+// //           borderRadius: BorderRadius.circular(borderRadius),
+// //         ),
+// //       ),
+// //       child: child ?? Text(
+// //         text,
+// //         style: TextStyle(
+// //           color: textColor,
+// //           fontSize: fontSize,
+// //           fontWeight: fontWeight,
+// //         ),
+// //       ),
+// //     );
+// //   }
+// // }
 
 

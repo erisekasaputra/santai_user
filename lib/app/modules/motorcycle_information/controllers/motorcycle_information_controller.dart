@@ -35,45 +35,8 @@ class MotorcycleInformationController extends GetxController {
   final selectedImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
 
-  void showImageSourceDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: const Center(
-          child: Text(
-            'Select Image Source',
-            style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold), 
-          ),
-        ),
-        backgroundColor: Colors.white,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library, color: Colors.black, size: 30), 
-              title: const Text(
-                'Gallery',
-                style: TextStyle(color: Colors.black, fontSize: 20) 
-              ),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.black, size: 30), 
-              title: const Text(
-                'Camera',
-                style: TextStyle(color: Colors.black, fontSize: 20)
-              ),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.camera);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+   void handleImageSourceSelection(ImageSource source) {
+    _pickImage(source);
   }
 
   Future<void> _pickImage(ImageSource source) async {

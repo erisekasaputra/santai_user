@@ -25,6 +25,6 @@ class SplashScreenController extends GetxController {
     Get.snackbar('User Timezone', userTimezone ?? 'Timezone not set');
     
     await Future.delayed(const Duration(seconds: 2));
-    Get.offNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.LOGIN);
   }
 }

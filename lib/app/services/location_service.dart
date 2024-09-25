@@ -63,12 +63,9 @@ class LocationService extends GetxService {
       if (permission == LocationPermission.deniedForever) {
         return {"error": true, "message": "Izin lokasi ditolak secara permanen."};
       }
-
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 15),
-        ),
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: Duration(seconds: 15),
       );
 
       return {"error": false, "position": position};

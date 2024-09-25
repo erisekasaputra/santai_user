@@ -23,7 +23,15 @@ extension CustomColorScheme on ColorScheme {
   Color get warning_200 => const Color(0xFFFFC043);
   Color get warning_300 => const Color(0xFFFFB014);
 
+  Color get alert_0 => const Color(0xFFFFEBEC);
+  Color get alert_25 => const Color(0xFFFFD8D8);
+  Color get alert_50 => const Color(0xFFFFC4C5);
+  Color get alert_100 => const Color(0xFFFF898B);
+  Color get alert_200 => const Color(0xFFFF6164);
+  Color get alert_300 => const Color(0xFFFF3A3D);
+
   Color get button_text_01 => brightness == Brightness.light ? Colors.white : Colors.black;
+  Color get text_01 => brightness == Brightness.light ? Colors.white : Colors.black;
 
   Color get borderInput_01 => const Color(0xFFDFE1E7);
 }

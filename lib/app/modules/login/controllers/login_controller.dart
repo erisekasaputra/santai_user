@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/usecases/authentikasi/login_staff.dart';
+import 'package:santai/app/domain/usecases/authentikasi/login_user.dart';
 // import 'package:santai/app/common/widgets/custom_snackbar.dart';
-import 'package:santai/app/domain/usecases/login_use_case.dart';
 import 'package:santai/app/modules/register_otp/views/register_otp_view.dart';
 import 'package:santai/app/routes/app_pages.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,11 +11,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 class LoginController extends GetxController {
   final isLoading = false.obs;
 
-  final LoginUseCase loginUseCase;
   final passwordController = TextEditingController();
   final isPasswordHidden = true.obs;
 
   final phoneController = TextEditingController();
+  final countryISOCode = ''.obs;
   final countryCode = ''.obs;
   final phoneNumber = ''.obs;
 
@@ -23,9 +24,13 @@ class LoginController extends GetxController {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
-  LoginController(this.loginUseCase);
+  final LoginUser loginUser;
+  final LoginStaff loginStaff;
+  LoginController({required this.loginUser, required this.loginStaff});
 
-   void updatePhoneInfo(String code, String number) {
+
+   void updatePhoneInfo(String isoCode, String code, String number) {
+    countryISOCode.value = isoCode;
     countryCode.value = code;
     phoneNumber.value = number;
   }
@@ -46,7 +51,7 @@ class LoginController extends GetxController {
         );
 
       isLoading.value = false;
-      Get.toNamed(Routes.REGISTER_OTP);
+      Get.toNamed(Routes.REGISTER_OTP, arguments: {'source': 'login'});
 
       // final user = await loginUseCase.execute(phone, password);
       // print('Logged in user: ${user.email}');

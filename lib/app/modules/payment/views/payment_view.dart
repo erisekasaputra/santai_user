@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_back_button.dart';
 import 'package:santai/app/modules/payment/controllers/payment_controller.dart';
 // import 'package:santai/app/routes/app_pages.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -13,20 +14,23 @@ class PaymentView extends GetView<PaymentController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 8, 0, 8),
+          child: CustomBackButton(
+            onPressed: () => Get.back(),
+          ),
         ),
+        leadingWidth: 100,
         title: const Text(
           'Payment',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontSize: 22,
           ),
         ),
         centerTitle: true,
-        elevation: 0,
       ),
       body: SafeArea(
         child: Padding(

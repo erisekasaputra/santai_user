@@ -6,7 +6,7 @@ import 'package:santai/app/theme/app_theme.dart';
 class CustomPhoneField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
-  final Function(String, String) onChanged;
+  final Function(String, String, String) onChanged;
 
   const CustomPhoneField({
     Key? key,
@@ -40,7 +40,7 @@ class CustomPhoneField extends StatelessWidget {
       ),
       initialCountryCode: 'MY',
       onChanged: (phone) {
-        onChanged(phone.countryCode, phone.number);
+        onChanged(phone.countryISOCode ,phone.countryCode, phone.number);
       },
       pickerDialogStyle: PickerDialogStyle(
         backgroundColor: Colors.white,

@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:santai/app/controllers/permission_controller.dart';
 import 'package:santai/app/controllers/theme_controller.dart';
 import 'package:santai/app/services/location_service.dart';
+import 'package:santai/app/services/notification_service.dart';
+import 'package:santai/app/services/signal_r_service.dart';
 import 'package:santai/app/services/timezone_service.dart';
 import 'package:santai/app/theme/app_theme.dart';
 import 'app/routes/app_pages.dart';
@@ -13,18 +15,20 @@ void main() async {
 
   final timezoneService = TimezoneService();
   await timezoneService.initializeTimeZones();
+
+  final notificationService = NotificationService();
+  await notificationService.initNotification();
   
   // Map<String, String> timezoneInfo = await timezoneService.getDetailedDeviceTimezone();
 
   String timezone = await timezoneService.getDeviceTimezone();
   await timezoneService.saveTimezone(timezone);
-  print('Updated device timezone: $timezone');
 
   Get.put(LocationService());
   Get.put(TimezoneService());
   Get.put(PermissionController());
   Get.put(ThemeController());
-
+  Get.put(SignalRService());
 
   runApp(
     GetMaterialApp(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_back_button.dart';
 import '../controllers/detail_product_controller.dart';
 
 class DetailProductView extends GetView<DetailProductController> {
@@ -11,20 +12,23 @@ class DetailProductView extends GetView<DetailProductController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 8, 0, 8),
+          child: CustomBackButton(
+            onPressed: () => Get.back(),
+          ),
         ),
+        leadingWidth: 100,
         title: const Text(
-          'Product Detail',
+          'Detail Product',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontSize: 22,
           ),
         ),
         centerTitle: true,
-        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -54,7 +58,7 @@ class DetailProductView extends GetView<DetailProductController> {
                       children: [
                         Text(
                           controller.product.name,
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                         ),
                       ],
                     ),
