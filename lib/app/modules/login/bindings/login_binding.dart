@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
+import 'package:santai/app/domain/usecases/authentikasi/sign-in_user.dart';
+import 'package:santai/app/domain/usecases/authentikasi/sign-in_staff.dart';
+import 'package:santai/app/domain/usecases/authentikasi/sign-in_google.dart';
 import 'package:santai/app/modules/login/controllers/login_controller.dart';
-import 'package:santai/app/domain/usecases/authentikasi/login_user.dart';
-import 'package:santai/app/domain/usecases/authentikasi/login_staff.dart';
+
 import 'package:santai/app/domain/repository/authentikasi/auth_repository.dart';
 import 'package:santai/app/data/repositories/authentikasi/auth_repository_impl.dart';
 import 'package:santai/app/data/datasources/authentikasi/auth_remote_data_source.dart';
@@ -24,14 +26,17 @@ class LoginBinding extends Bindings {
     );
 
     // Register the use cases
-    Get.lazyPut(() => LoginUser(Get.find<AuthRepository>()));
-    Get.lazyPut(() => LoginStaff(Get.find<AuthRepository>()));
+    Get.lazyPut(() => UserSignIn(Get.find<AuthRepository>()));
+    Get.lazyPut(() => StaffSignIn(Get.find<AuthRepository>()));
+    Get.lazyPut(() => GoogleSignIn(Get.find<AuthRepository>()));
+
 
     // Register the controller
     Get.lazyPut<LoginController>(
       () => LoginController(
-        loginUser: Get.find<LoginUser>(),
-        loginStaff: Get.find<LoginStaff>(),
+        signinUser: Get.find<UserSignIn>(),
+        signinStaff: Get.find<StaffSignIn>(),
+        signinGoogle: Get.find<GoogleSignIn>(),
       ),
     );
   }

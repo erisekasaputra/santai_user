@@ -1,4 +1,4 @@
-import '../../../domain/entities/authentikasi/user.dart';
+// import '../../../domain/entities/authentikasi/user.dart';
 import '../../../domain/repository/authentikasi/auth_repository.dart';
 
 class LoginUser {
@@ -6,7 +6,9 @@ class LoginUser {
 
   LoginUser(this.repository);
 
-  Future<void> call(User user) async {
-    return await repository.loginUser(user);
-  }
+  // Future<void> call(User user) async {
+  //   return await repository.loginUser(user);
+  // }
 }
+
+

@@ -6,7 +6,7 @@ import 'package:santai/app/services/timezone_service.dart';
 
 class SplashScreenController extends GetxController {
   final DeviceInfoController deviceInfoController = Get.find<DeviceInfoController>();
-  final TimezoneService _timezoneService = Get.find<TimezoneService>();
+  final TimezoneService timezoneService = TimezoneService();
   final PermissionController _permissionController = Get.find<PermissionController>();
 
   @override
@@ -19,10 +19,15 @@ class SplashScreenController extends GetxController {
     await deviceInfoController.getDeviceId();
     await _permissionController.requestLocationPermission();
     
-    Get.snackbar('Device ID', deviceInfoController.deviceId.value);
 
-    String? userTimezone = await _timezoneService.getSavedTimezone();
-    Get.snackbar('User Timezone', userTimezone ?? 'Timezone not set');
+    String timezone = await timezoneService.getDeviceTimezone();
+
+    
+    Get.snackbar('User Timezone', timezone);
+    // Get.snackbar('Device ID', deviceInfoController.deviceId.value);
+
+    // String? userTimezone = await _timezoneService.getSavedTimezone();
+    // Get.snackbar('User Timezone', userTimezone ?? 'Timezone not set');
     
     await Future.delayed(const Duration(seconds: 2));
     Get.offAllNamed(Routes.LOGIN);

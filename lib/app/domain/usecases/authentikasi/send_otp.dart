@@ -1,4 +1,6 @@
-import '../../../domain/entities/authentikasi/otp_request.dart';
+import 'package:santai/app/domain/entities/authentikasi/otp_request.dart';
+import 'package:santai/app/domain/entities/authentikasi/otp_request_res.dart';
+
 import '../../../domain/repository/authentikasi/auth_repository.dart';
 
 class SendOtp {
@@ -6,7 +8,8 @@ class SendOtp {
 
   SendOtp(this.repository);
 
-  Future<void> call(OtpRequest request) async {
+  Future<OtpRequestResponse> call(OtpRequest request) async {
     return await repository.sendOtp(request);
   }
+
 }

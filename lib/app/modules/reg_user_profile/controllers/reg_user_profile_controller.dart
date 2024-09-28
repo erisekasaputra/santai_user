@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/usecases/profile/insert_profile_user.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 class RegUserProfileController extends GetxController {
@@ -21,6 +22,12 @@ class RegUserProfileController extends GetxController {
 
   final genderOptions = ['Male', 'Female'];
   final selectedGender = 'Male'.obs;
+
+
+  final UserInsertProfile insertProfileUser;
+  RegUserProfileController({
+    required this.insertProfileUser,
+  });
 
 
   Future<void> register() async {

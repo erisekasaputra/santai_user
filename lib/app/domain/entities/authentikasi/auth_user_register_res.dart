@@ -1,3 +1,5 @@
+import 'package:santai/app/domain/entities/authentikasi/auth_registered_user.dart';
+
 class UserRegisterResponse {
   final RegisteredUser user;
   final NextAction next;
@@ -5,24 +7,6 @@ class UserRegisterResponse {
   UserRegisterResponse({
     required this.user,
     required this.next,
-  });
-}
-
-class RegisteredUser {
-  final String sub;
-  final String username;
-  final String phoneNumber;
-  final String? email;
-  final String userType;
-  final String? businessCode;
-
-  RegisteredUser({
-    required this.sub,
-    required this.username,
-    required this.phoneNumber,
-    this.email,
-    required this.userType,
-    this.businessCode,
   });
 }
 

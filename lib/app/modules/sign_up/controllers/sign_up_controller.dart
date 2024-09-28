@@ -21,15 +21,15 @@ class SignUpController extends GetxController {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
+  final RegisterUser registerUser;
+  SignUpController({required this.registerUser});
+
   void updatePhoneInfo(String isoCode, String code, String number) {
     countryISOCode.value = isoCode;
     countryCode.value = code;
     phoneNumber.value = number;
   }
 
-  final RegisterUser registerUser;
-
-  SignUpController({required this.registerUser});
 
   Future<void> signUp() async {
     isLoading.value = true;
@@ -48,18 +48,18 @@ class SignUpController extends GetxController {
 
       final response = await registerUser(dataUserRegister);
 
-      print("responseHUUUU: ${response.next.otpRequestToken}");
+      // print("responseHUUUU: ${response.next.otpRequestToken}");
 
       CustomToast.show(
         message: "Successfully registered!",
         type: ToastType.success,
       );
 
-      // Get.offAllNamed(Routes.REGISTER_OTP, arguments: {
-      //   'source': 'signup',
-      //   'otpRequestToken': response.next.otpRequestToken,
-      //   'otpRequestId': response.next.otpRequestId,
-      // });
+      Get.offAllNamed(Routes.REGISTER_OTP, arguments: {
+        'source': 'signup',
+        'otpRequestToken': response.next.otpRequestToken,
+        'otpRequestId': response.next.otpRequestId,
+      });
     } catch (error) {
       CustomToast.show(
         message: "Registration failed: ${error.toString()}",

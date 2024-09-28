@@ -42,38 +42,41 @@ class RegisterOtpView extends GetView<RegisterOtpController> {
                     style: TextStyle(fontSize: 16, color: Colors.black),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Wrap(
+                    alignment: WrapAlignment.center,
                     children: List.generate(
-                      4,
-                      (index) => SizedBox(
-                        width: 60,
-                        child: TextField(
-                          obscureText: true,
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          maxLength: 1,
-                          decoration: InputDecoration(
-                            counterText: "",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: borderColor),
+                      6,
+                      (index) => Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.12, 
+                          child: TextField(
+                            obscureText: true,
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            maxLength: 1,
+                            decoration: InputDecoration(
+                              counterText: "",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: borderColor),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: borderColor),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: borderColor, width: 2),
+                              ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: borderColor),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: borderColor, width: 2),
-                            ),
+                            onChanged: (value) {
+                              controller.updateOtpDigit(index, value);
+                              if (value.length == 1 && index < 5) {
+                                FocusScope.of(context).nextFocus();
+                              }
+                            },
                           ),
-                          onChanged: (value) {
-                            controller.updateOtpDigit(index, value);
-                            if (value.length == 1 && index < 3) {
-                              FocusScope.of(context).nextFocus();
-                            }
-                          },
                         ),
                       ),
                     ),

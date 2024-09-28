@@ -167,7 +167,7 @@ class SettingsView extends GetView<SettingsController> {
         leading: const Icon(Icons.logout, color: Colors.red),
         title: const Text('Logout', style: TextStyle(fontSize: 16, color: Colors.red)),
         onTap: () {
-        
+          controller.signOut();
         },
       ),
     );

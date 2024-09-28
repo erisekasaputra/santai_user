@@ -1,27 +1,55 @@
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/entities/authentikasi/auth_verify_login.dart';
+import 'package:santai/app/domain/entities/authentikasi/otp_request.dart';
+import 'package:santai/app/domain/entities/authentikasi/auth_otp_register_verify.dart';
+
+import 'package:santai/app/domain/usecases/authentikasi/otp_verify_register.dart';
+import 'package:santai/app/domain/usecases/authentikasi/send_otp.dart';
+import 'package:santai/app/domain/usecases/authentikasi/verify_login.dart';
+
 import 'dart:async';
 import 'package:santai/app/routes/app_pages.dart';
 import 'package:santai/app/services/notification_service.dart';
+import 'package:santai/app/services/secure_storage_service.dart';
 
 class RegisterOtpController extends GetxController {
   final otpSource = ''.obs;
-  final otp = ['', '', '', ''].obs;
+  final otpRequestId = ''.obs;
+  final otpRequestToken = ''.obs;
+
+  final otp = ['', '', '', '', '', ''].obs;
   final canResend = true.obs;
   final resendTimer = 60.obs;
 
   final isLoadingSms = false.obs;
   final isLoadingWhatsApp = false.obs;
 
+  final phoneNumber = ''.obs;
+
   final NotificationService _notificationService = NotificationService();
+  final SecureStorageService _secureStorage = SecureStorageService();
 
   Timer? _timer;
+
+  final SendOtp sendOtp;
+  final VerifyOtpRegister otpRegisterVerify;
+  final LoginVerify verifyLogin;
+
+  RegisterOtpController({
+    required this.sendOtp,
+    required this.otpRegisterVerify,
+    required this.verifyLogin,
+  });
 
   @override
   void onInit() {
     super.onInit();
     startResendTimer();
+
     otpSource.value = Get.arguments?['source'] ?? '';
+    otpRequestId.value = Get.arguments?['otpRequestId'] ?? '';
+    otpRequestToken.value = Get.arguments?['otpRequestToken'] ?? '';
   }
 
   @override
@@ -31,42 +59,36 @@ class RegisterOtpController extends GetxController {
   }
 
   void updateOtpDigit(int index, String value) {
-    otp[index] = value;
-    if (otp.every((digit) => digit.isNotEmpty)) {
-      verifyOtp();
-    }
-  }
-
-  void verifyOtp() {
-  try {
-    final fullOtp = otp.join();
-    print('Entered OTP: $fullOtp');
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      print('Attempting to navigate...');
-      if (otpSource.value == 'login') {
-        Get.offAllNamed(Routes.DASHBOARD);
-      } else {
-        Get.offAllNamed(Routes.REG_USER_PROFILE);
-      }
-      print('Navigation command executed');
-    });
-  } catch (e) {
-    CustomToast.show(
-      message: "Failed to authenticate with server",
-      type: ToastType.error,
-    );
+  otp[index] = value;
+  if (otp.every((digit) => digit.isNotEmpty)) {
+    verifyOtp(); 
   }
 }
 
   void sendOtpViaSms() async {
     isLoadingSms.value = true;
     try {
+      final otpRequest = OtpRequest(
+        otpProviderType: 'Sms',
+        otpRequestId: otpRequestId.value,
+        otpRequestToken: otpRequestToken.value,
+      );
+
+      final response = await sendOtp(otpRequest);
+
+      phoneNumber.value = response.user.phoneNumber;
+
+      _notificationService.showNotification(
+        id: 0,
+        title: 'Santai',
+        body: 'OTP has been sent via SMS',
+      );
+
       canResend.value = false;
       startResendTimer();
     } catch (e) {
       CustomToast.show(
-        message: "Failed to send OTP via SMS",
+        message: "Failed to send OTP via SMS: ${e.toString()}",
         type: ToastType.error,
       );
     } finally {
@@ -92,6 +114,47 @@ class RegisterOtpController extends GetxController {
       );
     } finally {
       isLoadingWhatsApp.value = false;
+    }
+  }
+
+  void verifyOtp() async {
+    try {
+      final fullOtp = otp.join();
+      // print('Entered OTP: $fullOtp');
+
+      final otpRegisterVerifyRequest = OtpRegisterVerify(
+        phoneNumber: phoneNumber.value,
+        token: fullOtp,
+      );
+
+      await otpRegisterVerify(otpRegisterVerifyRequest);
+
+      if (otpSource.value == 'login') {
+
+        print('masuk sini');
+
+        final deviceId = await _secureStorage.readSecureData('fcm_token');
+
+        final verifyLoginRequest = VerifyLogin(
+          deviceId: deviceId ?? '',
+          phoneNumber: phoneNumber.value,
+          token: fullOtp,
+        );
+
+        final response = await verifyLogin(verifyLoginRequest);
+
+        await _secureStorage.writeSecureData('access_token', response.accessToken);
+        await _secureStorage.writeSecureData('refresh_token', response.refreshToken.token);
+
+        Get.offAllNamed(Routes.DASHBOARD);
+      } else {
+        Get.offAllNamed(Routes.LOGIN);
+      }
+    } catch (e) {
+      CustomToast.show(
+        message: "Failed to authenticate with server",
+        type: ToastType.error,
+      );
     }
   }
 
