@@ -36,7 +36,7 @@ class ProfilePersonalInfo {
   final String firstName;
   final String? middleName;
   final String? lastName;
-  final DateTime dateOfBirth;
+  final String dateOfBirth;
   final String gender;
   final String? profilePictureUrl;
 

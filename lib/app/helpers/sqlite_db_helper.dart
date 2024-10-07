@@ -7,6 +7,14 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
+  Future<void> deleteDatabase() async {
+  final dbPath = await getDatabasesPath();
+  final path = join(dbPath, 'santai.db');
+  await databaseFactory.deleteDatabase(path);
+  _database = null;
+}
+
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('santai.db');
@@ -22,32 +30,13 @@ class DatabaseHelper {
 
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        phone TEXT NOT NULL,
-        fullName TEXT NOT NULL,
-        password TEXT NOT NULL
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE motorcycles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId INTEGER,
-        make TEXT NOT NULL,
-        model TEXT NOT NULL,
-        year INTEGER NOT NULL,
-        FOREIGN KEY (userId) REFERENCES users (id)
-      )
-    ''');
-
-    await db.execute('''
       CREATE TABLE addresses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         latitude REAL NOT NULL,
         longitude REAL NOT NULL,
-        isFavorite INTEGER NOT NULL
+        isFavorite INTEGER NOT NULL,
+        isSelected INTEGER NOT NULL
       )
     ''');
   }
@@ -61,42 +50,26 @@ class DatabaseHelper {
           name TEXT NOT NULL,
           latitude REAL NOT NULL,
           longitude REAL NOT NULL,
-          isFavorite INTEGER NOT NULL
+          isFavorite INTEGER NOT NULL,
+          isSelected INTEGER NOT NULL
         )
       ''');
     }
   }
-
-  Future<int> createUser(Map<String, dynamic> user) async {
+   Future<Map<String, dynamic>?> getCurrentAddress() async {
     final db = await database;
-    return await db.insert('users', user);
-  }
-
-  Future<Map<String, dynamic>?> getUser(int id) async {
-    final db = await database;
-    final results = await db.query('users', where: 'id = ?', whereArgs: [id]);
+    final results = await db.query('addresses', where: 'isSelected = 1', limit: 1);
     return results.isNotEmpty ? results.first : null;
+   }
+
+  Future<int> countAddressesBySelection() async {
+    final db = await database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM addresses WHERE isSelected = 1'
+    );
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 
-  Future<int> updateUser(Map<String, dynamic> user) async {
-    final db = await database;
-    return await db.update('users', user, where: 'id = ?', whereArgs: [user['id']]);
-  }
-
-  Future<int> deleteUser(int id) async {
-    final db = await database;
-    return await db.delete('users', where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<int> createMotorcycle(Map<String, dynamic> motorcycle) async {
-    final db = await database;
-    return await db.insert('motorcycles', motorcycle);
-  }
-
-  Future<List<Map<String, dynamic>>> getMotorcyclesForUser(int userId) async {
-    final db = await database;
-    return await db.query('motorcycles', where: 'userId = ?', whereArgs: [userId]);
-  }
 
   Future<int> createAddress(Map<String, dynamic> address) async {
     final db = await database;
@@ -105,8 +78,51 @@ class DatabaseHelper {
       'latitude': address['latitude'],
       'longitude': address['longitude'],
       'isFavorite': address['isFavorite'],
+      'isSelected': address['isSelected'],
     });
   }
+
+  Future<int> updateAddress(Map<String, dynamic> address) async {
+    final db = await database;
+    return await db.update(
+      'addresses', 
+      {
+        'name': address['name'],
+        'latitude': address['latitude'],
+        'longitude': address['longitude'],
+        'isFavorite': address['isFavorite']
+      }, 
+      where: 'id = ?', 
+      whereArgs: [address['id']]
+    );
+  }
+
+  Future<int> updateClearAddressSelected() async {
+    final db = await database;
+    return await db.update(
+      'addresses', 
+      {
+        'isSelected': 0
+      }, 
+      where: 'isSelected = ?', 
+      whereArgs: [1]
+    );
+  }
+
+  Future<int> setIsSelected(int id) async {
+    final db = await database;
+    return await db.update(
+      'addresses', 
+      {
+        'isSelected': 1
+      }, 
+      where: 'id = ?', 
+      whereArgs: [id]
+    );
+  }
+
+
+
 
   Future<List<Map<String, dynamic>>> getAddresses({bool? isFavorite}) async {
     final db = await database;
@@ -116,42 +132,37 @@ class DatabaseHelper {
     return await db.query('addresses');
   }
 
-  Future<int> updateAddress(Map<String, dynamic> address) async {
-    final db = await database;
-    return await db.update('addresses', address, where: 'id = ?', whereArgs: [address['id']]);
-  }
-
   Future<int> deleteAddress(int id) async {
     final db = await database;
     return await db.delete('addresses', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<void> insertDummyAddresses() async {
-    final addresses = [
-      {
-        'name': 'Kontrakan',
-        'latitude': -6.3164,
-        'longitude': 107.0089,
-        'isFavorite': 1
-      },
-      {
-        'name': 'Kantor',
-        'latitude': -6.2888,
-        'longitude': 106.9456,
-        'isFavorite': 1
-      },
-      {
-        'name': 'Burangkeng',
-        'latitude': -6.3377,
-        'longitude': 107.0253,
-        'isFavorite': 0
-      },
-    ];
+  // Future<void> insertDummyAddresses() async {
+  //   final addresses = [
+  //     {
+  //       'name': 'Kontrakan',
+  //       'latitude': -6.3164,
+  //       'longitude': 107.0089,
+  //       'isFavorite': 1
+  //     },
+  //     {
+  //       'name': 'Kantor',
+  //       'latitude': -6.2888,
+  //       'longitude': 106.9456,
+  //       'isFavorite': 1
+  //     },
+  //     {
+  //       'name': 'Burangkeng',
+  //       'latitude': -6.3377,
+  //       'longitude': 107.0253,
+  //       'isFavorite': 0
+  //     },
+  //   ];
 
-    for (var address in addresses) {
-      await createAddress(address);
-    }
-  }
+  //   for (var address in addresses) {
+  //     await createAddress(address);
+  //   }
+  // }
 
   Future close() async {
     final db = await instance.database;

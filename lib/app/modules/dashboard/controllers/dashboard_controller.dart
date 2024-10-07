@@ -1,9 +1,16 @@
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/entities/fleet/fleet_user.dart';
+import 'package:santai/app/domain/usecases/fleet/list_fleet_user.dart';
+import 'package:santai/app/exceptions/custom_http_exception.dart';
 import 'package:santai/app/helpers/sqlite_db_helper.dart';
 import 'package:santai/app/routes/app_pages.dart';
 import 'package:santai/app/services/location_service.dart';
+import 'package:santai/app/services/secure_storage_service.dart';
 
 class DashboardController extends GetxController {
+  final SecureStorageService _secureStorage = SecureStorageService();
+
   final userName = 'Pang Li';
   final LocationService locationService = Get.find<LocationService>();
   final DatabaseHelper dbHelper = DatabaseHelper.instance;
@@ -11,21 +18,134 @@ class DashboardController extends GetxController {
   final favoriteAddresses = <Map<String, dynamic>>[].obs;
   final recentAddresses = <Map<String, dynamic>>[].obs;
 
-  String get address => locationService.address.value;
+  final currentAddress = ''.obs;
+
+  // String get address => locationService.address.value;
   bool get isLoading => locationService.isLoading.value;
 
+
+  final listServiceProgress = RxList<ServiceProgress>([]);
+  final resultListFleetUser = <FleetUser>[].obs;
+  final currentServiceIndex = 0.obs;
+
+  final UserListFleet listFleetUser;
+  DashboardController({
+    required this.listFleetUser,
+  });
+
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    initializeAddresses();
+    // await dbHelper.deleteDatabase();
+    await initializeAddresses();
+
+
+    await getListFleetUser();
+    fetchServiceProgress();
   }
 
-  Future<void> initializeAddresses() async {
-    final addresses = await dbHelper.getAddresses();
-    if (addresses.isEmpty) {
-      await dbHelper.insertDummyAddresses();
+  // SERVICE PROGRESS
+    Future<void> getListFleetUser() async {
+      try {
+        final response = await listFleetUser();
+        resultListFleetUser.assignAll(response.data.items);
+      } catch (error) {
+        if (error is CustomHttpException) {
+          CustomToast.show(
+            message: error.message,
+            type: ToastType.error,
+          );
+        } else {
+          CustomToast.show(
+            message: "An unexpected error occurred",
+            type: ToastType.error,
+          );
+        }
+      }
     }
-    await loadAddresses();
+
+    Future<void> fetchServiceProgress() async {
+      try {
+        String? urlImgPublic =
+            await _secureStorage.readSecureData('commonGetImgUrlPublic');
+
+        final motorcycles = resultListFleetUser
+            .map((fleetUser) => Motorcycle(
+                  id: fleetUser.id ?? "",
+                  plateNumber: fleetUser.registrationNumber,
+                  brand: fleetUser.brand,
+                  model: fleetUser.model,
+                  nextService: fleetUser.lastInspectionDateLocal.toString(),
+                  image: fleetUser.imageUrl?.isEmpty == true
+                      ? ""
+                      : urlImgPublic != null
+                          ? urlImgPublic + (fleetUser.imageUrl ?? "")
+                          : fleetUser.imageUrl ?? "",
+                ))
+            .toList();
+
+        listServiceProgress.assignAll([
+          ServiceProgress(
+            id: 1,
+            steps: ['Order Receive', 'Pick-Up Parts', 'Servicing', 'Complete'],
+            currentStep: 0,
+            motorcycles: motorcycles,
+            selectedMotorcycleIndex: 0,
+          ),
+        ]);
+      } catch (e) {
+        print('Error fetching service progress: $e');
+      }
+    }
+
+    void selectMotorcycle(int serviceIndex, int motorcycleIndex) {
+      if (listServiceProgress[serviceIndex].currentStep == 0) {
+        listServiceProgress[serviceIndex] = ServiceProgress(
+          id: listServiceProgress[serviceIndex].id,
+          steps: listServiceProgress[serviceIndex].steps,
+          currentStep: listServiceProgress[serviceIndex].currentStep,
+          motorcycles: listServiceProgress[serviceIndex].motorcycles,
+          selectedMotorcycleIndex: motorcycleIndex,
+        );
+        update(); 
+      }
+    }
+  // END SERVICE PROGRESS
+
+
+
+
+  Future<void> initializeAddresses() async {
+    // COUNT JUMLAH IS SELECTED ADDRESS
+    final count = await dbHelper.countAddressesBySelection();
+    RxDouble latitude = 0.0.obs;
+    RxDouble longitude = 0.0.obs;
+
+    if (count == 0) {
+
+      final result = await locationService.getCurrentLocation();
+
+      longitude.value = result['longitude'] as double;
+      latitude.value = result['latitude'] as double;
+
+      final newAddress = {
+        'name': 'New Location',
+        'latitude': latitude.toDouble(),
+        'longitude': longitude.toDouble(),
+        'isFavorite': 0,
+        'isSelected': 1,
+      };
+
+      await dbHelper.createAddress(newAddress);
+
+    } else {
+      // GET CURRENT ADDRESS
+      final currentAddress = await dbHelper.getCurrentAddress();
+      latitude.value = currentAddress!['latitude'] as double;
+      longitude.value = currentAddress['longitude'] as double;
+    }
+
+    currentAddress.value = await locationService.translateCoordinatesToAddress(latitude.value, longitude.value);
   }
 
   Future<void> loadAddresses() async {
@@ -84,89 +204,55 @@ class DashboardController extends GetxController {
     }
   }
 
-  final List<ServiceProgress> serviceProgresses = [
-    ServiceProgress(
-      id: 1,
-      steps: ['Order Receive', 'Pick-Up Parts', 'Servicing', 'Complete'],
-      currentStep: 0,
-      motorcycles: [
-        Motorcycle(
-            plateNumber: 'VBB 6123',
-            brand: 'SYM',
-            model: 'VF3i 185',
-            nextService: '01/12/2024'),
-        Motorcycle(
-            plateNumber: 'AMF 4220',
-            brand: 'YAMAHA',
-            model: 'Y15ZR',
-            nextService: '15/01/2025'),
-      ],
-      selectedMotorcycleIndex: 0,
-    ),
-    ServiceProgress(
-      id: 2,
-      steps: ['Order Receive', 'Diagnosis', 'Repairing', 'Testing', 'Complete'],
-      currentStep: 1,
-      motorcycles: [
-        Motorcycle(
-            plateNumber: 'WXC 1234',
-            brand: 'HONDA',
-            model: 'RS150R',
-            nextService: '30/11/2024'),
-        Motorcycle(
-            plateNumber: 'JKL 5678',
-            brand: 'KAWASAKI',
-            model: 'Ninja 250',
-            nextService: '22/02/2025'),
-        Motorcycle(
-            plateNumber: 'MNO 9012',
-            brand: 'SUZUKI',
-            model: 'GSX-R150',
-            nextService: '10/03/2025'),
-      ],
-      selectedMotorcycleIndex: 1,
-    ),
-    ServiceProgress(
-      id: 3,
-      steps: [
-        'Order Receive',
-        'Waiting for Parts',
-        'Servicing',
-        'Quality Check',
-        'Complete'
-      ],
-      currentStep: 0,
-      motorcycles: [
-        Motorcycle(
-            plateNumber: 'PQR 3456',
-            brand: 'YAMAHA',
-            model: 'R15',
-            nextService: '05/04/2025'),
-        Motorcycle(
-            plateNumber: 'STU 7890',
-            brand: 'HONDA',
-            model: 'CBR150R',
-            nextService: '18/05/2025'),
-      ],
-      selectedMotorcycleIndex: 0,
-    ),
-  ];
 
-  final currentServiceIndex = 0.obs;
+  Future<void> addNewAddress(String name, double latitude, double longitude, int isFavorite) async {
+    try {
+      await dbHelper.createAddress({
+        'name': name,
+        'latitude': latitude,
+        'longitude': longitude,
+        'isFavorite': 0,
+        'isSelected': 1,
+      });
 
-  void selectMotorcycle(int serviceIndex, int motorcycleIndex) {
-    if (serviceProgresses[serviceIndex].currentStep == 0) {
-      // Only allow selection during "Order" step
-      serviceProgresses[serviceIndex] = ServiceProgress(
-        id: serviceProgresses[serviceIndex].id,
-        steps: serviceProgresses[serviceIndex].steps,
-        currentStep: serviceProgresses[serviceIndex].currentStep,
-        motorcycles: serviceProgresses[serviceIndex].motorcycles,
-        selectedMotorcycleIndex: motorcycleIndex,
+      await loadAddresses();
+
+      // if (result != -1) {
+      //   CustomToast.show(
+      //     message: "Alamat berhasil ditambahkan",
+      //     type: ToastType.success,
+      //   );
+      //   // Refresh address list after adding
+      //   await loadAddresses();
+      // } else {
+      //   CustomToast.show(
+      //     message: "Gagal menambahkan alamat",
+      //     type: ToastType.error,
+      //   );
+      // }
+    } catch (e) {
+      CustomToast.show(
+        message: "Terjadi kesalahan: $e",
+        type: ToastType.error,
       );
-      update(); // Notify listeners of the change
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   void navigateToPage(int index) {
     switch (index) {
@@ -187,16 +273,20 @@ class DashboardController extends GetxController {
 }
 
 class Motorcycle {
+  final String id;
   final String plateNumber;
   final String brand;
   final String model;
   final String nextService;
+  final String image;
 
   Motorcycle({
+    required this.id,
     required this.plateNumber,
     required this.brand,
     required this.model,
     required this.nextService,
+    required this.image,
   });
 }
 

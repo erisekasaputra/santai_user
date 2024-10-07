@@ -1,0 +1,13 @@
+import 'package:santai/app/domain/entities/common/common_url_image_public_res.dart';
+import 'package:santai/app/domain/repository/common/common_repository.dart';
+
+
+class CommonGetImgUrlPublic {
+  final CommonRepository repository;
+
+  CommonGetImgUrlPublic(this.repository);
+
+  Future<CommonUrlImagePublicRes> call() async {
+    return await repository.getUrlImagePublic();
+  }
+}

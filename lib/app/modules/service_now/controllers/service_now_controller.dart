@@ -1,147 +1,256 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/usecases/catalog/get_all_brand.dart';
+import 'package:santai/app/domain/usecases/catalog/get_all_category.dart';
+import 'package:santai/app/domain/usecases/catalog/get_all_item.dart';
+
+import 'package:santai/app/exceptions/custom_http_exception.dart';
 import 'package:santai/app/routes/app_pages.dart';
+import 'package:santai/app/services/secure_storage_service.dart';
 
 class ServiceNowController extends GetxController {
-  final isLoading = false.obs;
+  final SecureStorageService _secureStorage = SecureStorageService();
+  final urlImgPublic = ''.obs;
 
-  final selectedCategoryIndex = 0.obs;
-  final selectedPartTag = ''.obs;
+  final fleetId = ''.obs;
+
+  final isLoading = false.obs;
+  final isLoadingCategories = true.obs;
+  final isLoadingBrands = true.obs;
+  final isLoadingItems = true.obs;
+
+  final selectedCategoryId = ''.obs;
+  final selectedPartTagId = ''.obs;
   final selectedParts = <Map<String, dynamic>>{}.obs;
 
-void togglePartSelection(Map<String, dynamic> part) {
-  if (selectedParts.contains(part)) {
-    selectedParts.remove(part);
-  } else {
-    selectedParts.add(part);
-  }
-  update();
-}
+  // New RxList to store categories
+  final categories = <Map<String, dynamic>>[].obs;
+  final brands = <Map<String, dynamic>>[].obs;
+  final items = <Map<String, dynamic>>[].obs;
 
-Future<void> checkoutSelectedParts() async {
-  isLoading.value = true;
+  final ItemGetAll getAllItem;
+  final BrandGetAll getAllBrand;
+  final CategoryGetAll getAllCategory;
 
-  try{
+  ServiceNowController({
+    required this.getAllItem,
+    required this.getAllBrand,
+    required this.getAllCategory,
+  });
 
-    await Future.delayed(Duration(seconds: 2));
-
-    isLoading.value = false;
-    print('Selected parts:');
-    for (var part in selectedParts) {
-      print('${part['name']} - ${part['price']}');
+  @override
+  void onInit() async {
+    super.onInit();
+    if (Get.arguments != null && Get.arguments['fleetId'] != null) {
+      fleetId.value = Get.arguments['fleetId'];
     }
 
-    Get.toNamed(Routes.CHECKOUT);
+    print('fleetId: $fleetId');
 
-  } catch (e) {
+    urlImgPublic.value =
+        await _secureStorage.readSecureData('commonGetImgUrlPublic') ?? '';
 
-  } finally {
-    isLoading.value = false;
+    await fetchCategories();
+    await fetchBrands();
+    await fetchItems(
+        selectedCategoryId.value == '' ? null : selectedCategoryId.value,
+        selectedPartTagId.value == '' ? null : selectedPartTagId.value);
   }
-  
-}
 
-  final List<Map<String, dynamic>> categories = [
-    {'name': 'Repair', 'icon': Icons.build},
-    {'name': 'Fuel', 'icon': Icons.local_gas_station},
-    {'name': 'Tires', 'icon': Icons.disc_full},
-    {'name': 'Settings', 'icon': Icons.settings},
-    {'name': 'Accessories', 'icon': Icons.accessible_forward_outlined},
-    {'name': 'Maintenance', 'icon': Icons.build_circle},
-    {'name': 'Cleaning', 'icon': Icons.cleaning_services},
-    {'name': 'Safety Gear', 'icon': Icons.safety_divider},
-  ];
+  Future<void> fetchCategories() async {
+    try {
+      isLoadingCategories.value = true;
+      final categoryResponse = await getAllCategory();
+      categories.value = categoryResponse.data.items
+          .map((category) => {
+                'id': category.id,
+                'name': category.name,
+                'icon': urlImgPublic + (category.imageUrl),
+              })
+          .toList();
 
-  final Map<String, Map<String, List<Map<String, dynamic>>>> partsByCategory = {
-    'Repair': {
-      'Brake System': [
-        {'name': 'Brake Pads', 'description': 'High-performance brake pads', 'price': 120.00, 'rating': 4.8},
-        {'name': 'Brake Discs', 'description': 'Durable brake discs', 'price': 200.00, 'rating': 4.7},
-        {'name': 'Brake Fluid', 'description': 'High-quality brake fluid', 'price': 15.00, 'rating': 4.6},
-        {'name': 'Brake Calipers', 'description': 'Performance brake calipers', 'price': 300.00, 'rating': 4.9},
-        {'name': 'Brake Lines', 'description': 'Stainless steel brake lines', 'price': 50.00, 'rating': 4.5},
-      ],
-      'Engine': [
-        {'name': 'Oil Filter', 'description': 'Premium oil filter', 'price': 25.00, 'rating': 4.5},
-        {'name': 'Spark Plugs', 'description': 'Iridium spark plugs', 'price': 80.00, 'rating': 4.7},
-        {'name': 'Air Filter', 'description': 'High-flow air filter', 'price': 30.00, 'rating': 4.6},
-        {'name': 'Fuel Pump', 'description': 'High-performance fuel pump', 'price': 150.00, 'rating': 4.8},
-        {'name': 'Timing Belt', 'description': 'Durable timing belt', 'price': 100.00, 'rating': 4.7},
-      ],
-    },
-    'Fuel': {
-      'Engine Oil': [
-        {'name': 'Petronas F900', 'description': 'Full Synthetic 5W-50', 'price': 62.00, 'rating': 4.7},
-        {'name': 'Shell Advance', 'description': 'Fully Synthetic 10W-40', 'price': 70.00, 'rating': 4.6},
-        {'name': 'Castrol Edge', 'description': 'Full Synthetic 5W-30', 'price': 65.00, 'rating': 4.8},
-        {'name': 'Mobil 1', 'description': 'Full Synthetic 0W-40', 'price': 75.00, 'rating': 4.9},
-      ],
-      'Additives': [
-        {'name': 'Fuel Injector Cleaner', 'description': 'Cleans fuel system', 'price': 15.00, 'rating': 4.3},
-        {'name': 'Octane Booster', 'description': 'Increases fuel efficiency', 'price': 20.00, 'rating': 4.2},
-        {'name': 'Engine Cleaner', 'description': 'Cleans engine internals', 'price': 18.00, 'rating': 4.4},
-        {'name': 'Fuel Stabilizer', 'description': 'Prevents fuel degradation', 'price': 12.00, 'rating': 4.5},
-      ],
-    },
-    'Tires': {
-      'Front Tires': [
-        {'name': 'Michelin Pilot', 'description': '120/70-17 M/C', 'price': 220.00, 'rating': 4.9},
-        {'name': 'Pirelli Diablo', 'description': '120/70-17 M/C', 'price': 210.00, 'rating': 4.8},
-        {'name': 'Bridgestone Battlax', 'description': '120/70-17 M/C', 'price': 230.00, 'rating': 4.6},
-        {'name': 'Dunlop Sportmax', 'description': '120/70-17 M/C', 'price': 215.00, 'rating': 4.7},
-      ],
-      'Rear Tires': [
-        {'name': 'Michelin Power', 'description': '180/55-17 M/C', 'price': 250.00, 'rating': 4.9},
-        {'name': 'Dunlop SportMax', 'description': '190/50-17 M/C', 'price': 240.00, 'rating': 4.7},
-        {'name': 'Pirelli Angel', 'description': '180/55-17 M/C', 'price': 245.00, 'rating': 4.8},
-        {'name': 'Bridgestone Battlax', 'description': '190/50-17 M/C', 'price': 255.00, 'rating': 4.6},
-      ],
-    },
-    'Settings': {
-      'Lighting': [
-        {'name': 'LED Headlight', 'description': 'Bright LED headlight kit', 'price': 150.00, 'rating': 4.6},
-        {'name': 'Tail Light', 'description': 'LED tail light upgrade', 'price': 80.00, 'rating': 4.5},
-        {'name': 'Turn Signal Lights', 'description': 'LED turn signal lights', 'price': 40.00, 'rating': 4.4},
-        {'name': 'Fog Lights', 'description': 'High-intensity fog lights', 'price': 120.00, 'rating': 4.7},
-      ],
-      'Performance': [
-        {'name': 'Performance ECU', 'description': 'Tunable ECU upgrade', 'price': 350.00, 'rating': 4.7},
-        {'name': 'Quick Shifter', 'description': 'Smooth gear changes', 'price': 200.00, 'rating': 4.5},
-        {'name': 'Exhaust System', 'description': 'High-performance exhaust', 'price': 500.00, 'rating': 4.8},
-        {'name': 'Air Intake', 'description': 'High-flow air intake', 'price': 300.00, 'rating': 4.6},
-      ],
-    },
-  };
+      selectedCategoryId.value = categories.first['id'];
+    } catch (error) {
+      if (error is CustomHttpException) {
+        CustomToast.show(
+          message: error.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "An unexpected error occurred",
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      isLoadingCategories.value = false;
 
-  List<String> get partTags {
-  final categoryName = categories[selectedCategoryIndex.value]['name'] as String;
-  final tags = partsByCategory[categoryName]?.keys.toList() ?? [];
-  if (tags.isNotEmpty && selectedPartTag.value.isEmpty) {
-    selectedPartTag.value = tags.first;
-  }
-  return tags;
-}
-
-  List<Map<String, dynamic>> get currentParts {
-    final categoryName = categories[selectedCategoryIndex.value]['name'] as String;
-    final categoryParts = partsByCategory[categoryName];
-    if (categoryParts == null) return [];
-    
-    if (selectedPartTag.value.isEmpty && categoryParts.isNotEmpty) {
-      selectedPartTag.value = categoryParts.keys.first;
+      update();
     }
-    
-    return categoryParts[selectedPartTag.value] ?? [];
   }
 
-  void setSelectedCategory(int index) {
-    selectedCategoryIndex.value = index;
-    selectedPartTag.value = '';
+  Future<void> fetchBrands() async {
+    try {
+      isLoadingBrands.value = true;
+      final brandResponse = await getAllBrand();
+      brands.value = brandResponse.data.items
+          .map((brand) => {
+                'id': brand.id,
+                'name': brand.name,
+                'icon': urlImgPublic + (brand.imageUrl),
+              })
+          .toList();
+
+      selectedPartTagId.value = brands.first['id'];
+    } catch (error) {
+      if (error is CustomHttpException) {
+        CustomToast.show(
+          message: error.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "An unexpected error occurred",
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      isLoadingBrands.value = false;
+      update();
+    }
+  }
+
+  // Future<void> fetchItems(String? categoryId, String? brandId) async {
+  //   try {
+  //     isLoadingItems.value = true;
+  //     final itemResponse = await getAllItem(categoryId, brandId, 1, 10);
+  //     items.value = itemResponse.data.items
+  //         .map((item) => {
+  //               'id': item.id,
+  //               'name': item.name,
+  //               'description': item.description,
+  //               'price': item.price,
+  //               'rating': 0.0,
+  //               'imageUrl': urlImgPublic + (item.imageUrl),
+  //               'categoryId': item.categoryId,
+  //               'brandId': item.brandId,
+  //             })
+  //         .toList();
+  //   } catch (error) {
+  //     if (error is CustomHttpException) {
+  //       CustomToast.show(
+  //         message: error.message,
+  //         type: ToastType.error,
+  //       );
+  //     } else {
+  //       CustomToast.show(
+  //         message: "An unexpected error occurred",
+  //         type: ToastType.error,
+  //       );
+  //     }
+  //   } finally {
+  //     isLoadingItems.value = false;
+  //     update();
+  //   }
+  // }
+
+  Future<void> fetchItems(String? categoryId, String? brandId) async {
+    try {
+      isLoadingItems.value = true;
+      final itemResponse = await getAllItem(categoryId, brandId, 1, 10);
+      items.value = itemResponse.data.items.map((item) {
+        final mappedItem = {
+          'id': item.id,
+          'name': item.name,
+          'description': item.description,
+          'price': item.price,
+          'rating': 0.0,
+          'imageUrl': urlImgPublic + (item.imageUrl),
+          'categoryId': item.categoryId,
+          'brandId': item.brandId,
+        };
+
+        // Check if the item is already in selectedParts
+        if (selectedParts
+            .any((selectedItem) => selectedItem['id'] == item.id)) {
+          // Remove the old item and add the updated one
+          selectedParts
+              .removeWhere((selectedItem) => selectedItem['id'] == item.id);
+          selectedParts.add(mappedItem);
+        }
+
+        return mappedItem;
+      }).toList();
+    } catch (error) {
+      if (error is CustomHttpException) {
+        CustomToast.show(
+          message: error.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "An unexpected error occurred",
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      isLoadingItems.value = false;
+      update();
+    }
+  }
+
+  void setSelectedCategory(String categoryId) {
+    selectedCategoryId.value = categoryId;
     update();
+    fetchItems(categoryId,
+        selectedPartTagId.value == '' ? null : selectedPartTagId.value);
   }
 
   void setSelectedPartTag(String tag) {
-    selectedPartTag.value = tag;
+    selectedPartTagId.value = tag;
     update();
+    fetchItems(
+        selectedCategoryId.value == '' ? null : selectedCategoryId.value, tag);
+  }
+
+  // void togglePartSelection(Map<String, dynamic> part) {
+  //   if (selectedParts.contains(part)) {
+  //     selectedParts.remove(part);
+  //   } else {
+  //     selectedParts.add(part);
+  //   }
+  //   update();
+  // }
+
+  void togglePartSelection(Map<String, dynamic> part) {
+    if (selectedParts.any((item) => item['id'] == part['id'])) {
+      selectedParts.removeWhere((item) => item['id'] == part['id']);
+    } else {
+      selectedParts.add(part);
+    }
+    update();
+  }
+
+  Future<void> checkoutSelectedParts() async {
+    isLoading.value = true;
+
+    try {
+      List<Map<String, dynamic>> selectedItems = selectedParts
+          .map((part) => {
+                'id': part['id'],
+                'name': part['name'],
+                'price': part['price'],
+              })
+          .toList();
+
+      Get.toNamed(Routes.CHECKOUT, arguments: {
+        'fleetId': fleetId.value,
+        'selectedItems': selectedItems,
+      });
+    } catch (e) {
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

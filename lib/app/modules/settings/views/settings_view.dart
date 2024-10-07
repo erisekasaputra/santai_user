@@ -103,27 +103,27 @@ class SettingsView extends GetView<SettingsController> {
   );
 }
 
-  Widget _buildSettingsOptions(Color borderColor) {
+    Widget _buildSettingsOptions(Color borderColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         children: [
-          _buildSettingItem(Icons.person_outline, 'Edit Profile', borderColor ),
-          _buildSettingItem(Icons.location_on_outlined, 'Address', borderColor),
-          _buildSettingItem(Icons.notifications_none, 'Notification', borderColor),
-          _buildSettingItem(Icons.account_balance_wallet_outlined, 'E-Wallet', borderColor),
-          _buildSettingItem(Icons.security, 'Security', borderColor),
-          _buildSettingItem(Icons.language, 'Language', borderColor),
-          _buildSettingItem(Icons.privacy_tip_outlined, 'Privacy Policy', borderColor),
-          _buildSettingItem(Icons.help_outline, 'Support', borderColor),
-          _buildSettingItem(Icons.group_outlined, 'Invite Friends', borderColor),
+          _buildSettingItem(Icons.person_outline, 'Edit Profile', borderColor, controller.onEditProfileTap),
+          _buildSettingItem(Icons.location_on_outlined, 'Address', borderColor, controller.onAddressTap),
+          _buildSettingItem(Icons.notifications_none, 'Notification', borderColor, controller.onNotificationTap),
+          _buildSettingItem(Icons.account_balance_wallet_outlined, 'E-Wallet', borderColor, controller.onEWalletTap),
+          _buildSettingItem(Icons.security, 'Security', borderColor, controller.onSecurityTap),
+          _buildSettingItem(Icons.language, 'Language', borderColor, controller.onLanguageTap),
+          _buildSettingItem(Icons.privacy_tip_outlined, 'Privacy Policy', borderColor, controller.onPrivacyPolicyTap),
+          _buildSettingItem(Icons.help_outline, 'Support', borderColor, controller.onSupportTap),
+          _buildSettingItem(Icons.group_outlined, 'Invite Friends', borderColor, controller.onInviteFriendsTap),
           _buildLogoutItem(),
         ],
       ),
     );
   }
 
-  Widget _buildSettingItem(IconData icon, String title, Color borderColor) {
+   Widget _buildSettingItem(IconData icon, String title, Color borderColor, Function() onTap) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
@@ -135,9 +135,7 @@ class SettingsView extends GetView<SettingsController> {
         leading: Icon(icon, color: Colors.black),
         title: Text(title, style: const TextStyle(fontSize: 16)),
         trailing: const Icon(Icons.chevron_right),
-        onTap: () {
-         
-        },
+        onTap: onTap,
       ),
     );
   }

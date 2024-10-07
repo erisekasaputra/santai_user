@@ -74,6 +74,10 @@
         <!-- FCM -->
 
 
+        <meta-data
+            android:name="com.google.android.gms.auth.api.signin.CLIENT_ID"
+            android:value="1065462126306-sla57ni7q7n8mhs2v0miqa6u5ms8lrsi.apps.googleusercontent.com" />
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

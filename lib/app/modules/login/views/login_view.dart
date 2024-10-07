@@ -30,28 +30,29 @@ class LoginView extends GetView<LoginController> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: constraints.maxHeight * 0.2,
+                          height: constraints.maxHeight * 0.15,
                           child: Image.asset(
                             'assets/images/company_logo.png',
                             fit: BoxFit.contain,
                           ),
                         ),
-                        Column(
-                          children: [
-                            Text(
-                              'Welcome Back',
-                              style: TextStyle(fontSize: constraints.maxHeight * 0.04, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: constraints.maxHeight * 0.01),
-                            Text(
-                              'Login to your account',
-                              style: TextStyle(fontSize: constraints.maxHeight * 0.02, color: Colors.black),
-                            ),
-                          ],
-                        ),
+                        const SizedBox(height: 10),
+                        // Column(
+                        //   children: [
+                        //     Text(
+                        //       'Welcome Back',
+                        //       style: TextStyle(fontSize: constraints.maxHeight * 0.04, fontWeight: FontWeight.bold),
+                        //     ),
+                        //     SizedBox(height: constraints.maxHeight * 0.01),
+                        //     Text(
+                        //       'Login to Your Account',
+                        //       style: TextStyle(fontSize: constraints.maxHeight * 0.03, color: Colors.black, fontWeight: FontWeight.bold),
+                        //     ),
+                        //   ],
+                        // ),
                         Obx(() => Column(
                           children: [
                             if (controller.isStaffLogin.value) ...[
@@ -61,7 +62,7 @@ class LoginView extends GetView<LoginController> {
                                 hintText: 'Enter business code',
                                 icon: Icons.business_center,
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             const CustomLabel(text: 'Phone'),
                             CustomPhoneField(
@@ -69,7 +70,7 @@ class LoginView extends GetView<LoginController> {
                               controller: controller.phoneController,
                               onChanged: controller.updatePhoneInfo,
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             const CustomLabel(text: 'Password'),
                             CustomPasswordField(
                               controller: controller.passwordController,
@@ -89,7 +90,7 @@ class LoginView extends GetView<LoginController> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Obx(() => CustomElevatedButton(
                               text: controller.isStaffLogin.value
                                   ? 'Staff Log In'

@@ -136,7 +136,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.MOTORCYCLE_DETAIL,
-      page: () => const MotorcycleDetailView(),
+      page: () => MotorcycleDetailView(),
       binding: MotorcycleDetailBinding(),
       transition: Transition.downToUp,
       transitionDuration: durationTransision,

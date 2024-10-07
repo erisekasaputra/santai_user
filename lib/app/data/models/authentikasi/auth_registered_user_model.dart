@@ -8,7 +8,7 @@ class RegisteredUserModel extends RegisteredUser {
     String? email,
     required String userType,
     String? businessCode,
-    String? token,
+    String? otp,
   }) : super(
           sub: sub,
           username: username,
@@ -16,7 +16,7 @@ class RegisteredUserModel extends RegisteredUser {
           email: email,
           userType: userType,
           businessCode: businessCode,
-          token: token,
+          token: otp,
         );
 
   factory RegisteredUserModel.fromJson(Map<String, dynamic> json) {
@@ -27,7 +27,7 @@ class RegisteredUserModel extends RegisteredUser {
       email: json['email'],
       userType: json['userType'],
       businessCode: json['businessCode'],
-      token: json['token'],
+      otp: json['otp'],
     );
   }
 }

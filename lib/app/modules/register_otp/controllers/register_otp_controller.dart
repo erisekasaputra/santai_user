@@ -76,12 +76,12 @@ class RegisterOtpController extends GetxController {
 
       final response = await sendOtp(otpRequest);
 
-      phoneNumber.value = response.user.phoneNumber;
+      phoneNumber.value = response.data.phoneNumber;
 
       _notificationService.showNotification(
         id: 0,
         title: 'Santai',
-        body: 'OTP has been sent via SMS',
+        body: response.data.token ?? '',
       );
 
       canResend.value = false;
@@ -131,8 +131,6 @@ class RegisterOtpController extends GetxController {
 
       if (otpSource.value == 'login') {
 
-        print('masuk sini');
-
         final deviceId = await _secureStorage.readSecureData('fcm_token');
 
         final verifyLoginRequest = VerifyLogin(
@@ -143,10 +141,16 @@ class RegisterOtpController extends GetxController {
 
         final response = await verifyLogin(verifyLoginRequest);
 
-        await _secureStorage.writeSecureData('access_token', response.accessToken);
-        await _secureStorage.writeSecureData('refresh_token', response.refreshToken.token);
+        await _secureStorage.writeSecureData('access_token', response.data.accessToken);
+        await _secureStorage.writeSecureData('refresh_token', response.data.refreshToken.token);
+        await _secureStorage.writeSecureData('user_id', response.data.sub);
 
-        Get.offAllNamed(Routes.DASHBOARD);
+        if (response.next.action == "Homepage") {
+          Get.offAllNamed(Routes.DASHBOARD);
+        } else if (response.next.action == "CreateAccount") {
+          Get.offAllNamed(Routes.REG_USER_PROFILE);
+        };
+
       } else {
         Get.offAllNamed(Routes.LOGIN);
       }

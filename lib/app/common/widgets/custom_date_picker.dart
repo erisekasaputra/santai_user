@@ -38,7 +38,7 @@ class CustomDatePicker extends StatelessWidget {
           },
         );
         if (pickedDate != null) {
-          String formattedDate = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+          String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
           controller.text = formattedDate;
         }
       },

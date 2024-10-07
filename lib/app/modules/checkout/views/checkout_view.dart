@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:santai/app/common/widgets/custom_back_button.dart';
 import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
-import 'package:santai/app/routes/app_pages.dart';
 import '../controllers/checkout_controller.dart';
 import 'package:santai/app/theme/app_theme.dart';
 
@@ -68,7 +67,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 CustomElevatedButton(
                   text: 'Make Payment',
                   onPressed: () {
-                    Get.toNamed(Routes.PAYMENT);
+                    controller.createOrderButtonAction();
                   },
                 ),
               ],

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-
 class ServiceDetailController extends GetxController {
   late OrderDetails orderDetails;
+
 
   @override
   void onInit() {
@@ -30,6 +30,17 @@ class ServiceDetailController extends GetxController {
       grandTotal: 'RM95.00',
     );
   }
+
+  // Future<void> fetchItemDetails(String itemId) async {
+  //   try {
+  //     final itemResponse = await getItem(itemId);
+  //     if (itemResponse.data != null) {
+  //       orderDetails.items.value = itemResponse.data.items;
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching item details: $e');
+  //   }
+  // }
 }
 
 class OrderDetails {

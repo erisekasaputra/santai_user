@@ -1,12 +1,22 @@
 import 'package:santai/app/domain/entities/authentikasi/auth_registered_user.dart';
 
 class UserRegisterResponse {
-  final RegisteredUser user;
+  final bool isSuccess;
+  final RegisteredUser data;
   final NextAction next;
+  final String message;
+  final String responseStatus;
+  final List<dynamic> errors;
+  final List<dynamic> links;
 
   UserRegisterResponse({
-    required this.user,
+    required this.isSuccess,
+    required this.data,
     required this.next,
+    required this.message,
+    required this.responseStatus,
+    required this.errors,
+    required this.links,
   });
 }
 

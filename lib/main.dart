@@ -38,7 +38,7 @@ void main() async {
 
   // await Get.putAsync(() => FCMService().init());
 
-  final fcmService = await Get.putAsync(() => FCMService().init());
+  await Get.putAsync(() => FCMService().init());
 
   runApp(
     GetMaterialApp(

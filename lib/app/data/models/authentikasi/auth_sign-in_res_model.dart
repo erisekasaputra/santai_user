@@ -4,14 +4,32 @@ import 'package:santai/app/domain/entities/authentikasi/auth_signin_user_res.dar
 
 class SigninUserResponseModel extends SigninUserResponse {
   SigninUserResponseModel({
-    required RegisteredUserModel user,
+    required bool isSuccess,
+    required RegisteredUserModel data,
     required NextActionSigninUserModel next,
-  }) : super(user: user, next: next);
+    required String message,
+    required String responseStatus,
+    required List<dynamic> errors,
+    required List<dynamic> links,
+  }) : super(
+          isSuccess: isSuccess,
+          data: data,
+          next: next,
+          message: message,
+          responseStatus: responseStatus,
+          errors: errors,
+          links: links,
+        );
 
   factory SigninUserResponseModel.fromJson(Map<String, dynamic> json) {
     return SigninUserResponseModel(
-      user: RegisteredUserModel.fromJson(json['user']),
+      isSuccess: json['isSuccess'],
+      data: RegisteredUserModel.fromJson(json['data']),
       next: NextActionSigninUserModel.fromJson(json['next']),
+      message: json['message'],
+      responseStatus: json['responseStatus'],
+      errors: json['errors'],
+      links: json['links'],
     );
   }
 }

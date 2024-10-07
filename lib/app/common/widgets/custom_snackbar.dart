@@ -37,12 +37,12 @@ class ModernSnackbar {
       titleText: Container(),
       messageText: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 30),
-          const SizedBox(width: 5), 
+          Icon(icon, color: Colors.white, size: 25),
+          const SizedBox(width: 10), 
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Colors.white, fontSize: 20),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
         ],
@@ -51,6 +51,7 @@ class ModernSnackbar {
       backgroundColor: color,
       borderRadius: 8,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), 
+      // padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       duration: duration,
       isDismissible: true,
       dismissDirection: DismissDirection.horizontal,

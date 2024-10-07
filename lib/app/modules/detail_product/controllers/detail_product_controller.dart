@@ -1,44 +1,63 @@
 import 'package:get/get.dart';
-
-class Product {
-  final String name;
-  final String recommendation;
-  final String description;
-  final int sold;
-  final int performanceRating;
-  final int viscosityRating;
-  final int priceRating;
-
-  Product({
-    required this.name,
-    required this.recommendation,
-    required this.description,
-    required this.sold,
-    required this.performanceRating,
-    required this.viscosityRating,
-    required this.priceRating,
-  });
-}
+import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/entities/catalog/catalog_item_res.dart';
+import 'package:santai/app/domain/usecases/catalog/get_item.dart';
+import 'package:santai/app/exceptions/custom_http_exception.dart';
+import 'package:santai/app/services/secure_storage_service.dart';
 
 class DetailProductController extends GetxController {
-  final productName = ''.obs;
+  final isLoading = true.obs;
+
+  final SecureStorageService _secureStorage = SecureStorageService();
+  final urlImgPublic = ''.obs;
+
+  final items = Rx<CatalogItem?>(null);
+
+  final ItemGet getItem;
+
+  DetailProductController({
+    required this.getItem,
+  });
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    productName.value = Get.arguments ?? 'Unknown Product';
-   
-   
-    product = Product(
-      name: productName.value,
-      recommendation: 'Endurance',
-      description: 'This product is engineered to react instantly to the different demands of all your bike\'s critical areas delivering instant defense and responsive performance.',
-      sold: 53524,
-      performanceRating: 10,
-      viscosityRating: 10,
-      priceRating: 10,
-    );
+
+    urlImgPublic.value =
+        await _secureStorage.readSecureData('commonGetImgUrlPublic') ?? '';
+
+    final itemId = Get.arguments?['itemId'] ?? '';
+    await fetchItemDetails(itemId);
   }
 
-  late Product product;
+  Future<void> fetchItemDetails(String itemId) async {
+    try {
+      isLoading.value = true;
+      final CatalogItemResponse itemResponse = await getItem(itemId);
+      if (itemResponse.isSuccess) {
+        items.value = itemResponse.data;
+
+      } else {
+        CustomToast.show(
+          message: "No item found",
+          type: ToastType.warning,
+        );
+      }
+    } catch (error) {
+      if (error is CustomHttpException) {
+        CustomToast.show(
+          message: error.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "An unexpected error occurred",
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      isLoading.value = false;
+      update();
+    }
+  }
 }

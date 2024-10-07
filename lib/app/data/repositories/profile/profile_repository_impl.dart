@@ -18,4 +18,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final response = await remoteDataSource.insertProfileUser(profileUserModel);
     return response;
   }
+
+  @override
+  Future<ProfileUserResponseModel> getProfileUser() async {
+    final response = await remoteDataSource.getProfileUser();
+    return response;
+  }
 }

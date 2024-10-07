@@ -142,7 +142,7 @@ class ProfilePersonalInfoModel extends ProfilePersonalInfo {
     required String firstName,
     String? middleName,
     String? lastName,
-    required DateTime dateOfBirth,
+    required String dateOfBirth,
     required String gender,
     String? profilePictureUrl,
   }) : super(
@@ -159,7 +159,7 @@ class ProfilePersonalInfoModel extends ProfilePersonalInfo {
       firstName: json['firstName'],
       middleName: json['middleName'],
       lastName: json['lastName'],
-      dateOfBirth: DateTime.parse(json['dateOfBirth']),
+      dateOfBirth: json['dateOfBirth'],
       gender: json['gender'],
       profilePictureUrl: json['profilePictureUrl'],
     );

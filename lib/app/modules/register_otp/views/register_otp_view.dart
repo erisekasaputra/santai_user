@@ -90,22 +90,22 @@ class RegisterOtpView extends GetView<RegisterOtpController> {
                     )),
 
                     const SizedBox(height: 20),
-                     Obx(() => ElevatedButton.icon(
-                      icon: const Icon(Icons.call, color: Colors.white),
-                      label: Text(
-                        controller.isLoadingWhatsApp.value ? 'Sending...' : 'Send OTP via WhatsApp',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      onPressed: (controller.isLoadingWhatsApp.value || !controller.canResend.value) ? null : controller.sendOtpViaWhatsApp,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    )),
-                    const SizedBox(height: 10),
+                    //  Obx(() => ElevatedButton.icon(
+                    //   icon: const Icon(Icons.call, color: Colors.white),
+                    //   label: Text(
+                    //     controller.isLoadingWhatsApp.value ? 'Sending...' : 'Send OTP via WhatsApp',
+                    //     style: const TextStyle(color: Colors.white),
+                    //   ),
+                    //   onPressed: (controller.isLoadingWhatsApp.value || !controller.canResend.value) ? null : controller.sendOtpViaWhatsApp,
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: Colors.green,
+                    //     minimumSize: const Size(double.infinity, 50),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //   ),
+                    // )),
+                    // const SizedBox(height: 10),
                     Obx(() => ElevatedButton.icon(
                       icon: const Icon(Icons.sms, color: Colors.white),
                       label: Text(

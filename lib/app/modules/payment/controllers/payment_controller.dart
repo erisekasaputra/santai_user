@@ -5,11 +5,15 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentController extends GetxController {
   late WebViewController webViewController;
-  final paymentUrl = 'https://www.google.com'.obs;
+  final paymentUrl = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
+
+    paymentUrl.value = Get.arguments['paymentUrl'];
+
+
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))

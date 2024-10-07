@@ -44,7 +44,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 CustomTextField(
                   hintText: 'First Name',
                   icon: Icons.person,
-                  controller: TextEditingController(),
+                  controller: controller.firstNameController,
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Middle Name'),
@@ -52,7 +52,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 CustomTextField(
                   hintText: 'Middle Name',
                   icon: Icons.person,
-                  controller: TextEditingController(),
+                  controller: controller.middleNameController,
                 ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Last Name'),
@@ -60,25 +60,7 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                 CustomTextField(
                   hintText: 'Last Name',
                   icon: Icons.person,
-                  controller: TextEditingController(),
-                ),
-                const SizedBox(height: 10),
-                const CustomLabel(text: 'Phone'),
-                const SizedBox(height: 5),
-                CustomTextField(
-                  hintText: '[+6] 018 222 0060',
-                  icon: Icons.phone,
-                  controller: controller.phoneController,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 10),
-                const CustomLabel(text: 'Email'),
-                const SizedBox(height: 5),
-                CustomTextField(
-                  hintText: 'Email',
-                  icon: Icons.email,
-                  controller: TextEditingController(), 
-                  keyboardType: TextInputType.emailAddress,
+                  controller: controller.lastNameController,
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -129,6 +111,24 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                   icon: Icons.location_on,
                   controller: controller.addressController,
                 ),
+
+
+                const SizedBox(height: 10),
+                const CustomLabel(text: 'City'),
+                const SizedBox(height: 5),
+                CustomTextField(
+                  hintText: 'City',
+                  icon: Icons.location_on,
+                  controller: controller.cityController,
+                ),
+                const SizedBox(height: 10),
+                const CustomLabel(text: 'State'),
+                const SizedBox(height: 5),
+                CustomTextField(
+                  hintText: 'State',
+                  icon: Icons.location_on,
+                  controller: controller.stateController,
+                ),
                 const SizedBox(height: 10),
                 const CustomLabel(text: 'Postal Code'),
                 const SizedBox(height: 5),
@@ -138,6 +138,16 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                   controller: controller.posCodeController,
                   keyboardType: TextInputType.number,
                 ),
+                const SizedBox(height: 10),
+                const CustomLabel(text: 'Country'),
+                const SizedBox(height: 5),
+                CustomTextField(
+                  hintText: 'Country',
+                  icon: Icons.location_on,
+                  controller: controller.countryController,
+                ),
+
+
                 const SizedBox(height: 20),
                 Obx(() => CustomElevatedButton(
                   text: 'Registration',

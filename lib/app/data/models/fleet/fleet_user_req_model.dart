@@ -1,0 +1,93 @@
+import 'package:santai/app/domain/entities/fleet/fleet_user.dart';
+
+class FleetUserReqModel extends FleetUser {
+  FleetUserReqModel({
+    String? id,
+    required String registrationNumber,
+    required String vehicleType,
+    required String brand,
+    required String model,
+    required int yearOfManufacture,
+    required String chassisNumber,
+    required String engineNumber,
+    required String insuranceNumber,
+    required bool isInsuranceValid,
+    required DateTime lastInspectionDateLocal,
+    required int odometerReading,
+    required String fuelType,
+    required String ownerName,
+    required String ownerAddress,
+    required String usageStatus,
+    required String ownershipStatus,
+    required String transmissionType,
+    String? imageUrl,
+  }) : super(
+          id: id,
+          registrationNumber: registrationNumber,
+          vehicleType: vehicleType,
+          brand: brand,
+          model: model,
+          yearOfManufacture: yearOfManufacture,
+          chassisNumber: chassisNumber,
+          engineNumber: engineNumber,
+          insuranceNumber: insuranceNumber,
+          isInsuranceValid: isInsuranceValid,
+          lastInspectionDateLocal: lastInspectionDateLocal,
+          odometerReading: odometerReading,
+          fuelType: fuelType,
+          ownerName: ownerName,
+          ownerAddress: ownerAddress,
+          usageStatus: usageStatus,
+          ownershipStatus: ownershipStatus,
+          transmissionType: transmissionType,
+          imageUrl: imageUrl,
+        );
+
+  factory FleetUserReqModel.fromEntity(FleetUser user) {
+    return FleetUserReqModel(
+      id: user.id,
+      registrationNumber: user.registrationNumber,
+      vehicleType: user.vehicleType,
+      brand: user.brand,
+      model: user.model,
+      yearOfManufacture: user.yearOfManufacture,
+      chassisNumber: user.chassisNumber,
+      engineNumber: user.engineNumber,
+      insuranceNumber: user.insuranceNumber,
+      isInsuranceValid: user.isInsuranceValid,
+      lastInspectionDateLocal: user.lastInspectionDateLocal,
+      odometerReading: user.odometerReading,
+      fuelType: user.fuelType,
+      ownerName: user.ownerName,
+      ownerAddress: user.ownerAddress,
+      usageStatus: user.usageStatus,
+      ownershipStatus: user.ownershipStatus,
+      transmissionType: user.transmissionType,
+      imageUrl: user.imageUrl,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'registrationNumber': registrationNumber,
+      'vehicleType': vehicleType,
+      'brand': brand,
+      'model': model,
+      'yearOfManufacture': yearOfManufacture,
+      'chassisNumber': chassisNumber,
+      'engineNumber': engineNumber,
+      'insuranceNumber': insuranceNumber,
+      'isInsuranceValid': isInsuranceValid,
+      'lastInspectionDateLocal': lastInspectionDateLocal.toIso8601String(),
+      'odometerReading': odometerReading,
+      'fuelType': fuelType,
+      'ownerName': ownerName,
+      'ownerAddress': ownerAddress,
+      'usageStatus': usageStatus,
+      'ownershipStatus': ownershipStatus,
+      'transmissionType': transmissionType,
+      'imageUrl': imageUrl,
+    };
+  }
+}

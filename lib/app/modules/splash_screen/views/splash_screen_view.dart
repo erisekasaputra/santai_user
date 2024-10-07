@@ -15,8 +15,8 @@ class SplashScreenView extends GetView<SplashScreenController> {
           children: [
             Image.asset(
               'assets/images/splash_image.png',
-              width: 200,
-              height: 200,
+              width: 300,
+              height: 300,
             ),
           ],
         ),

@@ -3,33 +3,56 @@ import 'package:santai/app/domain/entities/authentikasi/auth_otp_register_verify
 
 class OtpRegisterVerifyResponseModel extends OtpRegisterVerifyResponse {
   OtpRegisterVerifyResponseModel({
-    required RegisteredUserModel user,
+    required bool isSuccess,
+    required RegisteredUserModel data,
     required NextActionOtpRegisterVerifyResponseModel next,
-  }) : super(user: user, next: next);
+    required String message,
+    required String responseStatus,
+    required List<dynamic> errors,
+    required List<dynamic> links,
+  }) : super(
+          isSuccess: isSuccess,
+          data: data,
+          next: next,
+          message: message,
+          responseStatus: responseStatus,
+          errors: errors,
+          links: links,
+        );
 
   factory OtpRegisterVerifyResponseModel.fromJson(Map<String, dynamic> json) {
     return OtpRegisterVerifyResponseModel(
-      user: RegisteredUserModel.fromJson(json['user']),
+      isSuccess: json['isSuccess'],
+      data: RegisteredUserModel.fromJson(json['data']),
       next: NextActionOtpRegisterVerifyResponseModel.fromJson(json['next']),
+      message: json['message'],
+      responseStatus: json['responseStatus'],
+      errors: json['errors'],
+      links: json['links'],
     );
   }
 
   factory OtpRegisterVerifyResponseModel.defaultSuccess() {
     return OtpRegisterVerifyResponseModel(
-      user: RegisteredUserModel(
+      isSuccess: true,
+      data: RegisteredUserModel(
         sub: '',
         username: '',
         phoneNumber: '',
         email: '',
         userType: '',
         businessCode: '',
-        token: '',
+        otp: '',
       ),
       next: NextActionOtpRegisterVerifyResponseModel(
         link: '',
         action: 'Success',
         method: '',
       ),
+      message: 'Success',
+      responseStatus: 'Success',
+      errors: [],
+      links: [],
     );
   }
 }

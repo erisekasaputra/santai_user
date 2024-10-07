@@ -7,7 +7,7 @@ class CustomToast {
   static void show({
     required String message,
     required ToastType type,
-    Toast length = Toast.LENGTH_SHORT,
+    Toast length = Toast.LENGTH_LONG,
     ToastGravity gravity = ToastGravity.TOP,
   }) {
     Color backgroundColor;
