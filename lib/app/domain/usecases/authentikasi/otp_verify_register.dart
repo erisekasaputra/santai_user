@@ -8,8 +8,7 @@ class VerifyOtpRegister {
 
   VerifyOtpRegister(this.repository);
 
-  Future<OtpRegisterVerifyResponse> call(OtpRegisterVerify request) async {
+  Future<OtpRegisterVerifyResponse?> call(OtpRegisterVerify request) async {
     return await repository.otpRegisterVerify(request);
   }
-
 }

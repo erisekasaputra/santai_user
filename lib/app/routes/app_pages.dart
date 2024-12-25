@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/change_password/bindings/change_password_binding.dart';
+import '../modules/change_password/views/change_password_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat_menu/bindings/chat_menu_binding.dart';
@@ -10,6 +12,8 @@ import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/detail_product/bindings/detail_product_binding.dart';
 import '../modules/detail_product/views/detail_product_view.dart';
+import '../modules/forgot_password/bindings/forgot_password_binding.dart';
+import '../modules/forgot_password/views/forgot_password_view.dart';
 import '../modules/history/bindings/history_binding.dart';
 import '../modules/history/views/history_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -24,6 +28,10 @@ import '../modules/motorcycle_information/bindings/motorcycle_information_bindin
 import '../modules/motorcycle_information/views/motorcycle_information_view.dart';
 import '../modules/payment/bindings/payment_binding.dart';
 import '../modules/payment/views/payment_view.dart';
+import '../modules/payment_status/bindings/payment_status_binding.dart';
+import '../modules/payment_status/views/payment_status_view.dart';
+import '../modules/qr_order/bindings/qr_order_binding.dart';
+import '../modules/qr_order/views/qr_order_view.dart';
 import '../modules/rate_service/bindings/rate_service_binding.dart';
 import '../modules/rate_service/views/rate_service_view.dart';
 import '../modules/reg_motorcycle/bindings/reg_motorcycle_binding.dart';
@@ -42,6 +50,8 @@ import '../modules/sign_up/bindings/sign_up_binding.dart';
 import '../modules/sign_up/views/sign_up_view.dart';
 import '../modules/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/splash_screen/views/splash_screen_view.dart';
+import '../modules/support_screen/bindings/support_screen_binding.dart';
+import '../modules/support_screen/views/support_screen_view.dart';
 
 part 'app_routes.dart';
 
@@ -49,7 +59,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.HOME;
-  static const durationTransision = const Duration(milliseconds: 200);
+  static const durationTransision = const Duration(milliseconds: 100);
 
   static final routes = [
     GetPage(
@@ -194,6 +204,31 @@ class AppPages {
       name: _Paths.MAP_PICKER,
       page: () => MapPickerView(),
       binding: MapPickerBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_STATUS,
+      page: () => const PaymentStatusView(),
+      binding: PaymentStatusBinding(),
+    ),
+    GetPage(
+      name: _Paths.QR_ORDER,
+      page: () => const QrOrderView(),
+      binding: QrOrderBinding(),
+    ),
+    GetPage(
+      name: _Paths.FORGOT_PASSWORD,
+      page: () => const ForgotPasswordView(),
+      binding: ForgotPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHANGE_PASSWORD,
+      page: () => const ChangePasswordView(),
+      binding: ChangePasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.SUPPORT_SCREEN,
+      page: () => const SupportScreenView(),
+      binding: SupportScreenBinding(),
     ),
   ];
 }

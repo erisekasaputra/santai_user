@@ -15,10 +15,3 @@ class SecureStorageService {
     await _storage.delete(key: key);
   }
 }
-
-
-// final SecureStorageService _secureStorage = SecureStorageService();
-
-// final isLoggedIn = await _secureStorage.readSecureData('isLoggedIn') == 'true';
-// await _secureStorage.writeSecureData('isLoggedIn', 'true');
-//  await _secureStorage.deleteSecureData('isLoggedIn');

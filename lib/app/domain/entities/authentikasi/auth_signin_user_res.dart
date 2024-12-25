@@ -2,7 +2,7 @@ import 'package:santai/app/domain/entities/authentikasi/auth_registered_user.dar
 
 class SigninUserResponse {
   final bool isSuccess;
-  final RegisteredUser data;
+  final RegisteredUser? data;
   final NextActionSigninUser next;
   final String message;
   final String responseStatus;

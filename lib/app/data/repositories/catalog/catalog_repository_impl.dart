@@ -13,25 +13,41 @@ class CatalogRepositoryImpl implements CatalogRepository {
 
   @override
   Future<CatalogItemsResponseModel> getAllCatalogItem(String? categoryId, String? brandId, int pageNumber, int pageSize) async {
-    final response = await remoteDataSource.getAllCatalogItem(categoryId, brandId, pageNumber, pageSize);
-    return response;
+    try {
+      final response = await remoteDataSource.getAllCatalogItem(categoryId, brandId, pageNumber, pageSize);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<CatalogBrandResponseModel> getAllCatalogBrand() async {
-    final response = await remoteDataSource.getAllCatalogBrand();
-    return response;
+    try {
+      final response = await remoteDataSource.getAllCatalogBrand();
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<CatalogCategoryResponseModel> getAllCatalogCategory() async {
-    final response = await remoteDataSource.getAllCatalogCategory();
-    return response;
+    try {
+      final response = await remoteDataSource.getAllCatalogCategory();
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<CatalogItemResponseModel> getItem(String itemId) async {
-    final response = await remoteDataSource.getItem(itemId);
-    return response;
+    try {
+      final response = await remoteDataSource.getItem(itemId);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

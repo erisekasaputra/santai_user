@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:santai/app/data/models/common/base_error.dart';
 import 'package:santai/app/routes/app_pages.dart';
 
 class MotorcycleInformationController extends GetxController {
@@ -15,17 +16,22 @@ class MotorcycleInformationController extends GetxController {
   final odometer = ''.obs;
   final purchasedDate = ''.obs;
 
-  final TextEditingController verifyOwnershipController = TextEditingController();
+  final TextEditingController verifyOwnershipController =
+      TextEditingController();
   final TextEditingController chassisNumberController = TextEditingController();
   final TextEditingController engineNumberController = TextEditingController();
   final TextEditingController insuranceNoController = TextEditingController();
-  final TextEditingController insuranceCompanyController = TextEditingController();
-  final TextEditingController roadTaxExpireDateController = TextEditingController();
+  final TextEditingController insuranceCompanyController =
+      TextEditingController();
+  final TextEditingController roadTaxExpireDateController =
+      TextEditingController();
   final TextEditingController odometerController = TextEditingController();
   final TextEditingController purchasedDateController = TextEditingController();
 
+  final error = Rx<ErrorResponse?>(null);
+
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     verifyOwnershipController.text = verifyOwnership.value;
     chassisNumberController.text = chassisNumber.value;
@@ -35,7 +41,7 @@ class MotorcycleInformationController extends GetxController {
   final selectedImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
 
-   void handleImageSourceSelection(ImageSource source) {
+  void handleImageSourceSelection(ImageSource source) {
     _pickImage(source);
   }
 
@@ -47,10 +53,9 @@ class MotorcycleInformationController extends GetxController {
   }
 
   void saveInformation() {
-  print('Saving motorcycle information...');
-  Get.snackbar('Success', 'Motorcycle information saved successfully');
-  Get.toNamed(Routes.MOTORCYCLE_DETAIL);
-}
+    Get.toNamed(Routes.MOTORCYCLE_DETAIL);
+  }
+
   @override
   void onClose() {
     verifyOwnershipController.dispose();

@@ -10,170 +10,335 @@ import 'package:santai/app/theme/app_theme.dart';
 import '../controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final Color primary_100 = Theme.of(context).colorScheme.primary_100;
-    final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
-
+    final Color primary300 = Theme.of(context).colorScheme.primary_300;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: constraints.maxHeight * 0.15,
-                          child: Image.asset(
-                            'assets/images/company_logo.png',
-                            fit: BoxFit.contain,
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: constraints.maxHeight * 0.17,
+                            child: Image.asset(
+                              'assets/images/logo_hd_santaimoto_blue.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        // Column(
-                        //   children: [
-                        //     Text(
-                        //       'Welcome Back',
-                        //       style: TextStyle(fontSize: constraints.maxHeight * 0.04, fontWeight: FontWeight.bold),
-                        //     ),
-                        //     SizedBox(height: constraints.maxHeight * 0.01),
-                        //     Text(
-                        //       'Login to Your Account',
-                        //       style: TextStyle(fontSize: constraints.maxHeight * 0.03, color: Colors.black, fontWeight: FontWeight.bold),
-                        //     ),
-                        //   ],
-                        // ),
-                        Obx(() => Column(
-                          children: [
-                            if (controller.isStaffLogin.value) ...[
-                              const CustomLabel(text: 'Business Code'),
-                              CustomTextField(
-                                controller: controller.businessCodeController,
-                                hintText: 'Enter business code',
-                                icon: Icons.business_center,
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                            const CustomLabel(text: 'Phone'),
-                            CustomPhoneField(
-                              hintText: 'Enter your phone number',
-                              controller: controller.phoneController,
-                              onChanged: controller.updatePhoneInfo,
+                          const SizedBox(height: 10),
+                          Text(
+                            'Welcome Back',
+                            style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontSize: constraints.maxHeight * 0.045,
+                              fontWeight: FontWeight.w600,
                             ),
-                            const SizedBox(height: 10),
-                            const CustomLabel(text: 'Password'),
-                            CustomPasswordField(
-                              controller: controller.passwordController,
-                              isPasswordHidden: controller.isPasswordHidden,
+                          ),
+                          Text(
+                            'Login to your account',
+                            style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
                             ),
-                          ],
-                        )),
-                        Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  'Forgot password?',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Obx(() => CustomElevatedButton(
-                              text: controller.isStaffLogin.value
-                                  ? 'Staff Log In'
-                                  : 'Log In',
-                              onPressed: controller.isLoading.value
-                                  ? null
-                                  : (controller.isStaffLogin.value
-                                      ? controller.signInAsStaff
-                                      : controller.login),
-                              isLoading: controller.isLoading.value,
-                            )),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          const SizedBox(height: 10),
+                          Obx(
+                            () => Column(
                               children: [
-                                Card(
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: borderColor, width: 1),
-                                    borderRadius: BorderRadius.circular(8),
+                                if (controller.isStaffLogin.value) ...[
+                                  const CustomLabel(
+                                    text: 'Business Code',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  child: IconButton(
-                                    icon: Image.asset('assets/images/google_logo.png',
-                                        width: 30, height: 30),
-                                    onPressed: controller.signInWithGoogle,
+                                  const SizedBox(height: 5),
+                                  CustomTextField(
+                                    controller:
+                                        controller.businessCodeController,
+                                    hintText: 'Enter Business Code',
+                                    icon: Icons.business_outlined,
+                                    fieldName: "BusinessCode",
+                                    error: controller.error,
                                   ),
+                                  const SizedBox(height: 20),
+                                ],
+                                const CustomLabel(
+                                  text: 'Phone',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                const SizedBox(width: 10),
-                                Card(
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: borderColor, width: 1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.business_center,
-                                        size: 30, color: Colors.black),
-                                    onPressed: controller.toggleStaffLogin,
-                                  ),
+                                const SizedBox(height: 5),
+                                CustomPhoneField(
+                                  hintText: 'Enter Phone Number',
+                                  controller: controller.phoneController,
+                                  onChanged: controller.updatePhoneInfo,
+                                  error: controller.error,
+                                ),
+                                const CustomLabel(
+                                  text: 'Password',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                const SizedBox(height: 5),
+                                CustomPasswordField(
+                                  controller: controller.passwordController,
+                                  isPasswordHidden: controller.isPasswordHidden,
+                                  fieldName: "Password",
+                                  error: controller.error,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          Column(
                             children: [
-                              const Text(
-                                "Don't have an account?",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Get.toNamed(Routes.SIGN_UP);
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.black,
-                                ),
-                                child: Text(
-                                  "Sign Up",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: primary_100
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () {
+                                    Get.toNamed(Routes.FORGOT_PASSWORD);
+                                  },
+                                  child: const Text(
+                                    'Forgot password?',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               ),
-                              const Text(
-                                "with mobile phone",
-                                style: TextStyle(fontSize: 16),
+                              const SizedBox(height: 5),
+                              Obx(() => CustomElevatedButton(
+                                    text: 'Log In',
+                                    onPressed: controller.isLoading.value
+                                        ? null
+                                        : (controller.isStaffLogin.value
+                                            ? controller.signInAsStaff
+                                            : controller.login),
+                                    isLoading: controller.isLoading.value,
+                                    height: 48,
+                                  )),
+                              const SizedBox(height: 20),
+                              Obx(
+                                () => controller.isStaffLogin.value
+                                    ? const SizedBox.shrink()
+                                    : const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Divider(
+                                              color: Colors.grey, // Line color
+                                              thickness: 1, // Line thickness
+                                              indent:
+                                                  3, // Left space before line
+                                              endIndent:
+                                                  15, // Right space after line
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Text(
+                                              'Or',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Divider(
+                                              color: Colors.grey,
+                                              thickness: 1,
+                                              indent: 15,
+                                              endIndent: 3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                               ),
+                              // Obx(
+                              //   () => controller.isStaffLogin.value
+                              //       ? const SizedBox.shrink()
+                              //       : const SizedBox(height: 20),
+                              // ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: [
+                              //     Card(
+                              //       color: Colors.white,
+                              //       shape: RoundedRectangleBorder(
+                              //         side: BorderSide(
+                              //             color: borderColor, width: 1),
+                              //         borderRadius: BorderRadius.circular(8),
+                              //       ),
+                              //       child: Obx(
+                              //         () => !controller.isStaffLogin.value
+                              //             ? IconButton(
+                              //                 icon: const Icon(
+                              //                     Icons.business_outlined,
+                              //                     size: 30,
+                              //                     color: Color(0xFF1E3A8A)),
+                              //                 onPressed:
+                              //                     controller.toggleStaffLogin,
+                              //               )
+                              //             : const SizedBox.shrink(),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
-                        ),
-                      ],
+                          Obx(
+                            () => controller.isStaffLogin.value
+                                ? const SizedBox.shrink()
+                                : const SizedBox(height: 20),
+                          ),
+                          Obx(
+                            () {
+                              return controller.isStaffLogin.value
+                                  ? const SizedBox.shrink()
+                                  : FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            "Dont have an Account ",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Saira',
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.toNamed(Routes.SIGN_UP);
+                                            },
+                                            child: const Text(
+                                              "Sign Up",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'Saira',
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.blueAccent,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Text(
+                                            "with mobile phone",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Saira',
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            );
-          }
-        ),
+              // Sticky icon on top-right corner
+              Obx(
+                () => Positioned(
+                  top: 10, // Posisi vertikal dari atas
+                  right: 10, // Posisi horizontal dari kanan
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Button untuk 'Personal' - urutan dimulai dari kanan
+                      TextButton(
+                        onPressed: () {
+                          controller.toggleStaffLogin(value: false);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: !controller.isStaffLogin.value
+                              ? primary300 // Warna latar belakang saat dipilih
+                              : Colors
+                                  .transparent, // Tidak ada latar belakang saat tidak dipilih
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                12), // Border radius yang lebih kecil
+                          ),
+                        ),
+                        child: Text(
+                          'Personal',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: !controller.isStaffLogin.value
+                                ? Colors.white
+                                : primary300,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      // Pipeline (garis pemisah) menggunakan karakter '|'
+                      Text(
+                        ' | ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: primary300,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      // Button untuk 'Business'
+                      TextButton(
+                        onPressed: () {
+                          controller.toggleStaffLogin(value: true);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: controller.isStaffLogin.value
+                              ? primary300 // Warna latar belakang saat dipilih
+                              : Colors
+                                  .transparent, // Tidak ada latar belakang saat tidak dipilih
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                12), // Border radius yang lebih kecil
+                          ),
+                        ),
+                        child: Text(
+                          'Business',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: controller.isStaffLogin.value
+                                ? Colors.white
+                                : primary300,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }

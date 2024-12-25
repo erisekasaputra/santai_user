@@ -1,50 +1,47 @@
-// lib/data/data_sources/auth_remote_data_source.dart
 import 'package:http/http.dart' as http;
 import 'package:santai/app/config/api_config.dart';
+import 'package:santai/app/data/models/authentikasi/auth_forgot_password_res_model.dart';
 
 import 'package:santai/app/data/models/authentikasi/auth_otp_reg_ver_req_model.dart';
 import 'package:santai/app/data/models/authentikasi/auth_otp_reg_ver_res_model.dart';
 
 import 'package:santai/app/data/models/authentikasi/auth_otp_req_req_model.dart';
 import 'package:santai/app/data/models/authentikasi/auth_otp_req_res_model.dart';
-import 'package:santai/app/data/models/authentikasi/auth_sign-in_google_req_model.dart';
-import 'package:santai/app/data/models/authentikasi/auth_sign-in_google_res_model.dart';
-import 'package:santai/app/data/models/authentikasi/auth_sign-out_model.dart';
+import 'package:santai/app/data/models/authentikasi/auth_sign_in_google_req_model.dart';
+import 'package:santai/app/data/models/authentikasi/auth_sign_in_google_res_model.dart';
+import 'package:santai/app/data/models/authentikasi/auth_sign_out_model.dart';
+import 'package:santai/app/data/models/authentikasi/auth_sign_in_req_model.dart';
 
 import 'package:santai/app/data/models/authentikasi/auth_user_reg_req_model.dart';
 import 'package:santai/app/data/models/authentikasi/auth_user_reg_res_model.dart';
 import 'package:santai/app/data/models/authentikasi/auth_verify_login_req_model.dart';
 import 'package:santai/app/data/models/authentikasi/auth_verify_login_res_model.dart';
 import 'package:santai/app/exceptions/custom_http_exception.dart';
+import 'package:santai/app/utils/http_error_handler.dart';
+import 'package:santai/app/utils/int_extension_method.dart';
 
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 
-import '../../../data/models/authentikasi/auth_sign-in_res_model.dart';
-import '../../../data/models/authentikasi/auth_sign-in_req_model.dart';
+import '../../models/authentikasi/auth_sign_in_res_model.dart';
 
-import '../../../data/models/authentikasi/auth_sign-in_staff_req_model.dart';
-import '../../../data/models/authentikasi/auth_sign-in_staff_res_model.dart';
+import '../../models/authentikasi/auth_sign_in_staff_req_model.dart';
+import '../../models/authentikasi/auth_sign_in_staff_res_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<SigninUserResponseModel> signinUser(SigninUserModel user);
-  Future<SigninStaffResponseModel> signinStaff(SigninStaffModel user);
-
-  Future<UserRegisterResponseModel> registerUser(UserRegisterModel user);
-  Future<SigninGoogleResponseModel> signinGoogle(SigninGoogleModel user);
-
-  Future<OtpRequestResponseModel> sendOtp(OtpRequestModel request);
-  Future<OtpRegisterVerifyResponseModel> otpRegisterVerify(
+  Future<SigninUserResponseModel?> signinUser(SigninUserModel user);
+  Future<SigninStaffResponseModel?> signinStaff(SigninStaffModel user);
+  Future<UserRegisterResponseModel?> registerUser(UserRegisterModel user);
+  Future<SigninGoogleResponseModel?> signinGoogle(SigninGoogleModel user);
+  Future<OtpRequestResponseModel?> sendOtp(OtpRequestModel request);
+  Future<OtpRegisterVerifyResponseModel?> otpRegisterVerify(
       OtpRegisterVerifyModel request);
-
-  Future<VerifyLoginResponseModel> verifyLogin(VerifyLoginModel request);
-
+  Future<VerifyLoginResponseModel?> verifyLogin(VerifyLoginModel request);
   Future<void> signOut(SignOutModel request);
-
-  Future<void> resetPassword(PasswordResetModel reset);
+  Future<bool> resetPassword(
+      String identity, String otpCode, String newPassword);
+  Future<ForgotPasswordResponseModel?> forgotPassword(String phoneNumber);
 }
-
-class PasswordResetModel {}
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final http.Client client;
@@ -56,7 +53,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   });
 
   @override
-  Future<SigninUserResponseModel> signinUser(SigninUserModel request) async {
+  Future<SigninUserResponseModel?> signinUser(SigninUserModel request) async {
     final response = await client
         .post(
           Uri.parse('$baseUrl/Auth/signin-user'),
@@ -65,34 +62,60 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         )
         .timeout(const Duration(seconds: 30));
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return SigninUserResponseModel.fromJson(json.decode(response.body));
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        return SigninUserResponseModel.fromJson(json.decode(response.body));
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(response.statusCode,
+          'You are not allowed to login with this account');
+    }
+
+    handleError(response, 'We can not log you in');
+    return null;
   }
 
   @override
-  Future<SigninStaffResponseModel> signinStaff(SigninStaffModel request) async {
+  Future<SigninStaffResponseModel?> signinStaff(
+      SigninStaffModel request) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/Auth/signin-staff'),
+      Uri.parse('$baseUrl/Auth/signin-business'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(request.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return SigninStaffResponseModel.fromJson(json.decode(response.body));
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        var decoded = json.decode(response.body);
+        return SigninStaffResponseModel.fromJson(decoded);
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(response.statusCode,
+          'You are not allowed to login with this account');
+    }
+
+    handleError(response, 'We can not log you in');
+    return null;
   }
 
   @override
-  Future<SigninGoogleResponseModel> signinGoogle(
+  Future<SigninGoogleResponseModel?> signinGoogle(
       SigninGoogleModel request) async {
     final response = await client.post(
       Uri.parse('$baseUrl/Auth/signin-google'),
@@ -100,18 +123,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: json.encode(request.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return SigninGoogleResponseModel.fromJson(json.decode(response.body));
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        return SigninGoogleResponseModel.fromJson(json.decode(response.body));
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(response.statusCode,
+          'You are not allowed to login with this account');
+    }
+
+    handleError(response, 'We can not log you in');
+    return null;
   }
 
   @override
-  Future<UserRegisterResponseModel> registerUser(UserRegisterModel user) async {
-    final uuid = Uuid();
+  Future<UserRegisterResponseModel?> registerUser(
+      UserRegisterModel user) async {
+    const uuid = Uuid();
     final idempotencyKey = uuid.v4();
 
     final response = await client.post(
@@ -123,34 +159,60 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: json.encode(user.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return UserRegisterResponseModel.fromJson(json.decode(response.body));
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        return UserRegisterResponseModel.fromJson(json.decode(response.body));
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(
+          response.statusCode, 'Forbidden to access this resource');
+    }
+
+    handleError(response, 'Could not register you account');
+    return null;
   }
 
   @override
-  Future<OtpRequestResponseModel> sendOtp(OtpRequestModel request) async {
+  Future<OtpRequestResponseModel?> sendOtp(OtpRequestModel request) async {
     final response = await client.post(
       Uri.parse('$baseUrl/Auth/otp'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(request.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return OtpRequestResponseModel.fromJson(json.decode(response.body));
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        var data = json.decode(response.body);
+        var responseData = OtpRequestResponseModel.fromJson(data);
+        return responseData;
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(
+          response.statusCode, 'Forbidden to access this resource');
+    }
+
+    handleError(response, 'Could not send the OTP');
+    return null;
   }
 
   @override
-  Future<OtpRegisterVerifyResponseModel> otpRegisterVerify(
+  Future<OtpRegisterVerifyResponseModel?> otpRegisterVerify(
       OtpRegisterVerifyModel request) async {
     final response = await client.patch(
       Uri.parse('$baseUrl/Auth/verify-phone-number'),
@@ -158,30 +220,58 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: json.encode(request.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return OtpRegisterVerifyResponseModel.defaultSuccess();
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        return OtpRegisterVerifyResponseModel.fromJson(
+            json.decode(response.body));
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(
+          response.statusCode, 'Forbidden to access this resource');
+    }
+
+    handleError(response, 'Could not verify you data');
+    return null;
   }
 
   @override
-  Future<VerifyLoginResponseModel> verifyLogin(VerifyLoginModel request) async {
+  Future<VerifyLoginResponseModel?> verifyLogin(
+      VerifyLoginModel request) async {
     final response = await client.patch(
       Uri.parse('$baseUrl/Auth/verify-login'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(request.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return VerifyLoginResponseModel.fromJson(json.decode(response.body));
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-          response.statusCode, responseBody['message'] ?? 'Failed to Login');
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        var data =
+            VerifyLoginResponseModel.fromJson(json.decode(response.body));
+        return data;
+      }
     }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(
+          response.statusCode, 'Forbidden to access this resource');
+    }
+
+    handleError(response, 'We can not log you in');
+    return null;
   }
 
   @override
@@ -192,20 +282,80 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: json.encode(request.toJson()),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    if (response.statusCode.isHttpResponseSuccess()) {
       return;
-    } else {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      throw CustomHttpException(
-      response.statusCode, responseBody['message'] ?? 'Failed to Login');
     }
+
+    final Map<String, dynamic> responseBody = response.body.isNotEmpty
+        ? json.decode(response.body)
+        : {'message': 'We can not proceed your request'};
+    throw CustomHttpException(response.statusCode,
+        responseBody['message'] ?? 'We can not log you out');
   }
 
   @override
-  Future<void> resetPassword(reset) {
-    // TODO: implement resetPassword
-    throw UnimplementedError();
+  Future<ForgotPasswordResponseModel?> forgotPassword(
+      String phoneNumber) async {
+    final response = await client.post(
+      Uri.parse('$baseUrl/Auth/forgot-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(
+        {
+          "phoneNumber": phoneNumber,
+        },
+      ),
+    );
+
+    if (response.statusCode.isHttpResponseSuccess()) {
+      if (response.body.isEmpty) {
+        return null;
+      } else {
+        return ForgotPasswordResponseModel.fromJson(json.decode(response.body));
+      }
+    }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return null;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(
+          response.statusCode, 'Forbidden to access this resource');
+    }
+
+    handleError(response, 'Could not forgot your account');
+    return null;
   }
 
-  // Similar methods for registerUser, sendOtp, and resetPassword
+  @override
+  Future<bool> resetPassword(
+      String identity, String otpCode, String newPassword) async {
+    final response = await client.post(
+      Uri.parse('$baseUrl/Auth/reset-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(
+        {
+          "identity": identity,
+          "otpCode": otpCode,
+          "newPassword": newPassword,
+        },
+      ),
+    );
+
+    if (response.statusCode.isHttpResponseSuccess()) {
+      return true;
+    }
+
+    if (response.statusCode.isHttpResponseNotFound()) {
+      return false;
+    }
+
+    if (response.statusCode.isHttpResponseForbidden()) {
+      throw CustomHttpException(
+          response.statusCode, 'Forbidden to access this resource');
+    }
+
+    handleError(response, 'Could not reset your password');
+    return false;
+  }
 }

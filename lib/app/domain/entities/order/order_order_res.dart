@@ -1,3 +1,6 @@
+import 'package:santai/app/domain/enumerations/order_status.dart';
+import 'package:santai/app/domain/enumerations/percentage_or_value_type.dart';
+
 class OrderResponse {
   final bool isSuccess;
   final OrderResponseData data;
@@ -42,7 +45,7 @@ class OrderResponseData {
   final List<String>? ratingImages;
   final List<Fee> fees;
   final Cancellation? cancellation;
-  final String orderStatus;
+  final OrderStatus orderStatus;
   final bool isPaid;
   final bool isRated;
   final bool isPaymentExpire;
@@ -95,6 +98,7 @@ class Buyer {
 class Mechanic {
   final String mechanicId;
   final String name;
+  final String imageUrl;
   final Rating? rating;
   final double performance;
   final bool isRated;
@@ -102,6 +106,7 @@ class Mechanic {
   Mechanic({
     required this.mechanicId,
     required this.name,
+    required this.imageUrl,
     this.rating,
     required this.performance,
     required this.isRated,
@@ -136,8 +141,8 @@ class Fleet {
   final String fleetId;
   final String brand;
   final String model;
-  final String registrationNumber;
-  final String? imageUrl;
+  final String? registrationNumber;
+  final String imageUrl;
   final List<BasicInspection> basicInspections;
   final List<PreServiceInspection> preServiceInspections;
 
@@ -145,8 +150,8 @@ class Fleet {
     required this.fleetId,
     required this.brand,
     required this.model,
-    required this.registrationNumber,
-    this.imageUrl,
+    this.registrationNumber,
+    required this.imageUrl,
     required this.basicInspections,
     required this.preServiceInspections,
   });
@@ -166,11 +171,6 @@ class Payment {
     this.paymentMethod,
     this.bankReference,
   });
-}
-
-enum PercentageOrValueType {
-  percentage,
-  value,
 }
 
 class Discount {

@@ -1,22 +1,17 @@
+import 'package:santai/app/data/models/profile/profile_user_req_model.dart';
 import 'package:santai/app/domain/entities/profile/profile_user_res.dart';
 import 'package:santai/app/domain/entities/profile/profile_user.dart';
+import 'package:santai/app/domain/enumerations/loyalty_tier.dart';
 
 class ProfileUserResponseModel extends ProfileUserResponse {
   ProfileUserResponseModel({
-    required bool isSuccess,
-    required ProfileUserDataModel data,
-    required String message,
-    required String responseStatus,
-    required List<dynamic> errors,
-    required List<dynamic> links,
-  }) : super(
-          isSuccess: isSuccess,
-          data: data,
-          message: message,
-          responseStatus: responseStatus,
-          errors: errors,
-          links: links,
-        );
+    required super.isSuccess,
+    required ProfileUserDataModel super.data,
+    required super.message,
+    required super.responseStatus,
+    required super.errors,
+    required super.links,
+  });
 
   factory ProfileUserResponseModel.fromJson(Map<String, dynamic> json) {
     return ProfileUserResponseModel(
@@ -28,30 +23,63 @@ class ProfileUserResponseModel extends ProfileUserResponse {
       links: json['links'],
     );
   }
+
+  factory ProfileUserResponseModel.empty(ProfileUserReqModel user) {
+    return ProfileUserResponseModel(
+      isSuccess: true,
+      data: ProfileUserDataModel(
+        id: '',
+        email: '',
+        phoneNumber: '',
+        timeZoneId: '',
+        address: ProfileAddressModel(
+          addressLine1: '',
+          addressLine2: '',
+          addressLine3: '',
+          city: '',
+          state: '',
+          postalCode: '',
+          country: '',
+        ),
+        loyaltyProgram: LoyaltyProgramModel(
+          userId: '',
+          points: 0,
+          tier: LoyaltyTier.basic,
+        ),
+        referral: ReferralModel(
+          referralCode: '',
+          rewardPoint: 0,
+        ),
+        personalInfo: ProfilePersonalInfoModel(
+          firstName: '',
+          middleName: '',
+          lastName: '',
+          dateOfBirth: '',
+          gender: '',
+          profilePicture: '',
+        ),
+        fleets: [],
+      ),
+      message: 'Profile updated successfully',
+      responseStatus: 'Success',
+      errors: [],
+      links: [],
+    );
+  }
 }
 
 class ProfileUserDataModel extends ProfileUserData {
   ProfileUserDataModel({
-    required String id,
-    String? email,
-    required String phoneNumber,
-    required String timeZoneId,
-    required ProfileAddressModel address,
-    required LoyaltyProgramModel loyaltyProgram,
-    required ReferralModel referral,
-    required ProfilePersonalInfoModel personalInfo,
-    required List<dynamic> fleets,
-  }) : super(
-          id: id,
-          email: email,
-          phoneNumber: phoneNumber,
-          timeZoneId: timeZoneId,
-          address: address,
-          loyaltyProgram: loyaltyProgram,
-          referral: referral,
-          personalInfo: personalInfo,
-          fleets: fleets,
-        );
+    required super.id,
+    super.email,
+    required super.phoneNumber,
+    required super.timeZoneId,
+    required ProfileAddressModel super.address,
+    required LoyaltyProgramModel super.loyaltyProgram,
+    required ReferralModel super.referral,
+    required ProfilePersonalInfoModel super.personalInfo,
+    required super.fleets,
+  });
 
   factory ProfileUserDataModel.fromJson(Map<String, dynamic> json) {
     return ProfileUserDataModel(
@@ -70,22 +98,14 @@ class ProfileUserDataModel extends ProfileUserData {
 
 class ProfileAddressModel extends ProfileAddress {
   ProfileAddressModel({
-    required String addressLine1,
-    String? addressLine2,
-    String? addressLine3,
-    required String city,
-    required String state,
-    required String postalCode,
-    required String country,
-  }) : super(
-          addressLine1: addressLine1,
-          addressLine2: addressLine2,
-          addressLine3: addressLine3,
-          city: city,
-          state: state,
-          postalCode: postalCode,
-          country: country,
-        );
+    required super.addressLine1,
+    super.addressLine2,
+    super.addressLine3,
+    required super.city,
+    required super.state,
+    required super.postalCode,
+    required super.country,
+  });
 
   factory ProfileAddressModel.fromJson(Map<String, dynamic> json) {
     return ProfileAddressModel(
@@ -102,32 +122,26 @@ class ProfileAddressModel extends ProfileAddress {
 
 class LoyaltyProgramModel extends LoyaltyProgram {
   LoyaltyProgramModel({
-    required String userId,
-    required int points,
-    required String tier,
-  }) : super(
-          userId: userId,
-          points: points,
-          tier: tier,
-        );
+    required super.userId,
+    required super.points,
+    required super.tier,
+  });
 
   factory LoyaltyProgramModel.fromJson(Map<String, dynamic> json) {
     return LoyaltyProgramModel(
       userId: json['userId'],
       points: json['points'],
-      tier: json['tier'],
+      tier: LoyaltyTier.values
+          .firstWhere((e) => e.toString().split('.').last == json['tier']),
     );
   }
 }
 
 class ReferralModel extends Referral {
   ReferralModel({
-    required String referralCode,
-    required int rewardPoint,
-  }) : super(
-          referralCode: referralCode,
-          rewardPoint: rewardPoint,
-        );
+    required super.referralCode,
+    required super.rewardPoint,
+  });
 
   factory ReferralModel.fromJson(Map<String, dynamic> json) {
     return ReferralModel(
@@ -139,20 +153,13 @@ class ReferralModel extends Referral {
 
 class ProfilePersonalInfoModel extends ProfilePersonalInfo {
   ProfilePersonalInfoModel({
-    required String firstName,
-    String? middleName,
-    String? lastName,
-    required String dateOfBirth,
-    required String gender,
-    String? profilePictureUrl,
-  }) : super(
-          firstName: firstName,
-          middleName: middleName,
-          lastName: lastName,
-          dateOfBirth: dateOfBirth,
-          gender: gender,
-          profilePictureUrl: profilePictureUrl,
-        );
+    required super.firstName,
+    super.middleName,
+    super.lastName,
+    required super.dateOfBirth,
+    required super.gender,
+    super.profilePicture,
+  });
 
   factory ProfilePersonalInfoModel.fromJson(Map<String, dynamic> json) {
     return ProfilePersonalInfoModel(
@@ -161,7 +168,7 @@ class ProfilePersonalInfoModel extends ProfilePersonalInfo {
       lastName: json['lastName'],
       dateOfBirth: json['dateOfBirth'],
       gender: json['gender'],
-      profilePictureUrl: json['profilePictureUrl'],
+      profilePicture: json['profilePicture'],
     );
   }
 }

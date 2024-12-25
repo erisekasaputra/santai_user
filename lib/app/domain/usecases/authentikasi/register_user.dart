@@ -8,7 +8,7 @@ class RegisterUser {
 
   RegisterUser(this.repository);
 
-  Future<UserRegisterResponse> call(UserRegister user) async {
+  Future<UserRegisterResponse?> call(UserRegister user) async {
     return await repository.registerUser(user);
   }
 }

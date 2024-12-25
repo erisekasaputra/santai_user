@@ -3,20 +3,13 @@ import 'package:santai/app/domain/entities/fleet/fleet_list_fleet_user_res.dart'
 
 class FleetListFleetUserResponseModel extends FleetListFleetUserResponse {
   FleetListFleetUserResponseModel({
-    required bool isSuccess,
-    required FleetUserPaginatedListModel data,
-    required String message,
-    required String responseStatus,
-    required List<dynamic> errors,
-    required List<dynamic> links,
-  }) : super(
-          isSuccess: isSuccess,
-          data: data,
-          message: message,
-          responseStatus: responseStatus,
-          errors: errors,
-          links: links,
-        );
+    required super.isSuccess,
+    required FleetUserPaginatedListModel super.data,
+    required super.message,
+    required super.responseStatus,
+    required super.errors,
+    required super.links,
+  });
 
   factory FleetListFleetUserResponseModel.fromJson(Map<String, dynamic> json) {
     return FleetListFleetUserResponseModel(
@@ -32,24 +25,17 @@ class FleetListFleetUserResponseModel extends FleetListFleetUserResponse {
 
 class FleetUserPaginatedListModel extends FleetUserPaginatedList {
   FleetUserPaginatedListModel({
-    required int pageNumber,
-    required int pageSize,
-    required int pageCount,
-    required int totalPages,
-    required List<FleetUserDataModel> items,
-  }) : super(
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-          pageCount: pageCount,
-          totalPages: totalPages,
-          items: items,
-        );
+    required super.pageNumber,
+    required super.pageSize,
+    required super.pageCount,
+    required super.totalPages,
+    required List<FleetUserDataModel> super.items,
+  });
 
   factory FleetUserPaginatedListModel.fromJson(Map<String, dynamic> json) {
     var itemsList = json['items'] as List;
-    List<FleetUserDataModel> items = itemsList
-        .map((item) => FleetUserDataModel.fromJson(item))
-        .toList();
+    List<FleetUserDataModel> items =
+        itemsList.map((item) => FleetUserDataModel.fromJson(item)).toList();
 
     return FleetUserPaginatedListModel(
       pageNumber: json['pageNumber'],
@@ -60,4 +46,3 @@ class FleetUserPaginatedListModel extends FleetUserPaginatedList {
     );
   }
 }
-

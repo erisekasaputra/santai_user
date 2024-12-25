@@ -8,6 +8,10 @@ class BrandGetAll {
   BrandGetAll(this.repository);
 
   Future<CatalogBrandResponse> call() async {
-    return await repository.getAllCatalogBrand();
+    try {
+      return await repository.getAllCatalogBrand();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

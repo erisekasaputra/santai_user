@@ -24,6 +24,11 @@ abstract class Routes {
   static const CHAT_MENU = _Paths.CHAT_MENU;
   static const CHAT = _Paths.CHAT;
   static const MAP_PICKER = _Paths.MAP_PICKER;
+  static const PAYMENT_STATUS = _Paths.PAYMENT_STATUS;
+  static const QR_ORDER = _Paths.QR_ORDER;
+  static const FORGOT_PASSWORD = _Paths.FORGOT_PASSWORD;
+  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
+  static const SUPPORT_SCREEN = _Paths.SUPPORT_SCREEN;
 }
 
 abstract class _Paths {
@@ -49,4 +54,9 @@ abstract class _Paths {
   static const CHAT_MENU = '/chat-menu';
   static const CHAT = '/chat';
   static const MAP_PICKER = '/map-picker';
+  static const PAYMENT_STATUS = '/payment-status';
+  static const QR_ORDER = '/qr-order';
+  static const FORGOT_PASSWORD = '/forgot-password';
+  static const CHANGE_PASSWORD = '/change-password';
+  static const SUPPORT_SCREEN = '/support-screen';
 }

@@ -9,6 +9,10 @@ class UserInsertProfile {
   UserInsertProfile(this.repository);
 
   Future<ProfileUserResponse> call(ProfileUser user) async {
-    return await repository.insertProfileUser(user);
+    try {
+      return await repository.insertProfileUser(user);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

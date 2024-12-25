@@ -31,7 +31,7 @@ class MapPickerView extends GetView<MapPickerController> {
                       trafficEnabled: false,
                       indoorViewEnabled: true,
                       liteModeEnabled: false,
-                      padding: EdgeInsets.only(bottom: 70),
+                      padding: const EdgeInsets.only(bottom: 70),
                     )),
                 Positioned(
                   top: 40,
@@ -46,13 +46,11 @@ class MapPickerView extends GetView<MapPickerController> {
                   left: 0,
                   right: 0,
                   top: 0,
-                  bottom:
-                      110, 
+                  bottom: 110,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Icon(Icons.location_on, color: Colors.red, size: 50),
-                   
                     ],
                   ),
                 ),
@@ -79,7 +77,7 @@ class MapPickerView extends GetView<MapPickerController> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
@@ -87,11 +85,15 @@ class MapPickerView extends GetView<MapPickerController> {
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
                 blurRadius: 10,
-                offset: Offset(0, 5),
+                offset: const Offset(0, 5),
               ),
             ],
           ),
           child: TextField(
+            style: const TextStyle(
+              fontSize: 14,
+              fontFamily: 'Saira',
+            ),
             onChanged: (value) {
               controller.searchPlaces(value);
             },
@@ -99,13 +101,17 @@ class MapPickerView extends GetView<MapPickerController> {
               hintText: 'Search location',
               border: InputBorder.none,
               icon: Icon(Icons.search),
+              hintStyle: TextStyle(
+                fontSize: 14,
+                fontFamily: 'Saira',
+              ),
             ),
           ),
         ),
         Obx(() => controller.searchResults.isNotEmpty
             ? Container(
-                margin: EdgeInsets.only(top: 8),
-                padding: EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -113,7 +119,7 @@ class MapPickerView extends GetView<MapPickerController> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 10,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
@@ -129,7 +135,7 @@ class MapPickerView extends GetView<MapPickerController> {
                   },
                 ),
               )
-            : SizedBox.shrink()),
+            : const SizedBox.shrink()),
       ],
     );
   }
@@ -139,35 +145,35 @@ class MapPickerView extends GetView<MapPickerController> {
       backgroundColor: Colors.white,
       child: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Get.back(),
+        onPressed: () => Get.back(closeOverlays: true),
       ),
     );
   }
 
- Widget _buildCurrentLocationButton() {
-  return Obx(() => CircleAvatar(
-    backgroundColor: Colors.white,
-    child: controller.isLoadingCurrentLocation.value
-      ? SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-          ),
-        )
-      : IconButton(
-          icon: Icon(Icons.my_location, color: Colors.black),
-          onPressed: controller.getCurrentLocation,
-        ),
-  ));
-}
+  Widget _buildCurrentLocationButton() {
+    return Obx(() => CircleAvatar(
+          backgroundColor: Colors.white,
+          child: controller.isLoadingCurrentLocation.value
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                  ),
+                )
+              : IconButton(
+                  icon: const Icon(Icons.my_location, color: Colors.black),
+                  onPressed: controller.getCurrentLocation,
+                ),
+        ));
+  }
 
   Widget _buildAddressCard() {
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
         color: Colors.white,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -177,30 +183,30 @@ class MapPickerView extends GetView<MapPickerController> {
               children: [
                 Text(
                   'Select Location',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: [
-                 const Icon(
+                const Icon(
                   Icons.location_on,
                   color: Colors.red,
                   size: 40,
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Obx(() => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             controller.selectedAddressName.value,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                           Text(
                             controller.selectedAddress.value,
-                            style: TextStyle(color: Colors.grey),
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ],
                       )),
@@ -209,7 +215,7 @@ class MapPickerView extends GetView<MapPickerController> {
             ),
             const SizedBox(height: 16),
             Obx(() => CustomElevatedButton(
-                  text: 'Konfirmasi alamat',
+                  text: 'Select',
                   onPressed: controller.isLoading.value
                       ? null
                       : controller.confirmLocation,

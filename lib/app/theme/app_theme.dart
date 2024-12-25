@@ -1,20 +1,43 @@
 import 'package:flutter/material.dart';
 
 extension CustomColorScheme on ColorScheme {
-  Color get primary_0 => brightness == Brightness.light ? const Color(0xFF8AC7F1) : const Color(0xFF1A5D8A);
-  Color get primary_25 => brightness == Brightness.light ? const Color(0xFF7AB9E2) : const Color(0xFF1E6B9E);
-  Color get primary_50 => brightness == Brightness.light ? const Color(0xFF6BAAD4) : const Color(0xFF2279B2);
-  Color get primary_100 => brightness == Brightness.light ? const Color(0xFF3D7EA9) : const Color(0xFF2A94D6);
-  Color get primary_200 => brightness == Brightness.light ? const Color(0xFF1F608D) : const Color(0xFF32AFFA);
-  Color get primary_300 => brightness == Brightness.light ? const Color(0xFF004370) : const Color(0xFF66C4FF);
+  Color get primary_0 => brightness == Brightness.light
+      ? const Color(0xFF8AC7F1)
+      : const Color(0xFF1A5D8A);
+  Color get primary_25 => brightness == Brightness.light
+      ? const Color(0xFF7AB9E2)
+      : const Color(0xFF1E6B9E);
+  Color get primary_50 => brightness == Brightness.light
+      ? const Color(0xFF6BAAD4)
+      : const Color(0xFF2279B2);
+  Color get primary_100 => brightness == Brightness.light
+      ? const Color(0xFF3D7EA9)
+      : const Color(0xFF2A94D6);
+  Color get primary_200 => brightness == Brightness.light
+      ? const Color(0xFF1F608D)
+      : const Color(0xFF32AFFA);
+  Color get primary_300 => brightness == Brightness.light
+      ? const Color(0xFF004370)
+      : const Color(0xFF66C4FF);
 
-  Color get secondary_0 => brightness == Brightness.light ? const Color(0xFFEBF8FD) : const Color(0xFF004D40);
-  Color get secondary_25 => brightness == Brightness.light ? const Color(0xFFD8F1FB) : const Color(0xFF00796B);
-  Color get secondary_50 => brightness == Brightness.light ? const Color(0xFFB1E3F8) : const Color(0xFF009688);
-  Color get secondary_100 => brightness == Brightness.light ? const Color(0xFF8AD6F4) : const Color(0xFF00BFAE);
-  Color get secondary_200 => brightness == Brightness.light ? const Color(0xFF63C8F1) : const Color(0xFF00B8A9);
-  Color get secondary_300 => brightness == Brightness.light ? const Color(0xFF3CBAED) : const Color(0xFF00ACC1);
-
+  Color get secondary_0 => brightness == Brightness.light
+      ? const Color(0xFFEBF8FD)
+      : const Color(0xFF004D40);
+  Color get secondary_25 => brightness == Brightness.light
+      ? const Color(0xFFD8F1FB)
+      : const Color(0xFF00796B);
+  Color get secondary_50 => brightness == Brightness.light
+      ? const Color(0xFFB1E3F8)
+      : const Color(0xFF009688);
+  Color get secondary_100 => brightness == Brightness.light
+      ? const Color(0xFF8AD6F4)
+      : const Color(0xFF00BFAE);
+  Color get secondary_200 => brightness == Brightness.light
+      ? const Color(0xFF63C8F1)
+      : const Color(0xFF00B8A9);
+  Color get secondary_300 => brightness == Brightness.light
+      ? const Color(0xFF3CBAED)
+      : const Color(0xFF00ACC1);
 
   Color get warning_0 => const Color(0xFFFFF7E7);
   Color get warning_25 => const Color(0xFFFFEFD0);
@@ -30,8 +53,10 @@ extension CustomColorScheme on ColorScheme {
   Color get alert_200 => const Color(0xFFFF6164);
   Color get alert_300 => const Color(0xFFFF3A3D);
 
-  Color get button_text_01 => brightness == Brightness.light ? Colors.white : Colors.black;
-  Color get text_01 => brightness == Brightness.light ? Colors.white : Colors.black;
+  Color get button_text_01 =>
+      brightness == Brightness.light ? Colors.white : Colors.black;
+  Color get text_01 =>
+      brightness == Brightness.light ? Colors.white : Colors.black;
 
   Color get borderInput_01 => const Color(0xFFDFE1E7);
 }
@@ -60,7 +85,7 @@ class AppTheme {
       iconTheme: IconThemeData(color: Colors.white),
     ),
     textTheme: const TextTheme(
-      titleLarge: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      titleLarge: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
       bodyMedium: TextStyle(color: Colors.black),
     ),
     buttonTheme: ButtonThemeData(
@@ -85,7 +110,7 @@ class AppTheme {
       iconTheme: IconThemeData(color: Colors.white),
     ),
     textTheme: const TextTheme(
-      titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
       bodyMedium: TextStyle(color: Colors.white),
     ),
     buttonTheme: ButtonThemeData(

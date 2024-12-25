@@ -3,20 +3,13 @@ import 'package:santai/app/domain/entities/fleet/fleet_user_res.dart';
 
 class FleetUserResponseModel extends FleetUserResponse {
   FleetUserResponseModel({
-    required bool isSuccess,
-    required FleetUserDataModel data,
-    required String message,
-    required String responseStatus,
-    required List<dynamic> errors,
-    required List<dynamic> links,
-  }) : super(
-          isSuccess: isSuccess,
-          data: data,
-          message: message,
-          responseStatus: responseStatus,
-          errors: errors,
-          links: links,
-        );
+    required super.isSuccess,
+    required FleetUserDataModel super.data,
+    required super.message,
+    required super.responseStatus,
+    required super.errors,
+    required super.links,
+  });
 
   factory FleetUserResponseModel.fromJson(Map<String, dynamic> json) {
     return FleetUserResponseModel(
@@ -33,24 +26,24 @@ class FleetUserResponseModel extends FleetUserResponse {
 class FleetUserDataModel extends FleetUser {
   FleetUserDataModel({
     required String id,
-    required String registrationNumber,
-    required String vehicleType,
+    String? registrationNumber,
+    String? vehicleType,
     required String brand,
     required String model,
-    required int yearOfManufacture,
-    required String chassisNumber,
-    required String engineNumber,
-    required String insuranceNumber,
-    required bool isInsuranceValid,
-    required DateTime lastInspectionDateLocal,
-    required int odometerReading,
-    required String fuelType,
-    required String ownerName,
-    required String ownerAddress,
-    required String usageStatus,
-    required String ownershipStatus,
-    required String transmissionType,
-    String? imageUrl,
+    int? yearOfManufacture,
+    String? chassisNumber,
+    String? engineNumber,
+    String? insuranceNumber,
+    bool? isInsuranceValid,
+    DateTime? lastInspectionDateLocal,
+    int? odometerReading,
+    String? fuelType,
+    String? ownerName,
+    String? ownerAddress,
+    String? usageStatus,
+    String? ownershipStatus,
+    String? transmissionType,
+    required String imageUrl,
   }) : super(
           id: id,
           registrationNumber: registrationNumber,
@@ -85,7 +78,9 @@ class FleetUserDataModel extends FleetUser {
       engineNumber: json['engineNumber'],
       insuranceNumber: json['insuranceNumber'],
       isInsuranceValid: json['isInsuranceValid'],
-      lastInspectionDateLocal: DateTime.parse(json['lastInspectionDateLocal']),
+      lastInspectionDateLocal: json['lastInspectionDateLocal'] == null
+          ? null
+          : DateTime.parse(json['lastInspectionDateLocal']),
       odometerReading: json['odometerReading'],
       fuelType: json['fuelType'],
       ownerName: json['ownerName'],

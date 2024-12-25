@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/domain/usecases/order/rate_order.dart';
+import 'package:santai/app/exceptions/custom_http_exception.dart';
+import 'package:santai/app/routes/app_pages.dart';
+import 'package:santai/app/utils/http_error_handler.dart';
+import 'package:santai/app/utils/logout_helper.dart';
 
 class RateServiceController extends GetxController {
-  final orderId = '00024';
-  final technicianName = 'Brian Weaknes';
+  final Logout logout = Logout();
+  final orderId = ''.obs;
+  final technicianName = 'N/A'.obs;
   final duration = 0.obs;
   final rating = 0.obs;
   final commentController = TextEditingController();
   final tipOptions = ['RM 2.00', 'RM 5.00', 'RM 10.00'];
   final selectedTip = RxString('');
   final String dummyDuration = '00:45';
+  final RateOrder rateOrder;
 
+  RateServiceController({required this.rateOrder});
+
+  @override
+  void onInit() async {
+    super.onInit();
+    orderId.value = Get.arguments?['orderId'] ?? '';
+    technicianName.value = Get.arguments?['mechanicName'] ?? '';
+  }
 
   void setRating(int value) {
     rating.value = value;
@@ -32,19 +48,58 @@ class RateServiceController extends GetxController {
           ),
           onSubmitted: (value) {
             selectedTip.value = 'RM $value';
-            Get.back();
+            Get.back(closeOverlays: true);
           },
         ),
       ),
     );
   }
 
-  void submitRating() {
-    // Implement rating submission logic
-    print('Rating: ${rating.value}');
-    print('Comment: ${commentController.text}');
-    print('Tip: ${selectedTip.value}');
-    Get.back(); // Return to previous screen
+  Future<void> submitRating() async {
+    try {
+      if (orderId.value.isEmpty || rating.value <= 0) {
+        return;
+      }
+      var result =
+          await rateOrder(orderId.value, rating.value, commentController.text);
+
+      if (result) {
+        Get.offAllNamed(Routes.DASHBOARD);
+        CustomToast.show(
+          message: 'Thanks for your rating',
+          type: ToastType.success,
+        );
+        return;
+      }
+
+      CustomToast.show(
+        message: 'Uh-oh, There is an issue',
+        type: ToastType.error,
+      );
+    } catch (error) {
+      if (error is CustomHttpException) {
+        if (error.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+        if (error.errorResponse != null) {
+          var messageError = parseErrorMessage(error.errorResponse!);
+          CustomToast.show(
+            message: '${error.message}$messageError',
+            type: ToastType.error,
+          );
+          return;
+        }
+
+        CustomToast.show(message: error.message, type: ToastType.error);
+        return;
+      } else {
+        CustomToast.show(
+          message: '$error',
+          type: ToastType.error,
+        );
+      }
+    }
   }
 
   @override

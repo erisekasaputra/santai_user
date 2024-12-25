@@ -1,20 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:santai/app/services/secure_storage_service.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/config/api_config.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:santai/app/utils/session_manager.dart';
 
 class ImageUploadService extends GetxService {
-  final String apiUrlPublic = '${ApiConfigUploadImage.baseUrl}/Files/images/public';
-  final SecureStorageService _secureStorage = Get.find<SecureStorageService>();
+  final SessionManager sessionManager = SessionManager();
+  final String apiUrlPublic =
+      '${ApiConfigUploadImage.baseUrl}/Files/images/public';
 
   Future<String> uploadImage(File imageFile) async {
     try {
-      final accessToken = await _secureStorage.readSecureData('access_token');
+      final accessToken =
+          await sessionManager.getSessionBy(SessionManagerType.accessToken);
 
-      if (accessToken == null) {
+      if (accessToken.isEmpty) {
         throw Exception('Access token not found');
       }
 
@@ -22,10 +24,8 @@ class ImageUploadService extends GetxService {
 
       request.headers['Authorization'] = 'Bearer $accessToken';
 
-      // Get the file extension
       String fileExtension = imageFile.path.split('.').last.toLowerCase();
 
-      // Set the correct MIME type based on the file extension
       String mimeType;
       switch (fileExtension) {
         case 'jpg':
@@ -53,7 +53,7 @@ class ImageUploadService extends GetxService {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         var jsonResponse = json.decode(response.body);
-        return jsonResponse['resourceName'];
+        return jsonResponse['data']['resourceName'];
       } else {
         throw Exception('Failed to upload image: ${response.reasonPhrase}');
       }

@@ -8,8 +8,7 @@ class SendOtp {
 
   SendOtp(this.repository);
 
-  Future<OtpRequestResponse> call(OtpRequest request) async {
+  Future<OtpRequestResponse?> call(OtpRequest request) async {
     return await repository.sendOtp(request);
   }
-
 }

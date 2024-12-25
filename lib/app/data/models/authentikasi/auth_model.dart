@@ -1,18 +1,12 @@
 import 'package:santai/app/domain/entities/authentikasi/user.dart';
 
-
 class UserModel extends User {
   UserModel({
-    required String phoneNumber,
-    required String password,
-    required String regionCode,
-    String? returnUrl,
-  }) : super(
-          phoneNumber: phoneNumber,
-          password: password,
-          regionCode: regionCode,
-          returnUrl: returnUrl,
-        );
+    required super.phoneNumber,
+    required super.password,
+    required super.regionCode,
+    super.returnUrl,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(

@@ -1,43 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_toast.dart';
+import 'package:santai/app/data/models/common/base_error.dart';
 
 import 'package:santai/app/domain/entities/authentikasi/auth_signin_staff.dart';
-import 'package:santai/app/domain/usecases/authentikasi/sign-in_staff.dart';
+import 'package:santai/app/domain/usecases/authentikasi/sign_in_staff.dart';
 
 import 'package:santai/app/domain/entities/authentikasi/auth_signin_user.dart';
-import 'package:santai/app/domain/usecases/authentikasi/sign-in_user.dart';
+import 'package:santai/app/domain/usecases/authentikasi/sign_in_user.dart';
 
-import 'package:santai/app/domain/usecases/authentikasi/sign-in_google.dart'
-    as GoogleSignInUsecase;
+import 'package:santai/app/domain/usecases/authentikasi/sign_in_google.dart'
+    as google_sign_in_usecase;
 import 'package:santai/app/domain/entities/authentikasi/auth_signin_google.dart';
+import 'package:santai/app/domain/usecases/common/common_get_img_url_public.dart';
 import 'package:santai/app/exceptions/custom_http_exception.dart';
+import 'package:santai/app/modules/register_otp/controllers/register_otp_controller.dart';
 
 import 'package:santai/app/routes/app_pages.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:santai/app/utils/logout_helper.dart';
+import 'package:santai/app/utils/session_manager.dart';
 
 class LoginController extends GetxController {
+  final registerOtpController = Get.isRegistered<RegisterOtpController>()
+      ? Get.find<RegisterOtpController>()
+      : null;
+
+  final SessionManager sessionManager = SessionManager();
+  final Logout logout = Logout();
   final isLoading = false.obs;
 
-  final passwordController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   final isPasswordHidden = true.obs;
 
-  final phoneController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   final countryISOCode = ''.obs;
   final countryCode = ''.obs;
   final phoneNumber = ''.obs;
 
-  final businessCodeController = TextEditingController();
+  TextEditingController businessCodeController = TextEditingController();
   final isStaffLogin = false.obs;
 
   final UserSignIn signinUser;
   final StaffSignIn signinStaff;
-  final GoogleSignInUsecase.GoogleSignIn signinGoogle;
+  final google_sign_in_usecase.GoogleSignIn signinGoogle;
+  final CommonGetImgUrlPublic commonGetImgUrlPublic;
 
-  LoginController(
-      {required this.signinUser,
-      required this.signinStaff,
-      required this.signinGoogle});
+  final error = Rx<ErrorResponse?>(null);
+
+  LoginController({
+    required this.signinUser,
+    required this.signinStaff,
+    required this.signinGoogle,
+    required this.commonGetImgUrlPublic,
+  });
+
+  @override
+  void onInit() async {
+    super.onInit();
+    final response = await commonGetImgUrlPublic();
+    await sessionManager.setSessionBy(
+        SessionManagerType.commonFileUrl, response.data.url);
+  }
 
   void updatePhoneInfo(String isoCode, String code, String number) {
     countryISOCode.value = isoCode;
@@ -45,8 +69,12 @@ class LoginController extends GetxController {
     phoneNumber.value = number;
   }
 
-  void toggleStaffLogin() {
-    isStaffLogin.toggle();
+  void toggleStaffLogin({bool? value}) {
+    if (value == null) {
+      isStaffLogin.toggle();
+      return;
+    }
+    isStaffLogin.value = value;
   }
 
   void login() async {
@@ -62,26 +90,47 @@ class LoginController extends GetxController {
       );
 
       final response = await signinUser(dataUserSignIn);
+      if (response == null) {
+        CustomToast.show(
+            message:
+                'We can not find your account in our database. Please make sure your credentials are correct',
+            type: ToastType.error);
+        return;
+      }
 
-      CustomToast.show(
-        message: "Successfully login!",
-        type: ToastType.success,
-      );
+      if (registerOtpController != null) {
+        registerOtpController!.otpSource.value = 'login';
+        registerOtpController!.otpRequestToken.value =
+            response.next.otpRequestToken;
+        registerOtpController!.otpRequestId.value = response.next.otpRequestId;
+      }
 
-      Get.offAllNamed(Routes.REGISTER_OTP, arguments: {
+      Get.toNamed(Routes.REGISTER_OTP, arguments: {
         'source': 'login',
         'otpRequestToken': response.next.otpRequestToken,
         'otpRequestId': response.next.otpRequestId,
       });
-    } catch (error) {
-      if (error is CustomHttpException) {
+    } catch (e) {
+      if (e is CustomHttpException) {
+        error.value = e.errorResponse;
+        if (e.errorResponse != null) {
+          CustomToast.show(
+            message: e.message,
+            type: ToastType.error,
+          );
+          return;
+        }
+        if (e.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
         CustomToast.show(
-          message: error.message,
+          message: e.message,
           type: ToastType.error,
         );
       } else {
         CustomToast.show(
-          message: "An unexpected error occurred",
+          message: "Upps, Unexpected error has occured",
           type: ToastType.error,
         );
       }
@@ -104,93 +153,123 @@ class LoginController extends GetxController {
       );
 
       final response = await signinStaff(dataSignInStaff);
-      
-      CustomToast.show(
-        message: "Successfully login!",
-        type: ToastType.success,
-      );
 
-      Get.offAllNamed(Routes.REGISTER_OTP, arguments: {
+      if (response == null) {
+        CustomToast.show(
+            message:
+                'We can not find your account in our database. Please make sure your credentials are correct',
+            type: ToastType.error);
+        return;
+      }
+
+      Get.toNamed(Routes.REGISTER_OTP, arguments: {
         'source': 'login',
         'otpRequestToken': response.next.otpRequestToken,
         'otpRequestId': response.next.otpRequestId,
       });
-    } catch (error) {
-      CustomToast.show(
-        message: "Login failed: ${error.toString()}",
-        type: ToastType.error,
-      );
+    } catch (e) {
+      if (e is CustomHttpException) {
+        error.value = e.errorResponse;
+
+        if (e.errorResponse != null) {
+          CustomToast.show(
+            message: e.message,
+            type: ToastType.error,
+          );
+          return;
+        }
+        if (e.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+        CustomToast.show(
+          message: e.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "Upps, Unexpected error has occured",
+          type: ToastType.error,
+        );
+      }
     } finally {
       isLoading.value = false;
     }
   }
 
   Future<void> signInWithGoogle() async {
-  try {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    final GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: ['email', 'profile'],
-      serverClientId:
-          '1065462126306-sla57ni7q7n8mhs2v0miqa6u5ms8lrsi.apps.googleusercontent.com',
-    );
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email'],
+        serverClientId:
+            '1065462126306-sla57ni7q7n8mhs2v0miqa6u5ms8lrsi.apps.googleusercontent.com',
+      );
 
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser == null) {
-      throw Exception('Google Sign-In was cancelled by the user');
+      if (googleUser == null) {
+        throw Exception('Google Sign-In was cancelled by the user');
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        throw Exception('Failed to obtain Google ID token');
+      }
+
+      // Gunakan token ID untuk proses login
+      final dataGoogleSignIn = SigninGoogle(googleIdToken: idToken);
+      final response = await signinGoogle(dataGoogleSignIn);
+
+      if (response == null) {
+        CustomToast.show(
+            message:
+                'We can not find your account in our database. Please make sure your credentials are correct',
+            type: ToastType.error);
+        return;
+      }
+
+      Get.toNamed(Routes.REGISTER_OTP, arguments: {
+        'source': 'login',
+        'otpRequestToken': response.next.otpRequestToken,
+        'otpRequestId': response.next.otpRequestId,
+        'googleIdToken':
+            idToken, // Tambahkan token ID ke argumen jika diperlukan
+      });
+    } catch (e) {
+      if (e is CustomHttpException) {
+        error.value = e.errorResponse;
+        if (e.errorResponse != null) {
+          CustomToast.show(
+            message: e.message,
+            type: ToastType.error,
+          );
+          return;
+        }
+        if (e.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+        CustomToast.show(
+          message: e.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "Upps, Unexpected error has occured",
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      isLoading.value = false;
     }
-
-    print("Google Sign-In successful. Email: ${googleUser.email}");
-
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final String? idToken = googleAuth.idToken;
-
-    if (idToken == null) {
-      throw Exception('Failed to obtain Google ID token');
-    }
-
-    // Cetak token ID untuk keperluan debugging (hapus ini di produksi)
-    print("Google ID Token: $idToken");
-
-    // Gunakan token ID untuk proses login
-    final dataGoogleSignIn = SigninGoogle(googleIdToken: idToken);
-    final response = await signinGoogle(dataGoogleSignIn);
-
-    CustomToast.show(
-      message: "Successfully logged in with Google!",
-      type: ToastType.success,
-    );
-
-    // Anda bisa menyimpan token ID jika diperlukan untuk penggunaan selanjutnya
-    // await saveGoogleIdToken(idToken);
-
-    Get.offAllNamed(Routes.REGISTER_OTP, arguments: {
-      'source': 'login',
-      'otpRequestToken': response.next.otpRequestToken,
-      'otpRequestId': response.next.otpRequestId,
-      'googleIdToken': idToken, // Tambahkan token ID ke argumen jika diperlukan
-    });
-  } catch (error) {
-    // ... (kode penanganan error tetap sama)
-  } finally {
-    isLoading.value = false;
   }
-}
-
-// Metode tambahan untuk menyimpan token jika diperlukan
-// Future<void> saveGoogleIdToken(String token) async {
-//   // Implementasi penyimpanan token, misalnya menggunakan shared preferences
-// }
 
   Future<bool> sendTokenToServer(String? token) async {
     return true; // Placeholder
-  }
-
-  @override
-  void onClose() {
-    phoneController.dispose();
-    passwordController.dispose();
-    super.onClose();
   }
 }

@@ -1,23 +1,23 @@
 class FleetUser {
   final String? id;
-  final String registrationNumber;
-  final String vehicleType;
+  final String? registrationNumber;
+  final String? vehicleType;
   final String brand;
   final String model;
-  final int yearOfManufacture;
-  final String chassisNumber;
-  final String engineNumber;
-  final String insuranceNumber;
-  final bool isInsuranceValid;
-  final DateTime lastInspectionDateLocal;
-  final int odometerReading;
-  final String fuelType;
-  final String ownerName;
-  final String ownerAddress;
-  final String usageStatus;
-  final String ownershipStatus;
-  final String transmissionType;
-  final String? imageUrl;
+  final int? yearOfManufacture;
+  final String? chassisNumber;
+  final String? engineNumber;
+  final String? insuranceNumber;
+  final bool? isInsuranceValid;
+  final DateTime? lastInspectionDateLocal;
+  final int? odometerReading;
+  final String? fuelType;
+  final String? ownerName;
+  final String? ownerAddress;
+  final String? usageStatus;
+  final String? ownershipStatus;
+  final String? transmissionType;
+  final String imageUrl;
 
   FleetUser({
     this.id,
@@ -38,6 +38,6 @@ class FleetUser {
     required this.usageStatus,
     required this.ownershipStatus,
     required this.transmissionType,
-    this.imageUrl,
+    required this.imageUrl,
   });
 }

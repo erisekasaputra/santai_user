@@ -8,6 +8,10 @@ class UserInsertFleet {
   UserInsertFleet(this.repository);
 
   Future<FleetUserResponse> call(FleetUser user) async {
-    return await repository.insertFleetUser(user);
+    try {
+      return await repository.insertFleetUser(user);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

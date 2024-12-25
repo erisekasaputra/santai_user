@@ -1,25 +1,16 @@
 import 'package:santai/app/data/models/authentikasi/auth_registered_user_model.dart';
 import 'package:santai/app/domain/entities/authentikasi/otp_request_res.dart';
 
-
 class OtpRequestResponseModel extends OtpRequestResponse {
   OtpRequestResponseModel({
-    required bool isSuccess,
-    required RegisteredUserModel data,
-    required NextActionOtpReqResModel next,
-    required String message,
-    required String responseStatus,
-    required List<dynamic> errors,
-    required List<dynamic> links,
-  }) : super(
-          isSuccess: isSuccess,
-          data: data,
-          next: next,
-          message: message,
-          responseStatus: responseStatus,
-          errors: errors,
-          links: links,
-        );
+    required super.isSuccess,
+    required RegisteredUserModel super.data,
+    required NextActionOtpReqResModel super.next,
+    required super.message,
+    required super.responseStatus,
+    required super.errors,
+    required super.links,
+  });
 
   factory OtpRequestResponseModel.fromJson(Map<String, dynamic> json) {
     return OtpRequestResponseModel(
@@ -34,17 +25,9 @@ class OtpRequestResponseModel extends OtpRequestResponse {
   }
 }
 
-
 class NextActionOtpReqResModel extends NextActionOtpReqRes {
-  NextActionOtpReqResModel({
-    required String link,
-    required String action,
-    required String method
-  }) : super(
-          link: link,
-          action: action,
-          method: method,
-        );
+  NextActionOtpReqResModel(
+      {required super.link, required super.action, required super.method});
 
   factory NextActionOtpReqResModel.fromJson(Map<String, dynamic> json) {
     return NextActionOtpReqResModel(

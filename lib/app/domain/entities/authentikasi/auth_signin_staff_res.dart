@@ -1,11 +1,11 @@
 import 'package:santai/app/domain/entities/authentikasi/auth_registered_user.dart';
 
 class SigninStaffResponse {
-  final RegisteredUser user;
+  final RegisteredUser? data;
   final NextActionSigninStaff next;
 
   SigninStaffResponse({
-    required this.user,
+    required this.data,
     required this.next,
   });
 }

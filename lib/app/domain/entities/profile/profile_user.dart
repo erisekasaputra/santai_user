@@ -36,16 +36,16 @@ class ProfilePersonalInfo {
   final String firstName;
   final String? middleName;
   final String? lastName;
-  final String dateOfBirth;
+  final String? dateOfBirth;
   final String gender;
-  final String? profilePictureUrl;
+  final String? profilePicture;
 
   ProfilePersonalInfo({
     required this.firstName,
     this.middleName,
     this.lastName,
-    required this.dateOfBirth,
+    this.dateOfBirth,
     required this.gender,
-    this.profilePictureUrl,
+    this.profilePicture,
   });
 }

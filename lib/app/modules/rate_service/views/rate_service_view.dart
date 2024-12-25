@@ -19,7 +19,7 @@ class RateServiceView extends GetView<RateServiceController> {
         leading: Padding(
           padding: const EdgeInsets.fromLTRB(14, 8, 0, 8),
           child: CustomBackButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Get.back(closeOverlays: true),
           ),
         ),
         leadingWidth: 100,
@@ -27,7 +27,7 @@ class RateServiceView extends GetView<RateServiceController> {
           'Rate Service',
           style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: 22,
           ),
         ),
@@ -42,12 +42,15 @@ class RateServiceView extends GetView<RateServiceController> {
               'Order ID',
               style: TextStyle(fontSize: 16, color: Colors.black),
             ),
-            Text(
-              '#${controller.orderId}',
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            Obx(
+              () => Text(
+                '#${controller.orderId.value.substring(0, 8).toUpperCase()}',
+                style:
+                    const TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
+              ),
             ),
             _buildTechnicianCard(context),
-            _buildProcessCard(context),
+            // _buildProcessCard(context),
             const SizedBox(height: 10),
             Card(
               shape: RoundedRectangleBorder(
@@ -62,7 +65,7 @@ class RateServiceView extends GetView<RateServiceController> {
                   children: [
                     _buildRatingSection(context),
                     const SizedBox(height: 24),
-                    _buildTipSection(),
+                    // _buildTipSection(),
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
@@ -104,9 +107,9 @@ class RateServiceView extends GetView<RateServiceController> {
               const Text('Technician', style: TextStyle(fontSize: 16)),
               Row(
                 children: [
-                  Text(controller.technicianName,
+                  Text(controller.technicianName.value,
                       style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
+                          fontSize: 20, fontWeight: FontWeight.w600)),
                   const SizedBox(width: 4),
                   const Icon(Icons.star, size: 20, color: Colors.yellow),
                 ],
@@ -136,10 +139,10 @@ class RateServiceView extends GetView<RateServiceController> {
               children: [
                 Text('Process',
                     style:
-                        TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 40, fontWeight: FontWeight.w600)),
                 Text('Services',
                     style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
               ],
             ),
             Expanded(
@@ -147,7 +150,7 @@ class RateServiceView extends GetView<RateServiceController> {
                 alignment: Alignment.centerRight,
                 child: Text(controller.dummyDuration,
                     style: const TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold)),
+                        fontSize: 30, fontWeight: FontWeight.w600)),
               ),
             ),
           ],
@@ -163,7 +166,7 @@ class RateServiceView extends GetView<RateServiceController> {
       children: [
         const Center(
             child: Text('Rate the technician',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600))),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -219,7 +222,7 @@ class RateServiceView extends GetView<RateServiceController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Add more tip for ${controller.technicianName}',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,

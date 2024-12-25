@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationService extends GetxService {
   final address = 'Fetching location...'.obs;
@@ -12,42 +15,115 @@ class LocationService extends GetxService {
     getCurrentLocation();
   }
 
-   Future<Map<String, double?>> getCurrentLocation() async {
+  Future<
+      (
+        double latitude,
+        double longitude,
+        bool isSuccess,
+        String? errorMessage
+      )> getCurrentLocation() async {
     isLoading.value = true;
     try {
-      Map<String, dynamic> dataResponse = await determinePosition();
-      if (!dataResponse["error"]) {
-        Position position = dataResponse["position"];
-        return {
-          'latitude': position.latitude,
-          'longitude': position.longitude,
-        };
-      } else {
-        Get.snackbar("Error", dataResponse["message"]);
-        return {'latitude': null, 'longitude': null};
+      var (bool isSuccess, String? errorMessage, Position? position) =
+          await determinePosition();
+      if (isSuccess && position != null) {
+        return (position.latitude, position.longitude, isSuccess, null);
       }
+      return (0.0, 0.0, false, errorMessage);
     } catch (e) {
-      print("Error in getCurrentLocation: $e");
-      Get.snackbar("Error", "Failed to get location. Please try again.");
-      return {'latitude': null, 'longitude': null};
+      return (0.0, 0.0, false, e.toString());
     } finally {
       isLoading.value = false;
     }
   }
 
-
-  Future<String> translateCoordinatesToAddress(double latitude, double longitude) async {
+  Future<(String? data, bool isSuccess)> translateCoordinatesToAddress(
+      double latitude, double longitude) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
-        return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}";
+        String street = '';
+        if (place.street != null) {
+          if (place.street!.toLowerCase().contains('route') ||
+              place.street!.toLowerCase().contains('street_address') ||
+              place.street!.toLowerCase().contains('street') ||
+              place.street!.toLowerCase().contains('jl')) {}
+          street = '${place.street}, ';
+        }
+
+        return (
+          "$street${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}",
+          true
+        );
       } else {
-        return "Address not found.";
+        return (null, false);
       }
     } catch (e) {
-      print("Failed to translate coordinates: $e");
-      return "Failed to get address.";
+      return (null, false);
+    }
+  }
+
+  Future<(bool isSuccess, String? errorMessage, Position? position)>
+      determinePosition() async {
+    try {
+      // Cek apakah layanan lokasi diaktifkan
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        await Geolocator.openLocationSettings();
+        serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          return (
+            false,
+            "Location services are still disabled. Please enable them in settings.",
+            null
+          );
+        }
+      }
+
+      // Cek izin lokasi
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        // Jika izin ditolak, minta kembali
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return (
+            false,
+            "Location permission denied. Please allow access to location.",
+            null
+          );
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return (
+          false,
+          "Location permission permanently denied. Please enable it in settings.",
+          null
+        );
+      }
+
+      // Mendapatkan posisi lokasi dengan akurasi tinggi
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit:
+            const Duration(seconds: 5), // Batasi waktu pengambilan posisi
+      );
+
+      return (true, null, position);
+    } on TimeoutException {
+      return (
+        false,
+        "The request to get location timed out. Please try again.",
+        null
+      );
+    } on PermissionDeniedException {
+      openAppSettings();
+      return (false, "Permission denied to access location services.", null);
+    } catch (e) {
+      return (false, "An unexpected error occurred: $e", null);
     }
   }
 
@@ -83,34 +159,4 @@ class LocationService extends GetxService {
   //     isLoading.value = false;
   //   }
   // }
-
-  Future<Map<String, dynamic>> determinePosition() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        return {"error": true, "message": "Layanan lokasi dinonaktifkan."};
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          return {"error": true, "message": "Izin lokasi ditolak."};
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        return {"error": true, "message": "Izin lokasi ditolak secara permanen."};
-      }
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: Duration(seconds: 15),
-      );
-
-      return {"error": false, "position": position};
-    } catch (e) {
-      print("Error in determinePosition: $e");
-      return {"error": true, "message": "Gagal mendapatkan posisi: $e"};
-    }
-  }
 }

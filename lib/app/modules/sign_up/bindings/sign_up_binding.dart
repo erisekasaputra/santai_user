@@ -9,21 +9,21 @@ import 'package:http/http.dart' as http;
 class SignUpBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<http.Client>(() => http.Client());
+    Get.create<http.Client>(() => http.Client());
 
-    Get.lazyPut<AuthRemoteDataSource>(
+    Get.create<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(client: Get.find<http.Client>()),
     );
 
-    Get.lazyPut<AuthRepository>(
-      () => AuthRepositoryImpl(remoteDataSource: Get.find<AuthRemoteDataSource>()),
+    Get.create<AuthRepository>(
+      () => AuthRepositoryImpl(
+          remoteDataSource: Get.find<AuthRemoteDataSource>()),
     );
 
+    Get.create(() => RegisterUser(Get.find<AuthRepository>()));
 
-    Get.lazyPut(() => RegisterUser(Get.find<AuthRepository>()));
-
-    Get.lazyPut<SignUpController>(
-      () => SignUpController(registerUser: Get.find<RegisterUser>()),
+    Get.put<SignUpController>(
+      SignUpController(registerUser: Get.find<RegisterUser>()),
     );
   }
 }

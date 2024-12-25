@@ -6,7 +6,7 @@ class ResetPassword {
 
   ResetPassword(this.repository);
 
-  Future<void> call(PasswordReset reset) async {
+  Future<bool> call(PasswordReset reset) async {
     return await repository.resetPassword(reset);
   }
 }

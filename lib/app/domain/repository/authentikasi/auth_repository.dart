@@ -1,3 +1,4 @@
+import 'package:santai/app/data/models/authentikasi/auth_forgot_password_res_model.dart';
 import 'package:santai/app/domain/entities/authentikasi/auth_otp_register_verify.dart';
 import 'package:santai/app/domain/entities/authentikasi/auth_otp_register_verify_res.dart';
 
@@ -22,18 +23,18 @@ import 'package:santai/app/domain/entities/authentikasi/otp_request_res.dart';
 import '../../entities/authentikasi/password_reset.dart';
 
 abstract class AuthRepository {
+  Future<UserRegisterResponse?> registerUser(UserRegister user);
 
-   Future<UserRegisterResponse> registerUser(UserRegister user);
-  
-  Future<SigninUserResponse> signinUser(SigninUser user);
-  Future<SigninStaffResponse> signinStaff(SigninStaff user);
-  Future<SigninGoogleResponse> signinGoogle(SigninGoogle user);
+  Future<SigninUserResponse?> signinUser(SigninUser user);
+  Future<SigninStaffResponse?> signinStaff(SigninStaff user);
+  Future<SigninGoogleResponse?> signinGoogle(SigninGoogle user);
 
-  Future<OtpRequestResponse> sendOtp(OtpRequest request);
-  Future<OtpRegisterVerifyResponse> otpRegisterVerify(OtpRegisterVerify request);
+  Future<OtpRequestResponse?> sendOtp(OtpRequest request);
+  Future<OtpRegisterVerifyResponse?> otpRegisterVerify(
+      OtpRegisterVerify request);
 
-  Future<VerifyLoginResponse> verifyLogin(VerifyLogin request);
+  Future<VerifyLoginResponse?> verifyLogin(VerifyLogin request);
   Future<void> signOut(SignOut request);
-
-  Future<void> resetPassword(PasswordReset reset);
+  Future<bool> resetPassword(PasswordReset reset);
+  Future<ForgotPasswordResponseModel?> forgotPassword(String phoneNumber);
 }

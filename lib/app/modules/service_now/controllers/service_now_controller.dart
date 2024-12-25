@@ -1,19 +1,21 @@
-// import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:santai/app/common/widgets/custom_toast.dart';
 import 'package:santai/app/domain/usecases/catalog/get_all_brand.dart';
 import 'package:santai/app/domain/usecases/catalog/get_all_category.dart';
 import 'package:santai/app/domain/usecases/catalog/get_all_item.dart';
-
 import 'package:santai/app/exceptions/custom_http_exception.dart';
 import 'package:santai/app/routes/app_pages.dart';
-import 'package:santai/app/services/secure_storage_service.dart';
+import 'package:santai/app/utils/logout_helper.dart';
+import 'package:santai/app/utils/session_manager.dart';
 
 class ServiceNowController extends GetxController {
-  final SecureStorageService _secureStorage = SecureStorageService();
+  final Logout logout = Logout();
+  int pageSize = 10;
+  final SessionManager sessionManager = SessionManager();
   final urlImgPublic = ''.obs;
 
   final fleetId = ''.obs;
+  final fleetModel = ''.obs;
 
   final isLoading = false.obs;
   final isLoadingCategories = true.obs;
@@ -33,59 +35,85 @@ class ServiceNowController extends GetxController {
   final BrandGetAll getAllBrand;
   final CategoryGetAll getAllCategory;
 
+  final pageNumber = 1.obs;
+  final totalPages = 1.obs;
+
   ServiceNowController({
     required this.getAllItem,
     required this.getAllBrand,
     required this.getAllCategory,
   });
 
+  Future<void> loadPage(int newPage) async {
+    if (newPage > 0 && newPage <= totalPages.value) {
+      // Panggil API atau lakukan logika pemuatan data baru
+      await fetchItems(
+          selectedCategoryId.value.isEmpty ? null : selectedCategoryId.value,
+          selectedPartTagId.value.isEmpty ? null : selectedPartTagId.value,
+          newPage);
+    }
+  }
+
   @override
   void onInit() async {
     super.onInit();
+
+    urlImgPublic.value =
+        await sessionManager.getSessionBy(SessionManagerType.commonFileUrl);
     if (Get.arguments != null && Get.arguments['fleetId'] != null) {
       fleetId.value = Get.arguments['fleetId'];
     }
-
-    print('fleetId: $fleetId');
-
-    urlImgPublic.value =
-        await _secureStorage.readSecureData('commonGetImgUrlPublic') ?? '';
+    if (Get.arguments != null && Get.arguments['fleetModel'] != null) {
+      fleetModel.value = Get.arguments['fleetModel'];
+    }
 
     await fetchCategories();
     await fetchBrands();
     await fetchItems(
-        selectedCategoryId.value == '' ? null : selectedCategoryId.value,
-        selectedPartTagId.value == '' ? null : selectedPartTagId.value);
+        selectedCategoryId.value.isEmpty ? null : selectedCategoryId.value,
+        selectedPartTagId.value.isEmpty ? null : selectedPartTagId.value,
+        pageNumber.value);
   }
 
   Future<void> fetchCategories() async {
     try {
       isLoadingCategories.value = true;
       final categoryResponse = await getAllCategory();
+      if (categoryResponse.data.items.isEmpty) {
+        return;
+      }
       categories.value = categoryResponse.data.items
           .map((category) => {
                 'id': category.id,
                 'name': category.name,
-                'icon': urlImgPublic + (category.imageUrl),
+                'icon': urlImgPublic.value + (category.imageUrl),
               })
           .toList();
-
-      selectedCategoryId.value = categories.first['id'];
     } catch (error) {
       if (error is CustomHttpException) {
-        CustomToast.show(
-          message: error.message,
-          type: ToastType.error,
-        );
+        if (error.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+
+        if (error.errorResponse != null) {
+          CustomToast.show(
+            message: error.message,
+            type: ToastType.error,
+          );
+          return;
+        }
+
+        CustomToast.show(message: error.message, type: ToastType.error);
+        return;
       } else {
         CustomToast.show(
-          message: "An unexpected error occurred",
+          message: "An unexpected error has occured",
           type: ToastType.error,
         );
       }
     } finally {
       isLoadingCategories.value = false;
-
       update();
     }
   }
@@ -94,24 +122,32 @@ class ServiceNowController extends GetxController {
     try {
       isLoadingBrands.value = true;
       final brandResponse = await getAllBrand();
+      if (brandResponse.data.items.isEmpty) {
+        return;
+      }
       brands.value = brandResponse.data.items
           .map((brand) => {
                 'id': brand.id,
                 'name': brand.name,
-                'icon': urlImgPublic + (brand.imageUrl),
+                'icon': urlImgPublic.value + (brand.imageUrl),
               })
           .toList();
-
-      selectedPartTagId.value = brands.first['id'];
     } catch (error) {
       if (error is CustomHttpException) {
+        if (error.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+        if (error.statusCode == 404) {
+          return;
+        }
         CustomToast.show(
           message: error.message,
           type: ToastType.error,
         );
       } else {
         CustomToast.show(
-          message: "An unexpected error occurred",
+          message: "An unexpected error has occured",
           type: ToastType.error,
         );
       }
@@ -121,52 +157,30 @@ class ServiceNowController extends GetxController {
     }
   }
 
-  // Future<void> fetchItems(String? categoryId, String? brandId) async {
-  //   try {
-  //     isLoadingItems.value = true;
-  //     final itemResponse = await getAllItem(categoryId, brandId, 1, 10);
-  //     items.value = itemResponse.data.items
-  //         .map((item) => {
-  //               'id': item.id,
-  //               'name': item.name,
-  //               'description': item.description,
-  //               'price': item.price,
-  //               'rating': 0.0,
-  //               'imageUrl': urlImgPublic + (item.imageUrl),
-  //               'categoryId': item.categoryId,
-  //               'brandId': item.brandId,
-  //             })
-  //         .toList();
-  //   } catch (error) {
-  //     if (error is CustomHttpException) {
-  //       CustomToast.show(
-  //         message: error.message,
-  //         type: ToastType.error,
-  //       );
-  //     } else {
-  //       CustomToast.show(
-  //         message: "An unexpected error occurred",
-  //         type: ToastType.error,
-  //       );
-  //     }
-  //   } finally {
-  //     isLoadingItems.value = false;
-  //     update();
-  //   }
-  // }
-
-  Future<void> fetchItems(String? categoryId, String? brandId) async {
+  Future<void> fetchItems(
+      String? categoryId, String? brandId, int currentPage) async {
     try {
       isLoadingItems.value = true;
-      final itemResponse = await getAllItem(categoryId, brandId, 1, 10);
+      final itemResponse =
+          await getAllItem(categoryId, brandId, currentPage, pageSize);
+      if (itemResponse.data.items.isEmpty) {
+        items.value = [];
+        pageNumber.value = 1;
+        totalPages.value = 1;
+        return;
+      }
+
+      pageNumber.value = currentPage;
+      totalPages.value = itemResponse.data.totalPages;
+
       items.value = itemResponse.data.items.map((item) {
         final mappedItem = {
           'id': item.id,
           'name': item.name,
           'description': item.description,
           'price': item.price,
-          'rating': 0.0,
-          'imageUrl': urlImgPublic + (item.imageUrl),
+          'rating': 5,
+          'imageUrl': urlImgPublic.value + (item.imageUrl),
           'categoryId': item.categoryId,
           'brandId': item.brandId,
         };
@@ -184,13 +198,20 @@ class ServiceNowController extends GetxController {
       }).toList();
     } catch (error) {
       if (error is CustomHttpException) {
+        if (error.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+        if (error.statusCode == 404) {
+          return;
+        }
         CustomToast.show(
           message: error.message,
           type: ToastType.error,
         );
       } else {
         CustomToast.show(
-          message: "An unexpected error occurred",
+          message: "An unexpected error has occured",
           type: ToastType.error,
         );
       }
@@ -201,17 +222,33 @@ class ServiceNowController extends GetxController {
   }
 
   void setSelectedCategory(String categoryId) {
+    if (selectedCategoryId.value == categoryId) {
+      selectedCategoryId.value = '';
+      fetchItems(null,
+          selectedPartTagId.value.isEmpty ? null : selectedPartTagId.value, 1);
+      return;
+    }
+
     selectedCategoryId.value = categoryId;
-    update();
-    fetchItems(categoryId,
-        selectedPartTagId.value == '' ? null : selectedPartTagId.value);
+    fetchItems(categoryId.isEmpty ? null : categoryId,
+        selectedPartTagId.value.isEmpty ? null : selectedPartTagId.value, 1);
   }
 
   void setSelectedPartTag(String tag) {
+    if (selectedPartTagId.value == tag) {
+      selectedPartTagId.value = '';
+      fetchItems(
+          selectedCategoryId.value.isEmpty ? null : selectedCategoryId.value,
+          null,
+          1);
+      return;
+    }
+
     selectedPartTagId.value = tag;
-    update();
     fetchItems(
-        selectedCategoryId.value == '' ? null : selectedCategoryId.value, tag);
+        selectedCategoryId.value.isEmpty ? null : selectedCategoryId.value,
+        tag,
+        1);
   }
 
   // void togglePartSelection(Map<String, dynamic> part) {
@@ -247,8 +284,24 @@ class ServiceNowController extends GetxController {
       Get.toNamed(Routes.CHECKOUT, arguments: {
         'fleetId': fleetId.value,
         'selectedItems': selectedItems,
+        'fleetModel': fleetModel.value
       });
-    } catch (e) {
+    } catch (error) {
+      if (error is CustomHttpException) {
+        if (error.statusCode == 401) {
+          await logout.doLogout();
+          return;
+        }
+        CustomToast.show(
+          message: error.message,
+          type: ToastType.error,
+        );
+      } else {
+        CustomToast.show(
+          message: "An unexpected error has occured",
+          type: ToastType.error,
+        );
+      }
     } finally {
       isLoading.value = false;
     }

@@ -14,22 +14,23 @@ class CustomElevatedButton extends StatelessWidget {
   final bool isLoading;
 
   const CustomElevatedButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.backgroundColor,
     this.textColor = Colors.white,
-    this.fontSize = 16,
+    this.fontSize = 15,
     this.fontWeight = FontWeight.bold,
-    this.borderRadius = 20.0,
+    this.borderRadius = 16.0,
     this.width = double.infinity,
-    this.height = 50.0,
+    this.height = 48.0,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final Color effectiveBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary_300;
+    final Color effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.primary_300;
 
     return ElevatedButton(
       onPressed: isLoading ? () {} : onPressed,

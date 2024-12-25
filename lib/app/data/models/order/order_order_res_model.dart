@@ -1,23 +1,17 @@
 import 'package:santai/app/domain/entities/order/order_order_res.dart';
+import 'package:santai/app/domain/enumerations/order_status.dart';
+import 'package:santai/app/domain/enumerations/percentage_or_value_type.dart';
 
 class OrderResponseModel extends OrderResponse {
   OrderResponseModel({
-    required bool isSuccess,
-    required OrderResponseDataModel data,
-    required String message,
-    required String responseStatus,
-    required List<dynamic> errors,
-    required List<dynamic> links,
-    dynamic next,
-  }) : super(
-          isSuccess: isSuccess,
-          data: data,
-          message: message,
-          responseStatus: responseStatus,
-          errors: errors,
-          links: links,
-          next: next,
-        );
+    required super.isSuccess,
+    required OrderResponseDataModel super.data,
+    required super.message,
+    required super.responseStatus,
+    required super.errors,
+    required super.links,
+    super.next,
+  });
 
   factory OrderResponseModel.fromJson(Map<String, dynamic> json) {
     return OrderResponseModel(
@@ -34,62 +28,34 @@ class OrderResponseModel extends OrderResponse {
 
 class OrderResponseDataModel extends OrderResponseData {
   OrderResponseDataModel({
-    required String orderId,
-    required String secret,
-    required String addressLine,
-    required double latitude,
-    required double longitude,
-    required BuyerModel buyer,
-    MechanicModel? mechanic,
-    required List<LineItemModel> lineItems,
-    required List<FleetModel> fleets,
-    required DateTime createdAtUtc,
-    required bool isScheduled,
-    DateTime? scheduledAtUtc,
-    PaymentModel? payment,
-    String? paymentUrl,
-    required DateTime paymentExpiration,
-    required String currency,
-    required double orderAmount,
-    DiscountModel? discount,
-    required double grandTotal,
-    RatingModel? orderRating,
-    List<String>? ratingImages,
-    required List<FeeModel> fees,
-    CancellationModel? cancellation,
-    required String orderStatus,
-    required bool isPaid,
-    required bool isRated,
-    required bool isPaymentExpire,
-  }) : super(
-          orderId: orderId,
-          secret: secret,
-          addressLine: addressLine,
-          latitude: latitude,
-          longitude: longitude,
-          buyer: buyer,
-          mechanic: mechanic,
-          lineItems: lineItems,
-          fleets: fleets,
-          createdAtUtc: createdAtUtc,
-          isScheduled: isScheduled,
-          scheduledAtUtc: scheduledAtUtc,
-          payment: payment,
-          paymentUrl: paymentUrl,
-          paymentExpiration: paymentExpiration,
-          currency: currency,
-          orderAmount: orderAmount,
-          discount: discount,
-          grandTotal: grandTotal,
-          orderRating: orderRating,
-          ratingImages: ratingImages,
-          fees: fees,
-          cancellation: cancellation,
-          orderStatus: orderStatus,
-          isPaid: isPaid,
-          isRated: isRated,
-          isPaymentExpire: isPaymentExpire,
-        );
+    required super.orderId,
+    required super.secret,
+    required super.addressLine,
+    required super.latitude,
+    required super.longitude,
+    required BuyerModel super.buyer,
+    MechanicModel? super.mechanic,
+    required List<LineItemModel> super.lineItems,
+    required List<FleetModel> super.fleets,
+    required super.createdAtUtc,
+    required super.isScheduled,
+    super.scheduledAtUtc,
+    PaymentModel? super.payment,
+    super.paymentUrl,
+    required super.paymentExpiration,
+    required super.currency,
+    required super.orderAmount,
+    DiscountModel? super.discount,
+    required super.grandTotal,
+    RatingModel? super.orderRating,
+    super.ratingImages,
+    required List<FeeModel> super.fees,
+    CancellationModel? super.cancellation,
+    required super.orderStatus,
+    required super.isPaid,
+    required super.isRated,
+    required super.isPaymentExpire,
+  });
 
   factory OrderResponseDataModel.fromJson(Map<String, dynamic> json) {
     return OrderResponseDataModel(
@@ -99,7 +65,9 @@ class OrderResponseDataModel extends OrderResponseData {
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       buyer: BuyerModel.fromJson(json['buyer']),
-      mechanic: json['mechanic'] != null ? MechanicModel.fromJson(json['mechanic']) : null,
+      mechanic: json['mechanic'] != null
+          ? MechanicModel.fromJson(json['mechanic'])
+          : null,
       lineItems: (json['lineItems'] as List)
           .map((item) => LineItemModel.fromJson(item))
           .toList(),
@@ -108,21 +76,30 @@ class OrderResponseDataModel extends OrderResponseData {
           .toList(),
       createdAtUtc: DateTime.parse(json['createdAtUtc']),
       isScheduled: json['isScheduled'],
-      scheduledAtUtc: json['scheduledAtUtc'] != null ? DateTime.parse(json['scheduledAtUtc']) : null,
-      payment: json['payment'] != null ? PaymentModel.fromJson(json['payment']) : null,
+      scheduledAtUtc: json['scheduledAtUtc'] != null
+          ? DateTime.parse(json['scheduledAtUtc'])
+          : null,
+      payment: json['payment'] != null
+          ? PaymentModel.fromJson(json['payment'])
+          : null,
       paymentUrl: json['paymentUrl'],
       paymentExpiration: DateTime.parse(json['paymentExpiration']),
       currency: json['currency'],
       orderAmount: (json['orderAmount'] as num).toDouble(),
-      discount: json['discount'] != null ? DiscountModel.fromJson(json['discount']) : null,
+      discount: json['discount'] != null
+          ? DiscountModel.fromJson(json['discount'])
+          : null,
       grandTotal: (json['grandTotal'] as num).toDouble(),
-      orderRating: json['orderRating'] != null ? RatingModel.fromJson(json['orderRating']) : null,
+      orderRating: json['orderRating'] != null
+          ? RatingModel.fromJson(json['orderRating'])
+          : null,
       ratingImages: (json['ratingImages'] as List?)?.cast<String>(),
-      fees: (json['fees'] as List)
-          .map((fee) => FeeModel.fromJson(fee))
-          .toList(),
-      cancellation: json['cancellation'] != null ? CancellationModel.fromJson(json['cancellation']) : null,
-      orderStatus: json['orderStatus'],
+      fees:
+          (json['fees'] as List).map((fee) => FeeModel.fromJson(fee)).toList(),
+      cancellation: json['cancellation'] != null
+          ? CancellationModel.fromJson(json['cancellation'])
+          : null,
+      orderStatus: OrderStatus.values.byName(json['orderStatus']),
       isPaid: json['isPaid'],
       isRated: json['isRated'],
       isPaymentExpire: json['isPaymentExpire'],
@@ -132,16 +109,11 @@ class OrderResponseDataModel extends OrderResponseData {
 
 class BuyerModel extends Buyer {
   BuyerModel({
-    required String buyerId,
-    required String buyerName,
-    String? email,
-    String? phoneNumber,
-  }) : super(
-          buyerId: buyerId,
-          buyerName: buyerName,
-          email: email,
-          phoneNumber: phoneNumber,
-        );
+    required super.buyerId,
+    required super.buyerName,
+    super.email,
+    super.phoneNumber,
+  });
 
   factory BuyerModel.fromJson(Map<String, dynamic> json) {
     return BuyerModel(
@@ -155,24 +127,21 @@ class BuyerModel extends Buyer {
 
 class MechanicModel extends Mechanic {
   MechanicModel({
-    required String mechanicId,
-    required String name,
-    RatingModel? rating,
-    required double performance,
-    required bool isRated,
-  }) : super(
-          mechanicId: mechanicId,
-          name: name,
-          rating: rating,
-          performance: performance,
-          isRated: isRated,
-        );
+    required super.mechanicId,
+    required super.name,
+    required super.imageUrl,
+    RatingModel? super.rating,
+    required super.performance,
+    required super.isRated,
+  });
 
   factory MechanicModel.fromJson(Map<String, dynamic> json) {
     return MechanicModel(
       mechanicId: json['mechanicId'],
       name: json['name'],
-      rating: json['rating'] != null ? RatingModel.fromJson(json['rating']) : null,
+      imageUrl: json['imageUrl'],
+      rating:
+          json['rating'] != null ? RatingModel.fromJson(json['rating']) : null,
       performance: (json['performance'] as num).toDouble(),
       isRated: json['isRated'],
     );
@@ -181,26 +150,16 @@ class MechanicModel extends Mechanic {
 
 class LineItemModel extends LineItem {
   LineItemModel({
-    required String lineItemId,
-    required String name,
-    required String sku,
-    required double unitPrice,
-    required String currency,
-    required int quantity,
-    double? taxPercentage,
-    double? taxValue,
-    required double subTotal,
-  }) : super(
-          lineItemId: lineItemId,
-          name: name,
-          sku: sku,
-          unitPrice: unitPrice,
-          currency: currency,
-          quantity: quantity,
-          taxPercentage: taxPercentage,
-          taxValue: taxValue,
-          subTotal: subTotal,
-        );
+    required super.lineItemId,
+    required super.name,
+    required super.sku,
+    required super.unitPrice,
+    required super.currency,
+    required super.quantity,
+    super.taxPercentage,
+    super.taxValue,
+    required super.subTotal,
+  });
 
   factory LineItemModel.fromJson(Map<String, dynamic> json) {
     return LineItemModel(
@@ -210,8 +169,12 @@ class LineItemModel extends LineItem {
       unitPrice: (json['unitPrice'] as num).toDouble(),
       currency: json['currency'],
       quantity: json['quantity'],
-      taxPercentage: json['taxPercentage'] != null ? (json['taxPercentage'] as num).toDouble() : null,
-      taxValue: json['taxValue'] != null ? (json['taxValue'] as num).toDouble() : null,
+      taxPercentage: json['taxPercentage'] != null
+          ? (json['taxPercentage'] as num).toDouble()
+          : null,
+      taxValue: json['taxValue'] != null
+          ? (json['taxValue'] as num).toDouble()
+          : null,
       subTotal: (json['subTotal'] as num).toDouble(),
     );
   }
@@ -219,22 +182,14 @@ class LineItemModel extends LineItem {
 
 class FleetModel extends Fleet {
   FleetModel({
-    required String fleetId,
-    required String brand,
-    required String model,
-    required String registrationNumber,
-    String? imageUrl,
-    required List<BasicInspectionModel> basicInspections,
-    required List<PreServiceInspectionModel> preServiceInspections,
-  }) : super(
-          fleetId: fleetId,
-          brand: brand,
-          model: model,
-          registrationNumber: registrationNumber,
-          imageUrl: imageUrl,
-          basicInspections: basicInspections,
-          preServiceInspections: preServiceInspections,
-        );
+    required super.fleetId,
+    required super.brand,
+    required super.model,
+    super.registrationNumber,
+    required super.imageUrl,
+    required List<BasicInspectionModel> super.basicInspections,
+    required List<PreServiceInspectionModel> super.preServiceInspections,
+  });
 
   factory FleetModel.fromJson(Map<String, dynamic> json) {
     return FleetModel(
@@ -255,18 +210,12 @@ class FleetModel extends Fleet {
 
 class PaymentModel extends Payment {
   PaymentModel({
-    required String currency,
-    required double amount,
-    DateTime? paidAt,
-    String? paymentMethod,
-    String? bankReference,
-  }) : super(
-          currency: currency,
-          amount: amount,
-          paidAt: paidAt,
-          paymentMethod: paymentMethod,
-          bankReference: bankReference,
-        );
+    required super.currency,
+    required super.amount,
+    super.paidAt,
+    super.paymentMethod,
+    super.bankReference,
+  });
 
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
@@ -281,27 +230,20 @@ class PaymentModel extends Payment {
 
 class DiscountModel extends Discount {
   DiscountModel({
-    required String couponCode,
-    required PercentageOrValueType parameter,
-    required String currency,
-    required double valuePercentage,
-    required double valueAmount,
-    required double minimumOrderValue,
-    required double discountAmount,
-  }) : super(
-          couponCode: couponCode,
-          parameter: parameter,
-          currency: currency,
-          valuePercentage: valuePercentage,
-          valueAmount: valueAmount,
-          minimumOrderValue: minimumOrderValue,
-          discountAmount: discountAmount,
-        );
+    required super.couponCode,
+    required super.parameter,
+    required super.currency,
+    required super.valuePercentage,
+    required super.valueAmount,
+    required super.minimumOrderValue,
+    required super.discountAmount,
+  });
 
   factory DiscountModel.fromJson(Map<String, dynamic> json) {
     return DiscountModel(
       couponCode: json['couponCode'],
-      parameter: PercentageOrValueType.values.firstWhere((e) => e.toString() == 'PercentageOrValueType.${json['parameter']}'),
+      parameter: PercentageOrValueType.values.firstWhere(
+          (e) => e.toString() == 'PercentageOrValueType.${json['parameter']}'),
       currency: json['currency'],
       valuePercentage: (json['valuePercentage'] as num).toDouble(),
       valueAmount: (json['valueAmount'] as num).toDouble(),
@@ -313,12 +255,9 @@ class DiscountModel extends Discount {
 
 class RatingModel extends Rating {
   RatingModel({
-    required double value,
-    String? comment,
-  }) : super(
-          value: value,
-          comment: comment,
-        );
+    required super.value,
+    super.comment,
+  });
 
   factory RatingModel.fromJson(Map<String, dynamic> json) {
     return RatingModel(
@@ -330,14 +269,10 @@ class RatingModel extends Rating {
 
 class BasicInspectionModel extends BasicInspection {
   BasicInspectionModel({
-    required String description,
-    required String parameter,
-    required int value,
-  }) : super(
-          description: description,
-          parameter: parameter,
-          value: value,
-        );
+    required super.description,
+    required super.parameter,
+    required super.value,
+  });
 
   factory BasicInspectionModel.fromJson(Map<String, dynamic> json) {
     return BasicInspectionModel(
@@ -350,16 +285,12 @@ class BasicInspectionModel extends BasicInspection {
 
 class PreServiceInspectionModel extends PreServiceInspection {
   PreServiceInspectionModel({
-    required String description,
-    required String parameter,
-    required int rating,
-    required List<PreServiceInspectionResultModel> preServiceInspectionResults,
-  }) : super(
-          description: description,
-          parameter: parameter,
-          rating: rating,
-          preServiceInspectionResults: preServiceInspectionResults,
-        );
+    required super.description,
+    required super.parameter,
+    required super.rating,
+    required List<PreServiceInspectionResultModel>
+        super.preServiceInspectionResults,
+  });
 
   factory PreServiceInspectionModel.fromJson(Map<String, dynamic> json) {
     return PreServiceInspectionModel(
@@ -375,14 +306,10 @@ class PreServiceInspectionModel extends PreServiceInspection {
 
 class PreServiceInspectionResultModel extends PreServiceInspectionResult {
   PreServiceInspectionResultModel({
-    required String description,
-    required String parameter,
-    required bool isWorking,
-  }) : super(
-          description: description,
-          parameter: parameter,
-          isWorking: isWorking,
-        );
+    required super.description,
+    required super.parameter,
+    required super.isWorking,
+  });
 
   factory PreServiceInspectionResultModel.fromJson(Map<String, dynamic> json) {
     return PreServiceInspectionResultModel(
@@ -395,24 +322,18 @@ class PreServiceInspectionResultModel extends PreServiceInspectionResult {
 
 class FeeModel extends Fee {
   FeeModel({
-    required PercentageOrValueType parameter,
-    required String feeDescription,
-    required String currency,
-    required double valuePercentage,
-    required double valueAmount,
-    required double feeAmount,
-  }) : super(
-          parameter: parameter,
-          feeDescription: feeDescription,
-          currency: currency,
-          valuePercentage: valuePercentage,
-          valueAmount: valueAmount,
-          feeAmount: feeAmount,
-        );
+    required super.parameter,
+    required super.feeDescription,
+    required super.currency,
+    required super.valuePercentage,
+    required super.valueAmount,
+    required super.feeAmount,
+  });
 
   factory FeeModel.fromJson(Map<String, dynamic> json) {
     return FeeModel(
-      parameter: PercentageOrValueType.values.firstWhere((e) => e.toString() == 'PercentageOrValueType.${json['parameter']}'),
+      parameter: PercentageOrValueType.values.firstWhere(
+          (e) => e.toString() == 'PercentageOrValueType.${json['parameter']}'),
       feeDescription: json['feeDescription'],
       currency: json['currency'],
       valuePercentage: (json['valuePercentage'] as num).toDouble(),
@@ -424,21 +345,21 @@ class FeeModel extends Fee {
 
 class CancellationModel extends Cancellation {
   CancellationModel({
-    List<FeeModel>? cancellationCharges,
-    double? cancellationRefundAmount,
-    String? currency,
-  }) : super(
-          cancellationCharges: cancellationCharges,
-          cancellationRefundAmount: cancellationRefundAmount,
-          currency: currency,
-        );
+    List<FeeModel>? super.cancellationCharges,
+    super.cancellationRefundAmount,
+    super.currency,
+  });
 
   factory CancellationModel.fromJson(Map<String, dynamic> json) {
     return CancellationModel(
       cancellationCharges: json['cancellationCharges'] != null
-          ? (json['cancellationCharges'] as List).map((fee) => FeeModel.fromJson(fee)).toList()
+          ? (json['cancellationCharges'] as List)
+              .map((fee) => FeeModel.fromJson(fee))
+              .toList()
           : null,
-      cancellationRefundAmount: json['cancellationRefundAmount'] != null ? (json['cancellationRefundAmount'] as num).toDouble() : null,
+      cancellationRefundAmount: json['cancellationRefundAmount'] != null
+          ? (json['cancellationRefundAmount'] as num).toDouble()
+          : null,
       currency: json['currency'],
     );
   }

@@ -4,7 +4,7 @@ import 'package:santai/app/common/widgets/custom_back_button.dart';
 import '../controllers/detail_product_controller.dart';
 
 class DetailProductView extends GetView<DetailProductController> {
-  const DetailProductView({Key? key}) : super(key: key);
+  const DetailProductView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,13 @@ class DetailProductView extends GetView<DetailProductController> {
         leading: Padding(
           padding: const EdgeInsets.fromLTRB(14, 8, 0, 8),
           child: CustomBackButton(
-            onPressed: () => Get.back(),
+            onPressed: () {
+              if (Get.isDialogOpen ?? false) {
+                Get.back(closeOverlays: true);
+              } else {
+                Get.back(closeOverlays: true);
+              }
+            },
           ),
         ),
         leadingWidth: 100,
@@ -24,8 +30,8 @@ class DetailProductView extends GetView<DetailProductController> {
           'Detail Product',
           style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
           ),
         ),
         centerTitle: true,
@@ -48,7 +54,7 @@ class DetailProductView extends GetView<DetailProductController> {
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
                           image: NetworkImage(controller.urlImgPublic.value +
-                              controller.items.value!.imageUrl),
+                              (controller.items.value?.imageUrl ?? "")),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -66,8 +72,8 @@ class DetailProductView extends GetView<DetailProductController> {
                             Text(
                               controller.items.value?.name ?? '',
                               style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
                                   color: Colors.black),
                             ),
                           ],
@@ -76,35 +82,24 @@ class DetailProductView extends GetView<DetailProductController> {
                       Container(
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.transparent),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '${controller.items.value?.soldQuantity} Sold',
+                          '${controller.items.value?.soldQuantity ?? '0'} Sold',
                           style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
                               color: Colors.grey[800]),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Recommended for ${controller.items.value?.brandName}',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                  ),
+                  const SizedBox(height: 5),
+
                   Divider(
                     thickness: 2,
                     color: Colors.grey[200],
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Description',
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
                   ),
                   const SizedBox(height: 5),
                   Text(
@@ -116,19 +111,18 @@ class DetailProductView extends GetView<DetailProductController> {
                   const Text(
                     'Santai Review',
                     style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                         color: Colors.black),
                   ),
                   const SizedBox(height: 5),
-                    ...controller.items.value?.ownerReviews.map((review) =>
-                      _buildRatingRow(review.title, review.rating)
-                    ) ?? [],
-                    // const SizedBox(height: 16),
-                    // _buildRatingRow('Price', controller.items.value?.price.toInt() ?? 0),
+                  ...controller.items.value?.ownerReviews.map((review) =>
+                          _buildRatingRow(review.title, review.rating)) ??
+                      [],
+                  // const SizedBox(height: 16),
+                  // _buildRatingRow('Price', controller.items.value?.price.toInt() ?? 0),
                   // const SizedBox(height: 5),
 
-                  
                   // _buildRatingRow(
                   //     'Price', controller.items.value?.price.toInt() ?? 0),
                 ],
@@ -141,41 +135,41 @@ class DetailProductView extends GetView<DetailProductController> {
   }
 
   Widget _buildRatingRow(String label, int rating) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            label,
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700]),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[700]),
+            ),
           ),
-        ),
-        Expanded(
-          child: Wrap(
-            spacing: 2,
-            runSpacing: 2,
-            children: List.generate(
-              10,
-              (index) => Icon(
-                index < rating ? Icons.star : Icons.star_border,
-                size: 20,
-                color: index < rating
-                    ? const Color(0xFFFFD700)
-                    : Colors.grey[300],
+          Expanded(
+            child: Wrap(
+              spacing: 2,
+              runSpacing: 2,
+              children: List.generate(
+                10,
+                (index) => Icon(
+                  index < rating ? Icons.star : Icons.star_border,
+                  size: 20,
+                  color: index < rating
+                      ? const Color(0xFFFFD700)
+                      : Colors.grey[300],
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   // Widget _buildRatingRow(String label, int rating) {
   //   return Padding(

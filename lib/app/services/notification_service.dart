@@ -1,7 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-
+// import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
@@ -9,91 +8,86 @@ class NotificationService {
 
   Future<void> initNotification() async {
     tz.initializeTimeZones();
-    
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    // const AndroidInitializationSettings initializationSettingsAndroid =
+    //     AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    // const DarwinInitializationSettings initializationSettingsIOS =
+    //     DarwinInitializationSettings(
+    //   requestAlertPermission: true,
+    //   requestBadgePermission: true,
+    //   requestSoundPermission: true,
+    // );
 
-    await notificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: (details) {
-        // Handle notification tap
-      },
-    );
+    // const InitializationSettings initializationSettings =
+    //     InitializationSettings(
+    //   android: initializationSettingsAndroid,
+    //   iOS: initializationSettingsIOS,
+    // );
+
+    // await notificationsPlugin.initialize(
+    //   initializationSettings,
+    //   onDidReceiveNotificationResponse: (details) {
+    //     // Handle notification tap
+    //   },
+    // );
   }
 
-Future<void> showNotification({
-  required int id,
-  required String title,
-  required String body,
-}) async {
-  print("Attempting to show notification: $title - $body");
-  try {
-    await notificationsPlugin.show(
-      id,
-      title,
-      body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'your_channel_id',
-          'Your Channel Name',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-    );
-    print("Notification shown successfully");
-  } catch (e) {
-    print("Error showing notification: $e");
-  }
-}
+  // Future<void> showNotification({
+  //   required int id,
+  //   required String title,
+  //   required String body,
+  // }) async {
+  //   try {
+  //     await notificationsPlugin.show(
+  //       id,
+  //       title,
+  //       body,
+  //       const NotificationDetails(
+  //         android: AndroidNotificationDetails(
+  //           'your_channel_id',
+  //           'Your Channel Name',
+  //           importance: Importance.max,
+  //           priority: Priority.high,
+  //         ),
+  //         iOS: DarwinNotificationDetails(),
+  //       ),
+  //     );
+  //   } catch (e) {}
+  // }
 
-  Future<void> scheduleNotification({
-    required int id,
-    required String title,
-    required String body,
-    required DateTime scheduledDate,
-  }) async {
-    await notificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledDate, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'your_channel_id',
-          'Your Channel Name',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
-  }
+  // Future<void> scheduleNotification({
+  //   required int id,
+  //   required String title,
+  //   required String body,
+  //   required DateTime scheduledDate,
+  // }) async {
+  //   await notificationsPlugin.zonedSchedule(
+  //     id,
+  //     title,
+  //     body,
+  //     tz.TZDateTime.from(scheduledDate, tz.local),
+  //     const NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         'your_channel_id',
+  //         'Your Channel Name',
+  //         importance: Importance.max,
+  //         priority: Priority.high,
+  //       ),
+  //       iOS: DarwinNotificationDetails(),
+  //     ),
+  //     uiLocalNotificationDateInterpretation:
+  //         UILocalNotificationDateInterpretation.absoluteTime,
+  //   );
+  // }
 
-  Future<void> cancelNotification(int id) async {
-    await notificationsPlugin.cancel(id);
-  }
+  // Future<void> cancelNotification(int id) async {
+  //   await notificationsPlugin.cancel(id);
+  // }
 
-  Future<void> cancelAllNotifications() async {
-    await notificationsPlugin.cancelAll();
-  }
+  // Future<void> cancelAllNotifications() async {
+  //   await notificationsPlugin.cancelAll();
+  // }
 }
 
 

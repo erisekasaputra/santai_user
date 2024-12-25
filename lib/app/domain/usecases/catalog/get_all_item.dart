@@ -8,6 +8,10 @@ class ItemGetAll {
   ItemGetAll(this.repository);
 
   Future<CatalogItemsResponse> call(String? categoryId, String? brandId, int pageNumber, int pageSize) async {
-    return await repository.getAllCatalogItem(categoryId, brandId, pageNumber, pageSize);
+    try {
+      return await repository.getAllCatalogItem(categoryId, brandId, pageNumber, pageSize);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

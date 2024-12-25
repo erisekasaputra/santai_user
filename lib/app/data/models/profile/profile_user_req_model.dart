@@ -2,23 +2,19 @@ import 'package:santai/app/domain/entities/profile/profile_user.dart';
 
 class ProfileUserReqModel extends ProfileUser {
   ProfileUserReqModel({
-    required String timeZoneId,
-    String? referralCode,
-    required ProfileAddressModel address,
-    required ProfilePersonalInfoModel personalInfo,
-  }) : super(
-          timeZoneId: timeZoneId,
-          referralCode: referralCode,
-          address: address,
-          personalInfo: personalInfo,
-        );
+    required super.timeZoneId,
+    super.referralCode,
+    required ProfileAddressModel super.address,
+    required ProfilePersonalInfoModel super.personalInfo,
+  });
 
   factory ProfileUserReqModel.fromEntity(ProfileUser profileUser) {
     return ProfileUserReqModel(
       timeZoneId: profileUser.timeZoneId,
       referralCode: profileUser.referralCode,
       address: ProfileAddressModel.fromEntity(profileUser.address),
-      personalInfo: ProfilePersonalInfoModel.fromEntity(profileUser.personalInfo),
+      personalInfo:
+          ProfilePersonalInfoModel.fromEntity(profileUser.personalInfo),
     );
   }
 
@@ -34,22 +30,14 @@ class ProfileUserReqModel extends ProfileUser {
 
 class ProfileAddressModel extends ProfileAddress {
   ProfileAddressModel({
-    required String addressLine1,
-    String? addressLine2,
-    String? addressLine3,
-    required String city,
-    required String state,
-    required String postalCode,
-    required String country,
-  }) : super(
-          addressLine1: addressLine1,
-          addressLine2: addressLine2,
-          addressLine3: addressLine3,
-          city: city,
-          state: state,
-          postalCode: postalCode,
-          country: country,
-        );
+    required super.addressLine1,
+    super.addressLine2,
+    super.addressLine3,
+    required super.city,
+    required super.state,
+    required super.postalCode,
+    required super.country,
+  });
 
   factory ProfileAddressModel.fromEntity(ProfileAddress address) {
     return ProfileAddressModel(
@@ -78,29 +66,23 @@ class ProfileAddressModel extends ProfileAddress {
 
 class ProfilePersonalInfoModel extends ProfilePersonalInfo {
   ProfilePersonalInfoModel({
-    required String firstName,
-    String? middleName,
-    String? lastName,
-    required String dateOfBirth,
-    required String gender,
-    String? profilePictureUrl,
-  }) : super(
-          firstName: firstName,
-          middleName: middleName,
-          lastName: lastName,
-          dateOfBirth: dateOfBirth,
-          gender: gender,
-          profilePictureUrl: profilePictureUrl,
-        );
+    required super.firstName,
+    super.middleName,
+    super.lastName,
+    required super.dateOfBirth,
+    required super.gender,
+    super.profilePicture,
+  });
 
-  factory ProfilePersonalInfoModel.fromEntity(ProfilePersonalInfo personalInfo) {
+  factory ProfilePersonalInfoModel.fromEntity(
+      ProfilePersonalInfo personalInfo) {
     return ProfilePersonalInfoModel(
       firstName: personalInfo.firstName,
       middleName: personalInfo.middleName,
       lastName: personalInfo.lastName,
       dateOfBirth: personalInfo.dateOfBirth,
       gender: personalInfo.gender,
-      profilePictureUrl: personalInfo.profilePictureUrl,
+      profilePicture: personalInfo.profilePicture,
     );
   }
 
@@ -111,7 +93,7 @@ class ProfilePersonalInfoModel extends ProfilePersonalInfo {
       'lastName': lastName,
       'dateOfBirth': dateOfBirth,
       'gender': gender,
-      'profilePictureUrl': profilePictureUrl,
+      'profilePictureUrl': profilePicture,
     };
   }
 }

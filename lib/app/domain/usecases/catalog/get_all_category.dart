@@ -8,6 +8,10 @@ class CategoryGetAll {
   CategoryGetAll(this.repository);
 
   Future<CatalogCategoryResponse> call() async {
-    return await repository.getAllCatalogCategory();
+    try {
+      return await repository.getAllCatalogCategory();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

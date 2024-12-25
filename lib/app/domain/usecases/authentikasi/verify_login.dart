@@ -1,4 +1,3 @@
-
 import 'package:santai/app/domain/entities/authentikasi/auth_verify_login.dart';
 import 'package:santai/app/domain/entities/authentikasi/auth_verify_login_res.dart';
 
@@ -9,7 +8,7 @@ class LoginVerify {
 
   LoginVerify(this.repository);
 
-  Future<VerifyLoginResponse> call(VerifyLogin user) async {
+  Future<VerifyLoginResponse?> call(VerifyLogin user) async {
     return await repository.verifyLogin(user);
   }
 }

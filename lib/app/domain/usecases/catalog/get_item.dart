@@ -8,6 +8,10 @@ class ItemGet {
   ItemGet(this.repository);
 
   Future<CatalogItemResponse> call(String itemId) async {
-    return await repository.getItem(itemId);
+    try {
+      return await repository.getItem(itemId);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

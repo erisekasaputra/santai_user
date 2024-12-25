@@ -1,8 +1,22 @@
+# Flutter/Dart/Pub related
 .dart_tool/
-.packages
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 build/
-pubspec.lock
+
+# User-specific files
 .idea/
 .vscode/
+
+# macOS-specific
+.DS_Store
+
+# Android-specific
+.gradle/
+local.properties
+
+# iOS-specific
+Pods/
+DerivedData/
+.xcuserdata/

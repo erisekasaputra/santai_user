@@ -3,6 +3,9 @@ import 'package:santai/app/data/datasources/fleet/fleet_remote_data_source.dart'
 import 'package:santai/app/data/repositories/fleet/fleet_repository_impl.dart';
 import 'package:santai/app/domain/repository/fleet/fleet_repository.dart';
 import 'package:santai/app/domain/usecases/fleet/insert_fleet_user.dart';
+import 'package:santai/app/domain/usecases/fleet/get_fleet_user.dart';
+import 'package:santai/app/domain/usecases/fleet/update_fleet_user.dart';
+import 'package:santai/app/services/auth_http_client.dart';
 import 'package:santai/app/services/image_upload_service.dart';
 import 'package:santai/app/services/secure_storage_service.dart';
 
@@ -12,36 +15,37 @@ import 'package:http/http.dart' as http;
 
 class RegMotorcycleBinding extends Bindings {
   @override
-  // void dependencies() {
-  //   Get.lazyPut<RegMotorcycleController>(
-  //     () => RegMotorcycleController(),
-  //   );
-  // }
-
   void dependencies() {
     // Register the http client
-    Get.lazyPut<http.Client>(() => http.Client());
+    Get.create<http.Client>(() => http.Client());
+    Get.create<SecureStorageService>(() => SecureStorageService());
+    Get.create<AuthHttpClient>(() => AuthHttpClient(
+        Get.find<http.Client>(), Get.find<SecureStorageService>()));
 
-    Get.lazyPut<FleetRemoteDataSource>(
-      () => FleetRemoteDataSourceImpl(client: Get.find<http.Client>()),
+    Get.create<FleetRemoteDataSource>(
+      () => FleetRemoteDataSourceImpl(client: Get.find<AuthHttpClient>()),
     );
 
-    Get.lazyPut<FleetRepository>(
-      () => FleetRepositoryImpl(remoteDataSource: Get.find<FleetRemoteDataSource>()),
+    Get.create<FleetRepository>(
+      () => FleetRepositoryImpl(
+          remoteDataSource: Get.find<FleetRemoteDataSource>()),
     );
 
-    Get.lazyPut(() => UserInsertFleet(Get.find<FleetRepository>()));
-    Get.lazyPut(() => SecureStorageService());
-    Get.lazyPut(() => ImageUploadService());
+    Get.create(() => UserInsertFleet(Get.find<FleetRepository>()));
+    Get.create(() => UserGetFleet(Get.find<FleetRepository>()));
+    Get.create(() => UserUpdateFleet(Get.find<FleetRepository>()));
+    Get.create(() => SecureStorageService());
+    Get.create(() => ImageUploadService());
 
     // Get.lazyPut(() => ImageUploadService(
     //   secureStorage: Get.find<SecureStorageService>(),
     // ));
 
-    Get.lazyPut(() => RegMotorcycleController(
+    Get.put(RegMotorcycleController(
       insertFleetUser: Get.find<UserInsertFleet>(),
       imageUploadService: Get.find<ImageUploadService>(),
+      getFleetUserById: Get.find<UserGetFleet>(),
+      updateFleetUser: Get.find<UserUpdateFleet>(),
     ));
-
   }
 }

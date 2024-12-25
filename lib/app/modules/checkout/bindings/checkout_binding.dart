@@ -8,33 +8,36 @@ import '../controllers/checkout_controller.dart';
 import 'package:santai/app/domain/repository/order/order_repository.dart';
 import 'package:santai/app/data/repositories/order/order_repository_impl.dart';
 import 'package:santai/app/domain/usecases/order/create_order.dart';
-
+import 'package:santai/app/domain/usecases/order/calculation_order.dart';
+import 'package:santai/app/domain/usecases/order/cek_coupon.dart';
 import 'package:http/http.dart' as http;
 
 class CheckoutBinding extends Bindings {
   @override
   void dependencies() {
-
     // Register the http client
-    Get.lazyPut<http.Client>(() => http.Client());
-    Get.lazyPut<SecureStorageService>(() => SecureStorageService());
-    Get.lazyPut<AuthHttpClient>(() => AuthHttpClient(Get.find<http.Client>(), Get.find<SecureStorageService>()));
+    Get.create<http.Client>(() => http.Client());
+    Get.create<SecureStorageService>(() => SecureStorageService());
+    Get.create<AuthHttpClient>(() => AuthHttpClient(
+        Get.find<http.Client>(), Get.find<SecureStorageService>()));
 
-    Get.lazyPut<OrderRemoteDataSource>(
+    Get.create<OrderRemoteDataSource>(
       () => OrderRemoteDataSourceImpl(client: Get.find<AuthHttpClient>()),
     );
 
-    Get.lazyPut<OrderRepository>(
-      () => OrderRepositoryImpl(remoteDataSource: Get.find<OrderRemoteDataSource>()),
+    Get.create<OrderRepository>(
+      () => OrderRepositoryImpl(
+          remoteDataSource: Get.find<OrderRemoteDataSource>()),
     );
 
-     Get.lazyPut(() => CreateOrder(Get.find<OrderRepository>()));
+    Get.create(() => CreateOrder(Get.find<OrderRepository>()));
+    Get.create(() => CalculateOrder(Get.find<OrderRepository>()));
+    Get.create(() => CheckCoupon(Get.find<OrderRepository>()));
 
-       Get.lazyPut<CheckoutController>(
-      () => CheckoutController(
-        createOrder: Get.find<CreateOrder>(),
-      ),
-    );
-   
+    Get.put<CheckoutController>(CheckoutController(
+      createOrder: Get.find<CreateOrder>(),
+      calculationOrder: Get.find<CalculateOrder>(),
+      checkCoupon: Get.find<CheckCoupon>(),
+    ));
   }
 }

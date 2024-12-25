@@ -8,6 +8,10 @@ class CommonGetImgUrlPublic {
   CommonGetImgUrlPublic(this.repository);
 
   Future<CommonUrlImagePublicRes> call() async {
-    return await repository.getUrlImagePublic();
+    try {
+      return await repository.getUrlImagePublic();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

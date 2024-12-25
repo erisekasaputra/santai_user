@@ -1,4 +1,5 @@
 import 'package:santai/app/domain/entities/profile/profile_user.dart';
+import 'package:santai/app/domain/enumerations/loyalty_tier.dart';
 
 class ProfileUserResponse {
   final bool isSuccess;
@@ -45,7 +46,7 @@ class ProfileUserData {
 class LoyaltyProgram {
   final String userId;
   final int points;
-  final String tier;
+  final LoyaltyTier tier;
 
   LoyaltyProgram({
     required this.userId,

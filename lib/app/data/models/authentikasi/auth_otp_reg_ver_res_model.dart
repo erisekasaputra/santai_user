@@ -3,22 +3,14 @@ import 'package:santai/app/domain/entities/authentikasi/auth_otp_register_verify
 
 class OtpRegisterVerifyResponseModel extends OtpRegisterVerifyResponse {
   OtpRegisterVerifyResponseModel({
-    required bool isSuccess,
-    required RegisteredUserModel data,
-    required NextActionOtpRegisterVerifyResponseModel next,
-    required String message,
-    required String responseStatus,
-    required List<dynamic> errors,
-    required List<dynamic> links,
-  }) : super(
-          isSuccess: isSuccess,
-          data: data,
-          next: next,
-          message: message,
-          responseStatus: responseStatus,
-          errors: errors,
-          links: links,
-        );
+    required super.isSuccess,
+    required RegisteredUserModel super.data,
+    required NextActionOtpRegisterVerifyResponseModel super.next,
+    required super.message,
+    required super.responseStatus,
+    required super.errors,
+    required super.links,
+  });
 
   factory OtpRegisterVerifyResponseModel.fromJson(Map<String, dynamic> json) {
     return OtpRegisterVerifyResponseModel(
@@ -42,7 +34,6 @@ class OtpRegisterVerifyResponseModel extends OtpRegisterVerifyResponse {
         email: '',
         userType: '',
         businessCode: '',
-        otp: '',
       ),
       next: NextActionOtpRegisterVerifyResponseModel(
         link: '',
@@ -60,12 +51,7 @@ class OtpRegisterVerifyResponseModel extends OtpRegisterVerifyResponse {
 class NextActionOtpRegisterVerifyResponseModel
     extends NextActionOtpRegisterVerifyResponse {
   NextActionOtpRegisterVerifyResponseModel(
-      {required String link, required String action, required String method})
-      : super(
-          link: link,
-          action: action,
-          method: method,
-        );
+      {required super.link, required super.action, required super.method});
 
   factory NextActionOtpRegisterVerifyResponseModel.fromJson(
       Map<String, dynamic> json) {

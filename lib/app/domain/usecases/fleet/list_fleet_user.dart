@@ -7,6 +7,10 @@ class UserListFleet {
   UserListFleet(this.repository);
 
   Future<FleetListFleetUserResponse> call() async {
-    return await repository.getListFleetUser();
+    try {
+      return await repository.getListFleetUser();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

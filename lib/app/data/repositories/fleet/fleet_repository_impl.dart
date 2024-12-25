@@ -22,5 +22,17 @@ class FleetRepositoryImpl implements FleetRepository {
     final response = await remoteDataSource.getListFleetUser();
     return response;
   }
+
+  @override
+  Future<FleetUserResponseModel> getFleetUserById(String fleetId) async {
+    final response = await remoteDataSource.getFleetUserById(fleetId);
+    return response;
+  }
+
+  @override
+  Future<FleetUserResponseModel> updateFleetUser(FleetUser user, String fleetId) async {
+    final fleetUserModel = FleetUserReqModel.fromEntity(user);
+    final response = await remoteDataSource.updateFleetUser(fleetUserModel, fleetId);
+    return response;
+  }
 }
-  

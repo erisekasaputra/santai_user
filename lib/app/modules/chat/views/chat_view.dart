@@ -5,12 +5,11 @@ import 'package:santai/app/theme/app_theme.dart';
 import '../controllers/chat_controller.dart';
 
 class ChatView extends GetView<ChatController> {
-  const ChatView({Key? key}) : super(key: key);
+  const ChatView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final Color borderColor = Theme.of(context).colorScheme.borderInput_01;
-    final Color primary_300 = Theme.of(context).colorScheme.primary_300;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
@@ -26,105 +25,113 @@ class ChatView extends GetView<ChatController> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(width: 10),
-            Obx(() => CircleAvatar(
-                  backgroundImage: controller.otherUser.value?.imageUrl != null
-                      ? NetworkImage(controller.otherUser.value!.imageUrl!)
-                      : null,
-                )),
+            Obx(
+              () => CircleAvatar(
+                backgroundImage: controller.commonImageUrl.isNotEmpty &&
+                        controller.he.value?.imageUrl != null &&
+                        controller.he.value!.imageUrl!.isNotEmpty
+                    ? Image.network(
+                            '${controller.commonImageUrl.value}${controller.he.value!.imageUrl}')
+                        .image
+                    : null,
+                child: controller.commonImageUrl.isNotEmpty &&
+                        controller.he.value?.imageUrl != null &&
+                        controller.he.value!.imageUrl!.isNotEmpty
+                    ? null
+                    : const Icon(
+                        Icons.person,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+              ),
+            ),
             const SizedBox(width: 10),
-            Obx(() => Text(
-                  controller.otherUser.value?.firstName ?? 'User',
+            Expanded(
+              child: Obx(
+                () => Text(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  controller.he.value?.firstName ?? 'User',
                   style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                )),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
           ],
         ),
         leadingWidth: 900,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.call, color: primary_300, size: 30,),
-            onPressed: () {},
-          ),
+        actions: const [
+          // IconButton(
+          //   icon: Icon(
+          //     Icons.call,
+          //     color: primary_300,
+          //     size: 30,
+          //   ),
+          //   onPressed: () {},
+          // ),
         ],
       ),
-      
-      body: Obx(() => Chat(
-            messages: controller.messages,
-            onSendPressed: controller.handleSendPressed,
-            user: controller.user.value!,
-            theme: DefaultChatTheme(
-              backgroundColor: Colors.white,
-              messageBorderRadius: 8,
-              messageInsetsHorizontal: 8,
-              messageInsetsVertical: 4,
-              primaryColor: Colors.white,
-              secondaryColor: Colors.white,
-              bubbleMargin: const EdgeInsets.all(10),
+      body: Obx(() {
+        if (controller.isLoading.value || controller.me.value == null) {
+          return const SizedBox.shrink();
+        }
 
-              inputBackgroundColor: Colors.white,
-              inputTextColor: Colors.black,
-              inputTextCursorColor: Colors.black,
-              inputTextDecoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-                contentPadding: const EdgeInsets.all(8),
-                hintStyle: const TextStyle(color: Colors.black),
+        return Chat(
+          messages: controller.chatService?.messages
+                  .map((element) => controller.convertToTextMessage(element))
+                  .toList() ??
+              [],
+          onSendPressed: controller.handleSendPressed,
+          user: controller.me.value!,
+          theme: DefaultChatTheme(
+            backgroundColor: Colors.grey.shade100,
+            messageBorderRadius: 8,
+            messageInsetsHorizontal: 12,
+            messageInsetsVertical: 8,
+            primaryColor: Colors.blue.shade400,
+            secondaryColor: Colors.grey.shade300,
+            bubbleMargin:
+                const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            inputBackgroundColor: Colors.white,
+            inputTextColor: Colors.black,
+            inputTextCursorColor: Colors.blue.shade400,
+            inputTextDecoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade300),
               ),
-              sentMessageBodyTextStyle: const TextStyle(color: Colors.black, fontSize: 16),
-              receivedMessageBodyTextStyle: const TextStyle(color: Colors.black, fontSize: 16),
-              userAvatarNameColors: [Colors.white],
-              userNameTextStyle: const TextStyle(color: Colors.white),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              hintText: 'Type your message...',
+              hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+              filled: true,
+              fillColor: Colors.grey.shade200,
             ),
-
-            // customMessageBuilder: (message, {required messageWidth}) {
-            //   final isCurrentUser =
-            //       message.author.id == controller.user.value!.id;
-            //   final previousMessage = controller.getPreviousMessage(message);
-            //   final showDateSeparator =
-            //       controller.shouldShowDateSeparator(message, previousMessage);
-
-            //   return Column(
-            //     children: [
-            //       if (showDateSeparator)
-            //         Padding(
-            //           padding: const EdgeInsets.symmetric(vertical: 16),
-            //           child: Text(
-            //             controller.formatDate(message.createdAt!),
-            //             style: TextStyle(color: Colors.grey, fontSize: 14),
-            //           ),
-            //         ),
-            //       Column(
-            //         crossAxisAlignment: isCurrentUser
-            //             ? CrossAxisAlignment.end
-            //             : CrossAxisAlignment.start,
-            //         children: [
-            //           Container(
-            //             decoration: BoxDecoration(
-            //               color:
-            //                   isCurrentUser ? Colors.black : Colors.grey[800],
-            //               borderRadius: BorderRadius.circular(8),
-            //             ),
-            //             padding: EdgeInsets.all(8),
-            //             child: Text(
-            //               message.toJson()['text'] as String,
-            //               style: TextStyle(color: Colors.white, fontSize: 18),
-            //             ),
-            //           ),
-            //           SizedBox(height: 4),
-            //           Text(
-            //             controller.formatTime(message.createdAt!),
-            //             style: TextStyle(color: Colors.grey, fontSize: 12),
-            //           ),
-            //         ],
-            //       ),
-            //     ],
-            //   );
-            // },
-          )),
+            sentMessageBodyTextStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.normal,
+            ),
+            receivedMessageBodyTextStyle: const TextStyle(
+              color: Colors.black,
+              fontSize: 13,
+              fontWeight: FontWeight.normal,
+            ),
+            userAvatarNameColors: [
+              Colors.blue.shade400,
+              Colors.green.shade400,
+              Colors.orange.shade400,
+            ],
+            userNameTextStyle: const TextStyle(
+              color: Colors.blueGrey,
+              fontSize: 12,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        );
+      }),
     );
   }
 }

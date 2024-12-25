@@ -8,8 +8,9 @@ import 'package:santai/app/common/widgets/custom_elvbtn_001.dart';
 import 'package:santai/app/common/widgets/custom_label_001.dart';
 import '../controllers/motorcycle_information_controller.dart';
 
-class MotorcycleInformationView extends GetView<MotorcycleInformationController> {
-  const MotorcycleInformationView({Key? key}) : super(key: key);
+class MotorcycleInformationView
+    extends GetView<MotorcycleInformationController> {
+  const MotorcycleInformationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
         leading: Padding(
           padding: const EdgeInsets.fromLTRB(14, 8, 0, 8),
           child: CustomBackButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Get.back(closeOverlays: true),
           ),
         ),
         leadingWidth: 100,
@@ -29,7 +30,7 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
           'Information',
           style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: 22,
           ),
         ),
@@ -44,9 +45,12 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
               const CustomLabel(text: 'Verify Ownership Document'),
               const SizedBox(height: 5),
               Obx(() => CustomImageUploader(
-                  selectedImage: controller.selectedImage.value,
-                  onImageSourceSelected: controller.handleImageSourceSelection,
-                )),
+                    selectedImage: controller.selectedImage.value,
+                    onImageSourceSelected:
+                        controller.handleImageSourceSelection,
+                    fieldName: "ImageUrl",
+                    error: controller.error,
+                  )),
               // Obx(() => GestureDetector(
               //     onTap: controller.showImageSourceDialog,
               //     child: Container(
@@ -82,15 +86,18 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
                 hintText: '5fsg6785cTggKL',
                 icon: Icons.verified_user,
                 controller: controller.verifyOwnershipController,
+                fieldName: "OwnerName",
+                error: controller.error,
               ),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Chassis Number'),
               const SizedBox(height: 5),
               CustomTextField(
-                hintText: '5fsg6785cTggKL',
-                icon: Icons.confirmation_number,
-                controller: controller.chassisNumberController,
-              ),
+                  hintText: '5fsg6785cTggKL',
+                  icon: Icons.confirmation_number,
+                  controller: controller.chassisNumberController,
+                  fieldName: "ChassisNumber",
+                  error: controller.error),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Engine Number'),
               const SizedBox(height: 5),
@@ -98,6 +105,8 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
                 hintText: 'Placeholder',
                 icon: Icons.engineering,
                 controller: controller.engineNumberController,
+                fieldName: "EngineNumber",
+                error: controller.error,
               ),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Insurance No'),
@@ -106,6 +115,8 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
                 hintText: 'Placeholder',
                 icon: Icons.security,
                 controller: controller.insuranceNoController,
+                fieldName: "InsuranceNumber",
+                error: controller.error,
               ),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Insurance Company'),
@@ -114,6 +125,8 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
                 hintText: 'Insurance Company',
                 icon: Icons.business,
                 controller: controller.insuranceCompanyController,
+                fieldName: "InsuranceCompany",
+                error: controller.error,
               ),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Road Tax Expire Date'),
@@ -121,46 +134,50 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
               CustomDatePicker(
                 hintText: 'Expire Date',
                 controller: controller.roadTaxExpireDateController,
+                fieldName: "Expire",
+                error: controller.error,
               ),
-                // GestureDetector(
-                //   onTap: () async {
-                //     DateTime? pickedDate = await showDatePicker(
-                //       context: context,
-                //       initialDate: DateTime.now(),
-                //       firstDate: DateTime.now().subtract(const Duration(days: 5 * 365)),
-                //       lastDate: DateTime.now().add(const Duration(days: 10 * 365)),
-                //       builder: (BuildContext context, Widget? child) {
-                //         return Theme(
-                //           data: ThemeData.light().copyWith(
-                //             primaryColor: Colors.grey,
-                //             hintColor: Colors.grey, 
-                //             colorScheme: ColorScheme.light(primary: Colors.grey),
-                //             buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-                //           ),
-                //           child: child ?? Container(),
-                //         );
-                //       },
-                //     );
-                //     if (pickedDate != null) {
-                //       String formattedDate = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-                //       controller.roadTaxExpireDateController.text = formattedDate;
-                //     }
-                //   },
-                //   child: AbsorbPointer(
-                //     child: CustomTextField(
-                //       hintText: 'Road Tax Expire Date',
-                //       icon: Icons.calendar_today,
-                //       controller: controller.roadTaxExpireDateController,
-                //       keyboardType: TextInputType.datetime,
-                //     ),
-                //   ),
-                // ),
+              // GestureDetector(
+              //   onTap: () async {
+              //     DateTime? pickedDate = await showDatePicker(
+              //       context: context,
+              //       initialDate: DateTime.now(),
+              //       firstDate: DateTime.now().subtract(const Duration(days: 5 * 365)),
+              //       lastDate: DateTime.now().add(const Duration(days: 10 * 365)),
+              //       builder: (BuildContext context, Widget? child) {
+              //         return Theme(
+              //           data: ThemeData.light().copyWith(
+              //             primaryColor: Colors.grey,
+              //             hintColor: Colors.grey,
+              //             colorScheme: ColorScheme.light(primary: Colors.grey),
+              //             buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+              //           ),
+              //           child: child ?? Container(),
+              //         );
+              //       },
+              //     );
+              //     if (pickedDate != null) {
+              //       String formattedDate = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+              //       controller.roadTaxExpireDateController.text = formattedDate;
+              //     }
+              //   },
+              //   child: AbsorbPointer(
+              //     child: CustomTextField(
+              //       hintText: 'Road Tax Expire Date',
+              //       icon: Icons.calendar_today,
+              //       controller: controller.roadTaxExpireDateController,
+              //       keyboardType: TextInputType.datetime,
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Purchased Date'),
               const SizedBox(height: 5),
               CustomDatePicker(
                 hintText: 'Purchased Date',
                 controller: controller.purchasedDateController,
+                fieldName: "Purchase",
+                error: controller.error,
               ),
               const SizedBox(height: 10),
               const CustomLabel(text: 'Odometer'),
@@ -169,6 +186,8 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
                 hintText: 'Odometer',
                 icon: Icons.speed,
                 controller: controller.odometerController,
+                fieldName: "Odometer",
+                error: controller.error,
               ),
               const SizedBox(height: 32),
               CustomElevatedButton(
@@ -181,6 +200,4 @@ class MotorcycleInformationView extends GetView<MotorcycleInformationController>
       ),
     );
   }
-
-
 }

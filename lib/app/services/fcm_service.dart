@@ -1,18 +1,14 @@
 import 'dart:convert';
-// import 'dart:typed_data';
-// import 'dart:ui' as ui;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:santai/app/services/secure_storage_service.dart';
+import 'package:santai/app/utils/session_manager.dart';
 
 class FCMService extends GetxService {
-  final SecureStorageService _secureStorage = SecureStorageService();
+  final SessionManager sessionManager = SessionManager();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
   static const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel',
     'High Importance Notifications',
@@ -20,23 +16,33 @@ class FCMService extends GetxService {
     importance: Importance.high,
   );
 
+  bool _isRequestingPermission = false;
   Future<FCMService> init() async {
-    await Firebase.initializeApp();
     await _requestPermissions();
-    await _setupNotificationChannels();
-    await _setupNotificationHandlers();
-    await _initializeLocalNotifications();
-    await _setupForegroundNotificationPresentation();
+    // await _setupNotificationChannels();
+    // await _setupNotificationHandlers();
+    // await _initializeLocalNotifications();
+    // await _setupForegroundNotificationPresentation();
     await _saveToken();
     return this;
   }
 
   Future<void> _requestPermissions() async {
-    await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    if (_isRequestingPermission) {
+      return;
+    }
+    try {
+      _isRequestingPermission = true;
+      await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } catch (e) {
+      print("Error requesting FCM permissions: $e");
+    } finally {
+      _isRequestingPermission = false;
+    }
   }
 
   Future<void> _setupNotificationChannels() async {
@@ -49,7 +55,7 @@ class FCMService extends GetxService {
   Future<void> _setupNotificationHandlers() async {
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
@@ -61,13 +67,13 @@ class FCMService extends GetxService {
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    final DarwinInitializationSettings initializationSettingsIOS =
+    const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
@@ -90,7 +96,7 @@ class FCMService extends GetxService {
   Future<void> _saveToken() async {
     String? token = await _firebaseMessaging.getToken();
     if (token != null) {
-      await _secureStorage.writeSecureData('fcm_token', token);
+      await sessionManager.setSessionBy(SessionManagerType.deviceId, token);
     }
   }
 
@@ -109,35 +115,39 @@ class FCMService extends GetxService {
 
   void _handleMessage(RemoteMessage message) {
     final data = message.data;
-    if (data['orderId'] != null) {
-      // dynamic orderId = data['orderId'];
-      // Navigate to the order details screen
-      // Get.toNamed('/order-details', arguments: data['orderId']);
-    }
+    if (data['orderId'] != null) {}
   }
 
   void _showLocalNotification(RemoteMessage message) {
-    final data = message.data;
-
- 
-
-    if (data.isNotEmpty) {
+    if (message.data.isNotEmpty) {
       List<AndroidNotificationAction>? actions;
-      if (data['actions'] is String) {
-        actions = (json.decode(data['actions']) as List).map((action) {
-
-          return AndroidNotificationAction(
-            action['action'],
-            action['title'],
-            showsUserInterface: true,
-          );
-        }).toList();
-      }
+      try {
+        if (message.data['actions'] is String) {
+          actions = (json.decode(message.data['actions']) as List<dynamic>)
+              .map((action) {
+                final actionId = action['action'] as String?;
+                final actionTitle = action['title'] as String?;
+                if (actionId != null && actionTitle != null) {
+                  return AndroidNotificationAction(
+                    actionId,
+                    actionTitle,
+                    showsUserInterface: true,
+                  );
+                }
+                return null;
+              })
+              .where((element) => element != null)
+              .cast<AndroidNotificationAction>()
+              .toList();
+        }
+      } catch (_) {}
 
       _flutterLocalNotificationsPlugin.show(
         0,
-        data['title'] ?? 'Default title', // Provide a default title if null
-        data['body'] ?? 'Default body', // Provide a default body if null
+        message.data['title'] ??
+            'Default title', // Provide a default title if null
+        message.data['body'] ??
+            'Default body', // Provide a default body if null
         NotificationDetails(
           android: AndroidNotificationDetails(
             channel.id,
@@ -149,42 +159,100 @@ class FCMService extends GetxService {
             actions: actions,
           ),
         ),
-        payload: data['orderId'],
+        payload: message.data['orderId'],
       );
-    } 
+    }
   }
 
-void _onDidReceiveNotificationResponse(NotificationResponse response) {
-
+  void _onDidReceiveNotificationResponse(NotificationResponse response) {
     if (response.payload != null) {
       // final notificationData = json.decode(response.payload!);
 
       if (response.actionId != null) {
         switch (response.actionId) {
           case 'accept_action':
-           
             break;
           case 'decline_action':
-         
             break;
           default:
-           
         }
-      } else {
-        // Navigate to order details screen
-        // Get.toNamed('/order-details', arguments: notificationData['orderId']);
-      }
+      } else {}
     }
   }
+
   Future<String?> getFCMToken() async {
     return await _firebaseMessaging.getToken();
   }
 }
 
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  final fcmService = FCMService();
-  await fcmService._initializeLocalNotifications();
-  fcmService._showLocalNotification(message);
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // await Firebase.initializeApp();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.high,
+  );
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  if (message.notification?.title == null ||
+      message.notification?.title == '') {
+    return;
+  }
+
+  List<AndroidNotificationAction>? actions;
+  if (message.data.isNotEmpty) {
+    try {
+      if (message.data['actions'] is String) {
+        actions = (json.decode(message.data['actions']) as List<dynamic>)
+            .map((action) {
+              final actionId = action['action'] as String?;
+              final actionTitle = action['title'] as String?;
+              if (actionId != null && actionTitle != null) {
+                return AndroidNotificationAction(
+                  actionId,
+                  actionTitle,
+                  showsUserInterface: true,
+                );
+              }
+              return null;
+            })
+            .where((element) => element != null)
+            .cast<AndroidNotificationAction>()
+            .toList();
+      }
+    } catch (_) {}
+  }
+
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    message.notification?.title ?? 'Default Title',
+    message.notification?.body ?? 'Default Body',
+    NotificationDetails(
+      android: AndroidNotificationDetails(channel.id, channel.name,
+          channelDescription: channel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          actions: actions),
+    ),
+    payload: message.data['orderId'],
+  );
 }
