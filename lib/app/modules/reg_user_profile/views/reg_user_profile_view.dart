@@ -95,6 +95,36 @@ class RegUserProfileView extends GetView<RegUserProfileController> {
                   error: controller.error,
                 ),
                 const SizedBox(height: 10),
+                Obx(
+                  () => controller.isUpdateMode.value
+                      ? const SizedBox.shrink()
+                      : const CustomLabel(
+                          text: 'Email',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                ),
+                Obx(
+                  () => controller.isUpdateMode.value
+                      ? const SizedBox.shrink()
+                      : const SizedBox(height: 5),
+                ),
+                Obx(
+                  () => controller.isUpdateMode.value
+                      ? const SizedBox.shrink()
+                      : CustomTextField(
+                          hintText: 'Email Address',
+                          icon: null,
+                          controller: controller.emailController,
+                          fieldName: "Email",
+                          error: controller.error,
+                        ),
+                ),
+                Obx(
+                  () => controller.isUpdateMode.value
+                      ? const SizedBox.shrink()
+                      : const SizedBox(height: 10),
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

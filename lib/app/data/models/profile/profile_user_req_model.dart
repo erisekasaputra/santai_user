@@ -2,6 +2,7 @@ import 'package:santai/app/domain/entities/profile/profile_user.dart';
 
 class ProfileUserReqModel extends ProfileUser {
   ProfileUserReqModel({
+    required super.email,
     required super.timeZoneId,
     super.referralCode,
     required ProfileAddressModel super.address,
@@ -10,6 +11,7 @@ class ProfileUserReqModel extends ProfileUser {
 
   factory ProfileUserReqModel.fromEntity(ProfileUser profileUser) {
     return ProfileUserReqModel(
+      email: profileUser.email,
       timeZoneId: profileUser.timeZoneId,
       referralCode: profileUser.referralCode,
       address: ProfileAddressModel.fromEntity(profileUser.address),
@@ -20,6 +22,7 @@ class ProfileUserReqModel extends ProfileUser {
 
   Map<String, dynamic> toJson() {
     return {
+      'email': email,
       'timeZoneId': timeZoneId,
       'referralCode': referralCode,
       'address': (address as ProfileAddressModel).toJson(),

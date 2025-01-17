@@ -258,6 +258,7 @@ class RegUserProfileController extends GetxController {
 
   final posCodeController = TextEditingController();
   final countryController = TextEditingController();
+  final emailController = TextEditingController();
 
   final genderOptions = ['Male', 'Female'];
   final selectedGender = 'Male'.obs;
@@ -272,11 +273,12 @@ class RegUserProfileController extends GetxController {
 
   final error = Rx<ErrorResponse?>(null);
 
-  RegUserProfileController(
-      {required this.insertProfileUser,
-      required this.getProfileUser,
-      required this.updateProfileUser,
-      required this.signOutUser});
+  RegUserProfileController({
+    required this.insertProfileUser,
+    required this.getProfileUser,
+    required this.updateProfileUser,
+    required this.signOutUser,
+  });
 
   @override
   void onInit() async {
@@ -374,8 +376,11 @@ class RegUserProfileController extends GetxController {
       String timezone = await timezoneService.getDeviceTimezone();
 
       final profileUser = ProfileUser(
+        email: emailController.text,
         timeZoneId: timezone,
-        referralCode: referenceCodeController.text,
+        referralCode: referenceCodeController.text.trim().isEmpty
+            ? null
+            : referenceCodeController.text,
         address: ProfileAddress(
           addressLine1: addressController.text,
           city: selectedCity.value,
@@ -474,6 +479,7 @@ class RegUserProfileController extends GetxController {
     addressController.dispose();
     posCodeController.dispose();
     countryController.dispose();
+    emailController.dispose();
     super.onClose();
   }
 }

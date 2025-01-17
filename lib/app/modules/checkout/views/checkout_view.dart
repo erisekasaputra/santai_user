@@ -282,9 +282,14 @@ class CheckoutView extends GetView<CheckoutController> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(item.name,
+                          Expanded(
+                            child: Text(
+                              item.name,
                               style: const TextStyle(
-                                  color: Colors.black, fontSize: 12)),
+                                  color: Colors.black, fontSize: 12),
+                              overflow: TextOverflow.ellipsis, // Auto ellipsis
+                            ),
+                          ),
                           Text(item.price,
                               style: const TextStyle(
                                   color: Colors.black, fontSize: 12)),

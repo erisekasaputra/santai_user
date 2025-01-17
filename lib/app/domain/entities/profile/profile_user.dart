@@ -1,10 +1,12 @@
 class ProfileUser {
+  final String email;
   final String timeZoneId;
   final String? referralCode;
   final ProfileAddress address;
   final ProfilePersonalInfo personalInfo;
 
   ProfileUser({
+    required this.email,
     required this.timeZoneId,
     this.referralCode,
     required this.address,
